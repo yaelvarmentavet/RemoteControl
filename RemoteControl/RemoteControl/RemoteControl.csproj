@@ -1,0 +1,87 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icons\ap_clean.bmp" />
+    <None Remove="Icons\ap_red.bmp" />
+    <None Remove="Icons\bat_1.bmp" />
+    <None Remove="Icons\home50.png" />
+    <None Remove="Icons\n2.bmp" />
+    <None Remove="Icons\n5.bmp" />
+    <None Remove="Icons\n7.bmp" />
+    <None Remove="Icons\n8.bmp" />
+    <None Remove="Icons\pr1h.bmp" />
+    <None Remove="Icons\pr1l.bmp" />
+    <None Remove="Icons\prh.bmp" />
+    <None Remove="Icons\prlh.bmp" />
+    <None Remove="Icons\prlow.bmp" />
+    <None Remove="Icons\pulseNo.bmp" />
+    <None Remove="Icons\pulseYes.bmp" />
+    <None Remove="Icons\support50.png" />
+    <None Remove="Icons\support500.jpg" />
+    <None Remove="Icons\support500.png" />
+    <None Remove="Icons\w.bmp" />
+    <None Remove="Icons\w_cropped.bmp" />
+    <None Remove="Icons\w_cropped.xcf" />
+    <None Remove="Icons\‏‏bat_l.bmp" />
+    <None Remove="Icons\‏‏pulseY.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ap_clean.bmp" />
+    <EmbeddedResource Include="Icons\ap_red.bmp" />
+    <EmbeddedResource Include="Icons\bat_1.bmp" />
+    <EmbeddedResource Include="Icons\home50.png" />
+    <EmbeddedResource Include="Icons\n2.bmp" />
+    <EmbeddedResource Include="Icons\n5.bmp" />
+    <EmbeddedResource Include="Icons\n7.bmp" />
+    <EmbeddedResource Include="Icons\n8.bmp" />
+    <EmbeddedResource Include="Icons\pr1h.bmp" />
+    <EmbeddedResource Include="Icons\pr1l.bmp" />
+    <EmbeddedResource Include="Icons\prh.bmp" />
+    <EmbeddedResource Include="Icons\prlh.bmp" />
+    <EmbeddedResource Include="Icons\prlow.bmp" />
+    <EmbeddedResource Include="Icons\pulseNo.bmp" />
+    <EmbeddedResource Include="Icons\pulseYes.bmp" />
+    <EmbeddedResource Include="Icons\support50.png" />
+    <EmbeddedResource Include="Icons\support500.jpg" />
+    <EmbeddedResource Include="Icons\support500.png" />
+    <EmbeddedResource Include="Icons\w.bmp" />
+    <EmbeddedResource Include="Icons\w_cropped.bmp" />
+    <EmbeddedResource Include="Icons\w_cropped.xcf" />
+    <EmbeddedResource Include="Icons\‏‏bat_l.bmp" />
+    <EmbeddedResource Include="Icons\‏‏pulseY.bmp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="CMTPage.xaml.cs">
+      <DependentUpon>CMTPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="SupportPage.xaml.cs">
+      <DependentUpon>SupportPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="CMTPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SupportPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>
