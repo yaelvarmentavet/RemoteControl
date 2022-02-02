@@ -13,21 +13,32 @@ namespace RemoteControl
         public MainPage()
         {
             InitializeComponent();
+            //App.Current.Resources.
         }
 
-        private async void Button_CMT_Clicked(object sender, EventArgs e)
+        private async void CMT_Tapped(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new CMTPage());
         }
 
-        private async void Image_Support_Tapped(object sender, EventArgs e)
+        private async void Support_Tapped(object sender, EventArgs e)
         {
             await Navigation.PushAsync(new SupportPage());
         }
 
-        private void Image_Home_Tapped(object sender, EventArgs e)
+        private void Home_Tapped(object sender, EventArgs e)
         {
 
+        }
+
+        private async void Treatment_Tapped(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new TreatmentPage());
+        }
+
+        private async void COWIDManagement_Tapped(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new COWIDManagementPage());
         }
     }
 }

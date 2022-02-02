@@ -3,48 +3,56 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:RemoteControl"
              x:Class="RemoteControl.MainPage">
-
+    <!--NavigationPage.HasNavigationBar="False">-->
+    
     <StackLayout>
-        <Frame BorderColor="Black" BackgroundColor="Gray">
+        <Frame Style="{StaticResource FrameDark}">
             <StackLayout>
-                <Frame Margin="10,0,10,0" CornerRadius="0" BorderColor="Black" BackgroundColor="AliceBlue">
+                <Frame Style="{StaticResource FrameLight}">
                     <StackLayout Orientation="Horizontal">
-                        <Image Source="{local:ImageResource RemoteControl.Icons.home50.png}" BackgroundColor="AliceBlue" HorizontalOptions="StartAndExpand">
+                        <Image Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.home50.png}" HorizontalOptions="StartAndExpand">
                             <Image.GestureRecognizers>
                                 <TapGestureRecognizer 
-                                    Tapped="Image_Home_Tapped">
+                                    Tapped="Home_Tapped">
                                 </TapGestureRecognizer>
                             </Image.GestureRecognizers>
                         </Image>
-                        <Button ImageSource="{local:ImageResource RemoteControl.Icons.home50.png}" BackgroundColor="AliceBlue" HorizontalOptions="StartAndExpand"/>
-                        <Label Text="Pulses: 150,000" HorizontalOptions="Start"/>
-                        <Image Source="{local:ImageResource RemoteControl.Icons.support50.png}" BackgroundColor="AliceBlue" HorizontalOptions="EndAndExpand">
+                        <!--Button ImageSource="{local:ImageResource RemoteControl.Icons.home50.png}" BackgroundColor="AliceBlue" HorizontalOptions="StartAndExpand"/-->
+                        <Label Style="{StaticResource LabelSmall}" Text="Pulses: 150,000" HorizontalOptions="Start"/>
+                        <Image Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.support50.png}" HorizontalOptions="EndAndExpand">
                             <Image.GestureRecognizers>
                                 <TapGestureRecognizer 
-                                    Tapped="Image_Support_Tapped">
+                                    Tapped="Support_Tapped">
                                 </TapGestureRecognizer>
                             </Image.GestureRecognizers>
                         </Image>
                     </StackLayout>
                 </Frame>
-                <Frame Margin="10,0,10,0" CornerRadius="0" BorderColor="Black" VerticalOptions="CenterAndExpand" BackgroundColor="AliceBlue">
+                <Frame Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
                     <StackLayout>
-                        <Label Text="APTX II – Welcome" FontSize="Title" Margin="0,30,0,30" HorizontalOptions="Center"/>
+                        <Label Style="{StaticResource LabelTitle}" Text="APTX II – Welcome"/>
                         <StackLayout Orientation="Horizontal">
-                            <Button Text="CMT" WidthRequest="190" HeightRequest="130" Margin="10,20,10,20" CornerRadius="10" HorizontalOptions="StartAndExpand">
-                                <Button.GestureRecognizers>
-                                    <TapGestureRecognizer 
-                                        Tapped="Button_CMT_Clicked">
-                                    </TapGestureRecognizer>
-                                </Button.GestureRecognizers>
-                            </Button>
-                            <Button Text="TREATMENT" WidthRequest="190" HeightRequest="130" Margin="10,20,10,20" CornerRadius="10" HorizontalOptions="CenterAndExpand"/>
-                            <Button Text="COW ID Management" WidthRequest="190" HeightRequest="130" Margin="10,20,10,20" CornerRadius="10" HorizontalOptions="EndAndExpand"/>
+                            <Button Style="{StaticResource ButtonLarge}" Text="CMT" Clicked="CMT_Tapped" HorizontalOptions="StartAndExpand"/>
+                            <Button Style="{StaticResource ButtonLarge}" Text="TREATMENT" Clicked="Treatment_Tapped" HorizontalOptions="CenterAndExpand"/>
+                            <Button Style="{StaticResource ButtonLarge}" Text="COW ID Management" Clicked="COWIDManagement_Tapped" HorizontalOptions="EndAndExpand"/>
                         </StackLayout>
-                        <Label Text="AM ID : 987653" FontSize="16"/>
-                        <Label Text="APT ID : 234876" FontSize="16"/>
+                        <Label Style="{StaticResource LabelSmall}" Text="AM ID : 987653"/>
+                        <Label Style="{StaticResource LabelSmall}" Text="APT ID : 234876"/>
                     </StackLayout>
                 </Frame>
+                <Frame Style="{StaticResource FrameLight}">
+                    <StackLayout Orientation="Horizontal">
+                        <Image Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.pr1h.bmp}" HorizontalOptions="StartAndExpand"/>
+                        <Image Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.pulseYes.bmp}" HorizontalOptions="CenterAndExpand"/>
+                        <Image Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.bat_1.bmp}" HorizontalOptions="CenterAndExpand"/>
+                        <Image Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.ap_clean.bmp}" HorizontalOptions="EndAndExpand"/>
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+        </Frame>
+    </StackLayout>
+
+</ContentPage>
                 <!--Label FontSize="16" Padding="30,24,30,0">
                     <Label.FormattedText>
                     <FormattedString>
@@ -56,17 +64,3 @@
                     </Label.FormattedText>
                 </Label-->
                 <!--Frame Padding="24" CornerRadius="0" BorderColor="Black"-->
-                <Frame Margin="10,0,10,0" CornerRadius="0" BorderColor="Black" BackgroundColor="AliceBlue">
-                    <StackLayout Orientation="Horizontal">
-                        <Image Source="{local:ImageResource RemoteControl.Icons.pr1h.bmp}" Margin="10,0,10,0" HorizontalOptions="StartAndExpand"/>
-                        <Image Source="{local:ImageResource RemoteControl.Icons.pulseYes.bmp}" Margin="10,0,10,0" HorizontalOptions="CenterAndExpand"/>
-                        <Image Source="{local:ImageResource RemoteControl.Icons.bat_1.bmp}" Margin="10,0,10,0" HorizontalOptions="CenterAndExpand"/>
-                        <Image Source="{local:ImageResource RemoteControl.Icons.ap_clean.bmp}" Margin="10,0,10,0" HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
-                    <!--Label Text="Welcome to Xamarin.Forms!" HorizontalTextAlignment="Center" FontSize="36"/-->
-                </Frame>
-            </StackLayout>
-        </Frame>
-    </StackLayout>
-
-</ContentPage>

@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="RemoteControl.UWP.App">
       <uap:VisualElements
-        DisplayName="RemoteControl.UWP"
+        DisplayName="Armenta - Remote Control Application"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="RemoteControl.UWP"
@@ -45,6 +45,7 @@
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
+        <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badge"/>
       </uap:VisualElements>
     </Application>
   </Applications>

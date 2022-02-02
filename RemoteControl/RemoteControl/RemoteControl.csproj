@@ -68,19 +68,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="CMTPage.xaml.cs">
-      <DependentUpon>CMTPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="SupportPage.xaml.cs">
-      <DependentUpon>SupportPage.xaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="CMTPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Update="COWIDManagementPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="SupportPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="TreatmentPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
