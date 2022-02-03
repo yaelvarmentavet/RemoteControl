@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:RemoteControl"
+             x:Class="RemoteControl.MainPage">
+    <!--NavigationPage.HasNavigationBar="False">-->
+
+    <ContentPage.BindingContext>
+        <local:MainPageViewModel/>
+    </ContentPage.BindingContext>
+    
+    <Frame Style="{StaticResource FrameDark}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Frame Grid.Row="0" Style="{StaticResource FrameLight}">
+                <!--<StackLayout Orientation="Horizontal">-->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.home.png}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                    Tapped="Home_Tapped">
+                            </TapGestureRecognizer>
+                        </Image.GestureRecognizers>
+                    </Image>
+                    <Label Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource LabelSmall}" Text="Pulses: 150,000"/>
+                    <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.settings.png}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                    Tapped="Support_Tapped">
+                            </TapGestureRecognizer>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </Grid>
+                <!--</StackLayout>-->
+            </Frame>
+            <Frame Grid.Row="1" Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
+                <!--<StackLayout>-->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="3*"/>
+                        <RowDefinition Height="6*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource LabelTitle}" Text="APTX II – Welcome"/>
+                    <!--<StackLayout Orientation="Horizontal"-->
+                    <!--<Button Grid.Row="1" Grid.Column="0" Command="{Binding EraseCommand}" Style="{StaticResource ButtonLarge}" Text="CMT" Clicked="CMT_Tapped"/>-->
+                    <Button Grid.Row="1" Grid.Column="0" Command="{Binding NextPage1}" Style="{StaticResource ButtonLarge}" Text="CMT"/>
+                    <!--<Button Grid.Row="1" Grid.Column="1" Style="{StaticResource ButtonLarge}" Text="TREATMENT" Clicked="Treatment_Tapped"/>-->
+                    <Button Grid.Row="1" Grid.Column="1" Command="{Binding NextPage2}" Style="{StaticResource ButtonLarge}" Text="TREATMENT"/>
+                    <!--<Button Grid.Row="1" Grid.Column="2" Style="{StaticResource ButtonLarge}" Text="COW ID Management" Clicked="COWIDManagement_Tapped"/>-->
+                    <Button Grid.Row="1" Grid.Column="2" Command="{Binding NextPage3}" Style="{StaticResource ButtonLarge}" Text="COW ID Management"/>
+                    <!--</StackLayout>-->
+                    <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource LabelSmall}" Text="AM ID : 987653"/>
+                    <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelSmall}" Text="APT ID : 234876"/>
+                </Grid>
+                <!--</StackLayout>-->
+            </Frame>
+            <Frame Grid.Row="2" Style="{StaticResource FrameLight}">
+                <!--<StackLayout Orientation="Horizontal">-->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.pr1h.bmp}"/>
+                    <Image Grid.Column="1" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.pulseYes.bmp}"/>
+                    <Image Grid.Column="2" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.bat_1.bmp}"/>
+                    <Image Grid.Column="3" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.ap_clean.bmp}"/>
+                </Grid>
+                <!--</StackLayout>-->
+            </Frame>
+        </Grid>
+    </Frame>
+    <!--</Grid>-->
+</ContentPage>
+<!--Label FontSize="16" Padding="30,24,30,0">
+                    <Label.FormattedText>
+                    <FormattedString>
+                        <FormattedString.Spans>
+                            <Span Text="Learn more at "/>
+                            <Span Text="https://aka.ms/xamarin-quickstart" FontAttributes="Bold"/>
+                        </FormattedString.Spans>
+                    </FormattedString>
+                    </Label.FormattedText>
+                </Label-->
+                <!--Frame Padding="24" CornerRadius="0" BorderColor="Black"-->

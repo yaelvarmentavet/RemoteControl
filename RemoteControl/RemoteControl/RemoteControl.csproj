@@ -11,10 +11,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CMTPage.xaml.cs" />
+    <Compile Remove="COWIDManagementPage.xaml.cs" />
+    <Compile Remove="MainPage.xaml.cs" />
+    <Compile Remove="MainPageViewModel.cs" />
+    <Compile Remove="SupportPage.xaml.cs" />
+    <Compile Remove="TreatmentPage.xaml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="CMTPage.xaml" />
+    <EmbeddedResource Remove="COWIDManagementPage.xaml" />
+    <EmbeddedResource Remove="MainPage.xaml" />
+    <EmbeddedResource Remove="SupportPage.xaml" />
+    <EmbeddedResource Remove="TreatmentPage.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Icons\ap_clean.bmp" />
     <None Remove="Icons\ap_red.bmp" />
     <None Remove="Icons\bat_1.bmp" />
-    <None Remove="Icons\home50.png" />
+    <None Remove="Icons\home.png" />
     <None Remove="Icons\n2.bmp" />
     <None Remove="Icons\n5.bmp" />
     <None Remove="Icons\n7.bmp" />
@@ -26,9 +43,7 @@
     <None Remove="Icons\prlow.bmp" />
     <None Remove="Icons\pulseNo.bmp" />
     <None Remove="Icons\pulseYes.bmp" />
-    <None Remove="Icons\support50.png" />
-    <None Remove="Icons\support500.jpg" />
-    <None Remove="Icons\support500.png" />
+    <None Remove="Icons\settings.png" />
     <None Remove="Icons\w.bmp" />
     <None Remove="Icons\w_cropped.bmp" />
     <None Remove="Icons\w_cropped.xcf" />
@@ -40,7 +55,7 @@
     <EmbeddedResource Include="Icons\ap_clean.bmp" />
     <EmbeddedResource Include="Icons\ap_red.bmp" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
-    <EmbeddedResource Include="Icons\home50.png" />
+    <EmbeddedResource Include="Icons\home.png" />
     <EmbeddedResource Include="Icons\n2.bmp" />
     <EmbeddedResource Include="Icons\n5.bmp" />
     <EmbeddedResource Include="Icons\n7.bmp" />
@@ -52,9 +67,7 @@
     <EmbeddedResource Include="Icons\prlow.bmp" />
     <EmbeddedResource Include="Icons\pulseNo.bmp" />
     <EmbeddedResource Include="Icons\pulseYes.bmp" />
-    <EmbeddedResource Include="Icons\support50.png" />
-    <EmbeddedResource Include="Icons\support500.jpg" />
-    <EmbeddedResource Include="Icons\support500.png" />
+    <EmbeddedResource Include="Icons\settings.png" />
     <EmbeddedResource Include="Icons\w.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.xcf" />
@@ -65,20 +78,5 @@
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="CMTPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="COWIDManagementPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SupportPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="TreatmentPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
   </ItemGroup>
 </Project>
