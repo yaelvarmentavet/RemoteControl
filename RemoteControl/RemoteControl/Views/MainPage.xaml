@@ -2,11 +2,13 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:RemoteControl"
-             x:Class="RemoteControl.MainPage">
+             xmlns:localViewModels="clr-namespace:RemoteControl.ViewModels"
+             xmlns:localViews="clr-namespace:RemoteControl.Views"
+             x:Class="RemoteControl.Views.MainPage">
     <!--NavigationPage.HasNavigationBar="False">-->
 
     <ContentPage.BindingContext>
-        <local:MainPageViewModel/>
+        <localViewModels:MainPageViewModel/>
     </ContentPage.BindingContext>
     
     <Frame Style="{StaticResource FrameDark}">
@@ -33,17 +35,17 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.home.png}">
-                        <Image.GestureRecognizers>
+                        <!--Image.GestureRecognizers>
                             <TapGestureRecognizer 
                                     Tapped="Home_Tapped">
                             </TapGestureRecognizer>
-                        </Image.GestureRecognizers>
+                        </Image.GestureRecognizers-->
                     </Image>
                     <Label Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource LabelSmall}" Text="Pulses: 150,000"/>
                     <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{local:ImageResource RemoteControl.Icons.settings.png}">
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer 
-                                    Tapped="Support_Tapped">
+                                    Tapped="Settings_Tapped">
                             </TapGestureRecognizer>
                         </Image.GestureRecognizers>
                     </Image>

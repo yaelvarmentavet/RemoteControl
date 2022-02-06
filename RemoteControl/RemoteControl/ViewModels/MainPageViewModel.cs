@@ -1,11 +1,12 @@
-﻿using System;
+﻿using RemoteControl.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text;
 using Xamarin.Forms;
 
-namespace RemoteControl
+namespace RemoteControl.ViewModels
 {
     class MainPageViewModel : INotifyPropertyChanged
     {

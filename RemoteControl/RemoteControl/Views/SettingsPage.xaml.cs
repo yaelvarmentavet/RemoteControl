@@ -1,65 +1,59 @@
-﻿using RemoteControl.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace RemoteControl.Views
 {
-    public partial class MainPage : ContentPage
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class SettingsPage : ContentPage
     {
-        public MainPage()
+        public SettingsPage()
         {
             //InitializeComponent();
             Init();
         }
-
+         
         void Init()
         {
-            BindingContext = new MainPageViewModel();
-
             Label ltitle = new Label
             {
-                Text = "APTX II – Welcome",
+                Text = "Technician Mode",
             };
             ltitle.SetDynamicResource(Label.StyleProperty, "LabelTitle");
 
             Button btn1 = new Button
             {
-                Text = "CMT"
+                Text = "Battery V: XX[V] I: XX[A]"
             };
             Resources.Where(r => r.Key == "ButtonLarge");
             btn1.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
-            btn1.SetBinding(Button.CommandProperty, "NextPage1");
+            //btn1.SetBinding(Button.CommandProperty, "");
 
             Button btn2 = new Button
             {
-                Text = "Treatment"
+                Text = "Valid touch XXX[%]"
             };
             btn2.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
-            btn2.SetBinding(Button.CommandProperty, "NextPage2");
+            //btn2.SetBinding(Button.CommandProperty, "");
 
             Button btn3 = new Button
             {
-                Text = "COW ID Management"
+                Text = "Pressure XX[Bar]"
             };
             btn3.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
-            btn3.SetBinding(Button.CommandProperty, "NextPage3");
+            //btn3.SetBinding(Button.CommandProperty, "");
 
-            Label lbl1 = new Label
+            Button btn4 = new Button
             {
-                Text = "AM ID : 987653",
+                Text = "KTU Speed XX.X[m / sec]"
             };
-            lbl1.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
-
-            Label lbl2 = new Label
-            {
-                Text = "APT ID : 234876",
-            };
-            lbl2.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            btn4.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            //btn4.SetBinding(Button.CommandProperty, "");
 
             Frame framemid = new Frame();
             framemid.SetDynamicResource(Frame.StyleProperty, "FrameLight");
@@ -79,6 +73,7 @@ namespace RemoteControl.Views
                     new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
                     new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
                     new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
+                    new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
                 }
             };
             gridmid.Children.Add(ltitle, 0, 0);
@@ -86,12 +81,11 @@ namespace RemoteControl.Views
             gridmid.Children.Add(btn1, 0, 1);
             gridmid.Children.Add(btn2, 1, 1);
             gridmid.Children.Add(btn3, 2, 1);
-            gridmid.Children.Add(lbl1, 0, 4);
-            gridmid.Children.Add(lbl2, 0, 5);
+            gridmid.Children.Add(btn4, 3, 1);
 
             Frame framemain = new Frame();
             framemain.SetDynamicResource(Frame.StyleProperty, "FrameDark");
-            
+
             Grid gridmain = new Grid()
             {
                 RowDefinitions =
@@ -107,7 +101,7 @@ namespace RemoteControl.Views
             };
             gridmain.Children.Add(framemain, 0, 0);
             Grid.SetRowSpan(framemain, 3);
-            GridTop gridtop = new GridTop(settings_tapped: Settings_Tapped);
+            GridTop gridtop = new GridTop(home_tapped: Home_Tapped);
             gridmain.Children.Add(gridtop.Frame, 0, 0);
             gridmain.Children.Add(framemid, 0, 1);
             GridBottom gridbottom = new GridBottom();
@@ -119,24 +113,9 @@ namespace RemoteControl.Views
             Content = gridmain;
         }
 
-        private async void Settings_Tapped(object sender, EventArgs e)
+        private async void Home_Tapped(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new SettingsPage());
-        }
-
-        private async void CMT_Tapped(object sender, EventArgs e)
-        {
-            await Navigation.PushAsync(new CMTPage());
-        }
-
-        private async void Treatment_Tapped(object sender, EventArgs e)
-        {
-            await Navigation.PushAsync(new TreatmentPage());
-        }
-
-        private async void COWIDManagement_Tapped(object sender, EventArgs e)
-        {
-            await Navigation.PushAsync(new COWIDManagementPage());
+            await Navigation.PopToRootAsync();
         }
     }
 }

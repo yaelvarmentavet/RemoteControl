@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RemoteControl.Views;
+using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -10,10 +12,10 @@ namespace RemoteControl
         {
             InitializeComponent();
 
+            var color = Resources.Where(r => r.Key == "BackgroundDark").FirstOrDefault().Value;
             MainPage = new NavigationPage(new MainPage())
             {
-                BarBackgroundColor = Color.Gray,
-                BarTextColor = Color.White
+                BarBackgroundColor = color == null ? Color.Default : (Color)color,
             };
         }
 
