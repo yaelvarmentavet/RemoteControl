@@ -8,21 +8,26 @@ using Xamarin.Forms;
 
 namespace RemoteControl.ViewModels
 {
-    class MainPageViewModel : INotifyPropertyChanged
+    class MainViewModel : INotifyPropertyChanged
     {
-        public MainPageViewModel()
+        public MainViewModel()
         {
-            NextPage1 = new Command(async () =>
+            NextPageSettings = new Command(async () =>
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new SettingsPage());
+            });
+            NextPageCMT = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new CMTPage());
             });
-            NextPage2 = new Command(async () =>
+            NextPageTreatment = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new TreatmentPage());
             });
-            NextPage3 = new Command(async () =>
+            NextPageCowId = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new COWIDManagementPage());
+                //await Application.Current.MainPage.Navigation.PushAsync(new CowIdPage());
             });
         }
 
@@ -32,8 +37,8 @@ namespace RemoteControl.ViewModels
 
         string theNote;
 
-        public string TheNote 
-        { 
+        public string TheNote
+        {
             get => theNote;
             set
             {
@@ -42,8 +47,9 @@ namespace RemoteControl.ViewModels
                 PropertyChanged?.Invoke(this, args);
             }
         }
-        public Command NextPage1 { get; }
-        public Command NextPage2 { get;}
-        public Command NextPage3 { get; }
+        public Command NextPageSettings { get; }
+        public Command NextPageCMT { get; }
+        public Command NextPageTreatment { get; }
+        public Command NextPageCowId { get; }
     }
 }

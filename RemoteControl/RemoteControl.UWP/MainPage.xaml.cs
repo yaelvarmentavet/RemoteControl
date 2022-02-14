@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -19,6 +19,8 @@ namespace RemoteControl.UWP
     {
         public MainPage()
         {
+            Xamarin.Forms.DependencyService.Register<RemoteControlUsbDevice>();
+
             this.InitializeComponent();
 
             LoadApplication(new RemoteControl.App());

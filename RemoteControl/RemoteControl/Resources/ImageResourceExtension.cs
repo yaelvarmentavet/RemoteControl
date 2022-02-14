@@ -5,7 +5,7 @@ using System.Text;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
-namespace RemoteControl
+namespace RemoteControl.Resources
 {
     [ContentProperty(nameof(Source))]
     class ImageResourceExtension : IMarkupExtension

@@ -10,7 +10,7 @@ namespace RemoteControl.Views
         public Frame Frame;
         public Grid Grid;
 
-        public GridTop(EventHandler home_tapped = null, EventHandler settings_tapped = null)
+        public GridTop(string home_tapped = null, string settings_tapped = null)
         {
             Image imghome = new Image();
             imghome.SetDynamicResource(Image.StyleProperty, "IconFrame");
@@ -19,7 +19,7 @@ namespace RemoteControl.Views
             if (home_tapped != null)
             {
                 TapGestureRecognizer taphome = new TapGestureRecognizer();
-                taphome.Tapped += home_tapped;
+                taphome.SetBinding(TapGestureRecognizer.CommandProperty, home_tapped);
                 imghome.GestureRecognizers.Add(taphome);
             }
 
@@ -36,7 +36,7 @@ namespace RemoteControl.Views
             if (settings_tapped != null)
             {
                 TapGestureRecognizer tapsettings = new TapGestureRecognizer();
-                tapsettings.Tapped += settings_tapped;
+                tapsettings.SetBinding(TapGestureRecognizer.CommandProperty, settings_tapped);
                 imgsettings.GestureRecognizers.Add(tapsettings);
             }
 
