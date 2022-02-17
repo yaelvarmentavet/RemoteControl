@@ -9,6 +9,7 @@ using Android.Runtime;
 using Android.App;
 using Android.Content;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 //[assembly: Xamarin.Forms.Dependency(typeof(DeviceInfo))]
 namespace RemoteControl.Droid
@@ -55,19 +56,21 @@ namespace RemoteControl.Droid
                         {
                             UsbInterface intf = device?.GetInterface(0);
                             UsbEndpoint endpointRx = intf?.GetEndpoint(0);
-                            UsbEndpoint endpointTx = intf?.GetEndpoint(1);
-                            UsbDeviceConnection connection = MainActivity.manager?.OpenDevice(device);
-                            if (connection != null)
+                            //UsbEndpoint 
+                            EndpointTx = intf?.GetEndpoint(1);
+                            //UsbDeviceConnection 
+                            Connection = MainActivity.manager?.OpenDevice(device);
+                            if (Connection != null)
                             {
-                                connection?.ClaimInterface(intf, true);
+                                Connection?.ClaimInterface(intf, true);
                                 int? resp = -1;
 
-                                resp = connection?.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
-                                resp = connection?.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
-                                resp = connection?.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
-                                resp = connection?.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
-                                resp = connection?.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
-                                resp = connection?.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
+                                resp = Connection?.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
+                                resp = Connection?.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
+                                resp = Connection?.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
+                                resp = Connection?.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
+                                resp = Connection?.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
+                                resp = Connection?.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
 
                                 //}
                                 //    }
@@ -75,13 +78,15 @@ namespace RemoteControl.Droid
 
                                 //public async Task Read(byte[] bytesRx, int size)
                                 //{
-                                int size = 64;
+                                int size = 1024;
+                                //int sizeRx = 0;
                                 byte[]? bytesRx = null;
-                                byte[]? bytesTx = null;
+                                //byte[]? bytesTx = null;
                                 string strRx = null;
-                                string strTx = null;
-                                ByteBuffer bytesBufferTx = null;
-                                ByteBuffer bytesBufferRx = null;
+                                //string strTx = null;
+                                //ByteBuffer bytesBufferRx = null;
+                                ByteBuffer bytesBufferRx = ByteBuffer.Allocate(size);
+                                //ByteBuffer bytesBufferTx = null;
 
                                 while (true)
                                 {
@@ -96,40 +101,46 @@ namespace RemoteControl.Droid
                                     //{
 
                                     // Tx
-                                    bytesBufferTx = ByteBuffer.Allocate(size * 2);
-                                    bytesTx = Encoding.ASCII.GetBytes("testread,3#");
-                                    bytesBufferTx.Put(bytesTx, 0, bytesTx.Length);
-
-                                    UsbRequest requestTx = new UsbRequest();
-                                    requestTx.Initialize(connection, endpointTx);
-                                    requestTx.Queue(bytesBufferTx, bytesTx.Length);
-                                    UsbRequest? responseTx = await connection?.RequestWaitAsync();
-
-                                    bytesTx = new byte[size];
-                                    bytesBufferTx.Get(bytesTx, 0, bytesTx.Length);
-                                    bytesBufferTx.Position(0);
-                                    strTx = Encoding.ASCII.GetString(bytesTx);
+                                    //bytesBufferTx = ByteBuffer.Allocate(size * 2);
+                                    //bytesTx = Encoding.ASCII.GetBytes("testread,3#");
+                                    //bytesBufferTx.Put(bytesTx, 0, bytesTx.Length);
+                                    //
+                                    //UsbRequest requestTx = new UsbRequest();
+                                    //requestTx.Initialize(connection, endpointTx);
+                                    //requestTx.Queue(bytesBufferTx, bytesTx.Length);
+                                    //UsbRequest? responseTx = await connection?.RequestWaitAsync();
+                                    //
+                                    //bytesTx = new byte[size];
+                                    //bytesBufferTx.Get(bytesTx, 0, bytesTx.Length);
+                                    //bytesBufferTx.Position(0);
+                                    //strTx = Encoding.ASCII.GetString(bytesTx);
 
                                     // Rx
-                                    bytesBufferRx = ByteBuffer.Allocate(size * 2);
-
                                     UsbRequest requestRx = new UsbRequest();
-                                    requestRx.Initialize(connection, endpointRx);
-                                    requestRx.Queue(bytesBufferRx, size);
+                                    requestRx.Initialize(Connection, endpointRx);
 
-                                    UsbRequest? responseRx = await connection?.RequestWaitAsync();
+                                    bytesBufferRx.Clear();
+                                    requestRx.Queue(bytesBufferRx);
+
+                                    UsbRequest? responseRx = await Connection?.RequestWaitAsync();
 
                                     bytesRx = new byte[size];
-                                    bytesBufferRx.Position(0);
-                                    bytesBufferRx.Get(bytesRx, 0, bytesRx.Length);
-                                    strRx = Encoding.ASCII.GetString(bytesRx);
+                                    bytesBufferRx.Flip();
+                                    bytesBufferRx.Get(bytesRx, 0, bytesBufferRx.Limit());
 
-                                    //Activity.RunOnUiThread
-                                    Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                                    bytesRx = bytesRx.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).ToArray();
+
+                                    if ((bytesRx != null) && (bytesRx.Length > 0))
                                     {
-                                        Id = strRx;
-                                        eventHandler?.Invoke(this, new EventArgs());
-                                    });
+                                        strRx += Encoding.UTF8.GetString(bytesRx, 0, bytesRx.Length);
+
+                                        //Activity.RunOnUiThread
+                                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                                        {
+                                            Data = strRx;
+                                            eventHandler?.Invoke(this, new EventArgs());
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -139,16 +150,49 @@ namespace RemoteControl.Droid
         }
 
         private EventHandler eventHandler = null;
-        private string Id;
+        private string Data;
+        private UsbDeviceConnection Connection;
+        private UsbEndpoint EndpointTx;
 
-        public string GetId()
+        public string GetData()
         {
-            return singletone.Id;
+            return singletone.Data;
         }
 
         public void Event(EventHandler eventHandler)
         {
             singletone.eventHandler = eventHandler;
         }
+
+        public async Task<int> Send(string data)
+        {
+            if ((singletone.Connection != null) && (singletone.EndpointTx != null))
+            {
+                int size = 64;
+                byte[]? bytesTx = null;
+                string strTx = null;
+                ByteBuffer bytesBufferTx = null;
+
+                // Tx
+                UsbRequest requestTx = new UsbRequest();
+                requestTx.Initialize(singletone.Connection, singletone.EndpointTx);
+                
+                bytesTx = Encoding.UTF8.GetBytes("testread,3#");
+                bytesBufferTx = ByteBuffer.Wrap(bytesTx);
+                
+                requestTx.Queue(bytesBufferTx);
+                UsbRequest? responseTx = await singletone.Connection?.RequestWaitAsync();
+
+                bytesTx = new byte[size];
+                bytesBufferTx.Flip();
+                bytesBufferTx.Get(bytesTx, 0, bytesBufferTx.Limit());
+
+                strTx = Encoding.UTF8.GetString(bytesTx, 0, bytesBufferTx.Limit());
+
+                return 0;
+            }
+            return -1;
+        }
+
     }
 }

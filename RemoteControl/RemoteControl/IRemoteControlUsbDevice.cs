@@ -7,7 +7,8 @@ namespace RemoteControl
 {
     public interface IRemoteControlUsbDevice
     {
-        string GetId();
+        string GetData();
         void Event(EventHandler eventHandler);
+        Task<int> Send(string data);
     }
 }

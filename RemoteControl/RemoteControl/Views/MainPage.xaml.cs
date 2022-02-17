@@ -20,46 +20,58 @@ namespace RemoteControl.Views
         void InitMainPage()
         {
             BindingContext = new MainViewModel();
-
-            Label ltitle = new Label
+            
+            Label lbltitle = new Label
             {
                 Text = "APTX II – Welcome",
             };
-            ltitle.SetDynamicResource(Label.StyleProperty, "LabelTitle");
+            lbltitle.SetDynamicResource(Label.StyleProperty, "LabelTitle");
 
-            Button btn1 = new Button
+            Button btncmt = new Button
             {
                 Text = "CMT"
             };
             Resources.Where(r => r.Key == "ButtonLarge");
-            btn1.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
-            btn1.SetBinding(Button.CommandProperty, "NextPageCMT");
+            btncmt.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            btncmt.SetBinding(Button.CommandProperty, "NextPageCMT");
 
-            Button btn2 = new Button
+            Button btntreat = new Button
             {
                 Text = "Treatment"
             };
-            btn2.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
-            btn2.SetBinding(Button.CommandProperty, "NextPageTreatment");
+            btntreat.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            btntreat.SetBinding(Button.CommandProperty, "NextPageTreatment");
 
-            Button btn3 = new Button
+            Button btncowid = new Button
             {
                 Text = "COW ID Management"
             };
-            btn3.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
-            btn3.SetBinding(Button.CommandProperty, "NextPageCowId");
-            
-            Label lbl1 = new Label
-            {
-                Text = "AM ID : 987653",
-            };
-            lbl1.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            btncowid.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            btncowid.SetBinding(Button.CommandProperty, "NextPageCowId");
 
-            Label lbl2 = new Label
+            Label lblamid = new Label
             {
-                Text = "APT ID : 234876",
+                Text = "AM ID :",
+                HorizontalTextAlignment = TextAlignment.End,
             };
-            lbl2.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblamid.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+
+            Label lblamval = new Label();
+            lblamval.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblamval.SetBinding(Label.TextProperty, "SNum");
+            //lblamval.BindingContext = BindingContext;
+
+            Label lblaptid = new Label
+            {
+                Text = "APT ID :",
+                HorizontalTextAlignment = TextAlignment.End,
+            };
+            lblaptid.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+
+            Label lblaptval = new Label();
+            lblaptval.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblaptval.SetBinding(Label.TextProperty, "AptId");
+            //lblaptval.BindingContext = BindingContext;
 
             Grid gridmid = new Grid()
             {
@@ -78,13 +90,16 @@ namespace RemoteControl.Views
                     new ColumnDefinition{ Width = new GridLength(1, GridUnitType.Star)},
                 }
             };
-            gridmid.Children.Add(ltitle, 0, 0);
-            Grid.SetColumnSpan(ltitle, gridmid.ColumnDefinitions.Count());
-            gridmid.Children.Add(btn1, 0, 1);
-            gridmid.Children.Add(btn2, 1, 1);
-            gridmid.Children.Add(btn3, 2, 1);
-            gridmid.Children.Add(lbl1, 0, 4);
-            gridmid.Children.Add(lbl2, 0, 5);
+            gridmid.Children.Add(lbltitle, 0, 0);
+            Grid.SetColumnSpan(lbltitle, gridmid.ColumnDefinitions.Count());
+            gridmid.Children.Add(btncmt, 0, 1);
+            gridmid.Children.Add(btntreat, 1, 1);
+            gridmid.Children.Add(btncowid, 2, 1);
+            gridmid.Children.Add(lblamid, 0, 4);
+            gridmid.Children.Add(lblamval, 1, 4);
+            gridmid.Children.Add(lblaptid, 0, 5);
+            gridmid.Children.Add(lblaptval, 1, 5);
+            Grid.SetColumnSpan(lblaptval, gridmid.ColumnDefinitions.Count() - 1);
 
             GridMain gridmain = new GridMain(gridmid, settings_tapped: "NextPageSettings");
 
