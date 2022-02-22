@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Xamarin.Forms;
 
 namespace RemoteControl.ViewModels
@@ -37,38 +38,60 @@ namespace RemoteControl.ViewModels
             {
                 string data = DependencyService.Get<IRemoteControlUsbDevice>().GetData();
 
-                if (data.Contains("str,serial_num:"))
+                if (SNum == 0)
                 {
-                    int snum = DataParse(data, "str,serial_num:", NumberStyles.Number);
-                    SNum = snum;
+                    if (data.Contains("str,serial_num:"))
+                    {
+                        uint snum = DataParse(data, "str,serial_num:", NumberStyles.Number);
+                        SNum = snum;
+                    }
+                    if (data.Contains("SNUM"))
+                    {
+                        uint snum = DataParse(data, "SNUM", NumberStyles.Number);
+                        SNum = snum;
+                    }
                 }
-                if (data.Contains("CS 3 ADR: 1000 W:"))
+                if ((aptId[0] == 0) || (aptId[1] == 0) || (aptId[2] == 0))
                 {
-                    int aptid = DataParse(data, "CS 3 ADR: 1000 W:", NumberStyles.HexNumber);
-                    aptId[0] = aptid;
-                    aptId = aptId;
-                    AptId = AptId;
+                    if (data.Contains("CS 3 ADR: 1000 W:"))
+                    {
+                        uint aptid = DataParse(data, "CS 3 ADR: 1000 W:", NumberStyles.HexNumber);
+                        aptId[0] = aptid;
+                        aptId = aptId;
+                        AptId = AptId;
+                    }
+                    if (data.Contains("CS 3 ADR: 1004 W:"))
+                    {
+                        uint aptid = DataParse(data, "CS 3 ADR: 1004 W:", NumberStyles.HexNumber);
+                        aptId[1] = aptid;
+                        aptId = aptId;
+                        AptId = AptId;
+                    }
+                    if (data.Contains("CS 3 ADR: 1008 W:"))
+                    {
+                        uint aptid = DataParse(data, "CS 3 ADR: 1008 W:", NumberStyles.HexNumber);
+                        aptId[2] = aptid;
+                        aptId = aptId;
+                        AptId = AptId;
+                    }
+                    if (data.Contains("readid dDevice_id"))
+                    {
+                        uint aptid = DataParse(data, "readid dDevice_id", NumberStyles.HexNumber);
+                        aptId[0] = aptid;
+                    }
                 }
-                if (data.Contains("CS 3 ADR: 1004 W:"))
+                if (Remaining == 0)
                 {
-                    int aptid = DataParse(data, "CS 3 ADR: 1004 W:", NumberStyles.HexNumber);
-                    aptId[1] = aptid;
-                    aptId = aptId;
-                    AptId = AptId;
+                    if (data.Contains("pulses written"))
+                    {
+                        uint remaining = DataParse(data, "pulses written", NumberStyles.Number);
+                        Remaining = remaining;
+                    }
                 }
-                if (data.Contains("CS 3 ADR: 1008 W:"))
+                if (data.Contains("Done Init"))
                 {
-                    int aptid = DataParse(data, "CS 3 ADR: 1008 W:", NumberStyles.HexNumber);
-                    aptId[2] = aptid;
-                    aptId = aptId;
-                    AptId = AptId;
+                    DoneInit = true;
                 }
-
-                //if (!data.Contains("testread"))
-                //{
-                //    await DependencyService.Get<IRemoteControlUsbDevice>().Send("testread,3#");
-                //    return;
-                //}
 
                 //if ((BindingContext != null) &&
                 //    (BindingContext as CowIdViewModel)?.IsPageOpened == true)
@@ -81,20 +104,30 @@ namespace RemoteControl.ViewModels
                 //await Current.MainPage.Navigation.PushAsync(new CowIdPage());
             });
 
-            //new Thread (async () =>
-            //{
-            //    int resp = -1;
-            //    while (resp < 0)
-            //    {
-            //        resp = await DependencyService.Get<IRemoteControlUsbDevice>().Send("testread,3#");
-            //    }
-            //}).Start();
+            new Thread(async () =>
+            {
+                Thread.Sleep(10000);
+                //while (!DoneInit)
+                //{
+                //}
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    if (SNum == 0)
+                        DependencyService.Get<IRemoteControlUsbDevice>().Send("testread,3#");
+                    else if (Remaining == 0)
+                        DependencyService.Get<IRemoteControlUsbDevice>().Send("find,3#");
+                    else if ((aptId[0] == 0) || (aptId[1] == 0) || (aptId[2] == 0))
+                        DependencyService.Get<IRemoteControlUsbDevice>().Send("readid#");
+                }
+            })
+            { Name = "UsbTx" }.Start();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        int snum;
-        public int SNum
+        uint snum;
+        public uint SNum
         {
             get => snum;
             set
@@ -104,9 +137,9 @@ namespace RemoteControl.ViewModels
             }
         }
 
-        int[] aptid = new int[3];
+        uint[] aptid = new uint[3];
         
-        public int[] aptId
+        public uint[] aptId
         {
             get => aptid;
             set
@@ -124,6 +157,19 @@ namespace RemoteControl.ViewModels
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptId)));
             }
         }
+
+        uint remaining;
+        public uint Remaining
+        {
+            get => remaining;
+            set
+            {
+                remaining = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+            }
+        }
+        
+        private bool DoneInit;
 
         public ObservableCollection<string> AllNotes { get; set; }
 
@@ -145,10 +191,10 @@ namespace RemoteControl.ViewModels
         public Command NextPageTreatment { get; }
         public Command NextPageCowId { get; }
 
-        private int DataParse(string data, string pattern, NumberStyles numberStyles)
+        private uint DataParse(string data, string pattern, NumberStyles numberStyles)
         {
-            int num;
-            int.TryParse(new string(data?.Substring(data.IndexOf(pattern) + pattern.Length)?.TakeWhile(c => c != '\r')?.ToArray()),
+            uint num;
+            uint.TryParse(new string(data?.Substring(data.IndexOf(pattern) + pattern.Length)?.TakeWhile(c => c != '\r')?.ToArray()),
                          NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | numberStyles,
                          CultureInfo.InvariantCulture,
                          out num);

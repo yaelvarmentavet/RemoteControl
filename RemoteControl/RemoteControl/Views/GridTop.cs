@@ -23,11 +23,16 @@ namespace RemoteControl.Views
                 imghome.GestureRecognizers.Add(taphome);
             }
 
-            Label labelpulses = new Label
+            Label lblpuls = new Label
             {
-                Text = "Pulses: 150,000",
+                Text = "Pulses:",
+                HorizontalTextAlignment = TextAlignment.End,
             };
-            labelpulses.SetDynamicResource(Label.StyleProperty, "LabelSmall");
+            lblpuls.SetDynamicResource(Label.StyleProperty, "LabelSmall");
+
+            Label lblpulsval = new Label();
+            lblpulsval.SetDynamicResource(Label.StyleProperty, "LabelSmall");
+            lblpulsval.SetBinding(Label.TextProperty, "Remaining");
 
             Image imgsettings = new Image();
             imgsettings.SetDynamicResource(Image.StyleProperty, "IconFrame");
@@ -59,8 +64,9 @@ namespace RemoteControl.Views
                 }
             };
             Grid.Children.Add(imghome, 0, 0);
-            Grid.Children.Add(labelpulses, 1, 0);
-            Grid.SetColumnSpan(labelpulses, 3);
+            Grid.Children.Add(lblpuls, 1, 0);
+            Grid.Children.Add(lblpulsval, 2, 0);
+            //Grid.SetColumnSpan(lblpuls, 3);
             Grid.Children.Add(imgsettings, 4, 0);
 
 
