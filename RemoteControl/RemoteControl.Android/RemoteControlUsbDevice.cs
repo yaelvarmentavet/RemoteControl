@@ -46,7 +46,7 @@ namespace RemoteControl.Droid
                     //Java.Util.HashMap devices = (Java.Util.HashMap)(manager?.DeviceList);
                     var devices = MainActivity.Manager?.DeviceList;
                     UsbDevice device = (devices as IDictionary<string, UsbDevice>)?.Values.FirstOrDefault();
-                    
+
                     if (device != null)
                     {
                         PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
@@ -89,11 +89,11 @@ namespace RemoteControl.Droid
                                         // Tx
                                         //bytesTx = Encoding.UTF8.GetBytes("testread,3#");
                                         //resp = Connection?.BulkTransfer(EndpointTx, bytesTx, bytesTx.Length, 0); //do in another thread
-                                        
+
                                         // Rx
                                         bytesRx = new byte[size];
                                         resp = Connection?.BulkTransfer(endpointRx, bytesRx, bytesRx.Length, 300); //do in another thread
-                                        
+
                                         //strRx = Encoding.UTF8.GetString(bytesRx);
 
                                         // Tx
@@ -170,10 +170,15 @@ namespace RemoteControl.Droid
                 string strTx = null;
                 //ByteBuffer bytesBufferTx = null;
                 int? resp = -1;
-        
+
                 bytesTx = Encoding.UTF8.GetBytes(data);
-                resp = Connection?.BulkTransfer(EndpointTx, bytesTx, bytesTx.Length, 0); //do in another thread
-        
+                //resp = Connection?.BulkTransfer(EndpointTx, bytesTx, bytesTx.Length, 0); //do in another thread
+                foreach (byte b in bytesTx)
+                {
+                    resp = Connection?.BulkTransfer(EndpointTx, new byte[] { b }, 1, 0); //do in another thread
+                    Thread.Sleep(100);
+                }
+
                 // Tx
                 //UsbRequest requestTx = new UsbRequest();
                 //requestTx.Initialize(singletone.Connection, singletone.EndpointTx);
@@ -187,11 +192,11 @@ namespace RemoteControl.Droid
                 //bytesTx = new byte[size];
                 //bytesBufferTx.Flip();
                 //bytesBufferTx.Get(bytesTx, 0, bytesBufferTx.Limit());
-                
+
                 //strTx = Encoding.UTF8.GetString(bytesTx, 0, bytesBufferTx.Limit());
-                
+
                 strTx = Encoding.UTF8.GetString(bytesTx, 0, bytesTx.Length);
-        
+
                 return 0;
             }
             return -1;

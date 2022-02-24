@@ -25,28 +25,28 @@ namespace RemoteControl.Views
             {
                 Text = "APTX II – Welcome",
             };
-            lbltitle.SetDynamicResource(Label.StyleProperty, "LabelTitle");
+            lbltitle.SetDynamicResource(StyleProperty, "LabelTitle");
 
             Button btncmt = new Button
             {
                 Text = "CMT"
             };
             Resources.Where(r => r.Key == "ButtonLarge");
-            btncmt.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            btncmt.SetDynamicResource(StyleProperty, "ButtonLarge");
             btncmt.SetBinding(Button.CommandProperty, "NextPageCMT");
 
             Button btntreat = new Button
             {
                 Text = "Treatment"
             };
-            btntreat.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            btntreat.SetDynamicResource(StyleProperty, "ButtonLarge");
             btntreat.SetBinding(Button.CommandProperty, "NextPageTreatment");
 
             Button btncowid = new Button
             {
                 Text = "COW ID Management"
             };
-            btncowid.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+            btncowid.SetDynamicResource(StyleProperty, "ButtonLarge");
             btncowid.SetBinding(Button.CommandProperty, "NextPageCowId");
 
             Label lblamid = new Label
@@ -54,10 +54,10 @@ namespace RemoteControl.Views
                 Text = "AM ID :",
                 HorizontalTextAlignment = TextAlignment.End,
             };
-            lblamid.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblamid.SetDynamicResource(StyleProperty, "LabelSmall");
 
             Label lblamval = new Label();
-            lblamval.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblamval.SetDynamicResource(StyleProperty, "LabelSmall");
             lblamval.SetBinding(Label.TextProperty, "SNum");
             //lblamval.BindingContext = BindingContext;
 
@@ -66,10 +66,10 @@ namespace RemoteControl.Views
                 Text = "APT ID :",
                 HorizontalTextAlignment = TextAlignment.End,
             };
-            lblaptid.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblaptid.SetDynamicResource(StyleProperty, "LabelSmall");
 
             Label lblaptval = new Label();
-            lblaptval.SetDynamicResource(Label.ScaleProperty, "LabelSmall");
+            lblaptval.SetDynamicResource(StyleProperty, "LabelSmall");
             lblaptval.SetBinding(Label.TextProperty, "AptId");
             //lblaptval.BindingContext = BindingContext;
 

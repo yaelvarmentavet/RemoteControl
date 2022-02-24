@@ -40,52 +40,60 @@ namespace RemoteControl.ViewModels
 
                 if (SNum == 0)
                 {
-                    if (data.Contains("str,serial_num:"))
-                    {
-                        uint snum = DataParse(data, "str,serial_num:", NumberStyles.Number);
-                        SNum = snum;
-                    }
+                    //if (data.Contains("str,serial_num:"))
+                    //{
+                    //    uint snum = DataParse(data, "str,serial_num:", NumberStyles.Number);
+                    //    SNum = snum;
+                    //}
                     if (data.Contains("SNUM"))
                     {
-                        uint snum = DataParse(data, "SNUM", NumberStyles.Number);
-                        SNum = snum;
+                        uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
+                        SNum = snum[0];
                     }
                 }
                 if ((aptId[0] == 0) || (aptId[1] == 0) || (aptId[2] == 0))
                 {
-                    if (data.Contains("CS 3 ADR: 1000 W:"))
+                    //if (data.Contains("CS 3 ADR: 1000 W:"))
+                    //{
+                    //    uint aptid = DataParse(data, "CS 3 ADR: 1000 W:", NumberStyles.HexNumber);
+                    //    aptId[0] = aptid;
+                    //    aptId = aptId;
+                    //    AptId = AptId;
+                    //}
+                    //if (data.Contains("CS 3 ADR: 1004 W:"))
+                    //{
+                    //    uint aptid = DataParse(data, "CS 3 ADR: 1004 W:", NumberStyles.HexNumber);
+                    //    aptId[1] = aptid;
+                    //    aptId = aptId;
+                    //    AptId = AptId;
+                    //}
+                    //if (data.Contains("CS 3 ADR: 1008 W:"))
+                    //{
+                    //    uint aptid = DataParse(data, "CS 3 ADR: 1008 W:", NumberStyles.HexNumber);
+                    //    aptId[2] = aptid;
+                    //    aptId = aptId;
+                    //    AptId = AptId;
+                    //}
+                    if (data.Contains("readid Device_id"))
                     {
-                        uint aptid = DataParse(data, "CS 3 ADR: 1000 W:", NumberStyles.HexNumber);
-                        aptId[0] = aptid;
-                        aptId = aptId;
+                        uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
+                        aptId[0] = aptid[0];
+                        aptId[1] = aptid[1];
+                        aptId[2] = aptid[2];
                         AptId = AptId;
-                    }
-                    if (data.Contains("CS 3 ADR: 1004 W:"))
-                    {
-                        uint aptid = DataParse(data, "CS 3 ADR: 1004 W:", NumberStyles.HexNumber);
-                        aptId[1] = aptid;
-                        aptId = aptId;
-                        AptId = AptId;
-                    }
-                    if (data.Contains("CS 3 ADR: 1008 W:"))
-                    {
-                        uint aptid = DataParse(data, "CS 3 ADR: 1008 W:", NumberStyles.HexNumber);
-                        aptId[2] = aptid;
-                        aptId = aptId;
-                        AptId = AptId;
-                    }
-                    if (data.Contains("readid dDevice_id"))
-                    {
-                        uint aptid = DataParse(data, "readid dDevice_id", NumberStyles.HexNumber);
-                        aptId[0] = aptid;
                     }
                 }
                 if (Remaining == 0)
                 {
-                    if (data.Contains("pulses written"))
+                    //if (data.Contains("pulses written"))
+                    //{
+                    //    uint remaining = DataParse(data, "pulses written", NumberStyles.Number);
+                    //    Remaining = remaining;
+                    //}
+                    if (data.Contains("Found:"))
                     {
-                        uint remaining = DataParse(data, "pulses written", NumberStyles.Number);
-                        Remaining = remaining;
+                        uint[] remaining = DataParse(data, "Found:", NumberStyles.Number);
+                        Remaining = remaining[0];
                     }
                 }
                 if (data.Contains("Done Init"))
@@ -191,13 +199,28 @@ namespace RemoteControl.ViewModels
         public Command NextPageTreatment { get; }
         public Command NextPageCowId { get; }
 
-        private uint DataParse(string data, string pattern, NumberStyles numberStyles)
+        private uint[] DataParse(string data, string pattern, NumberStyles numberStyles)
         {
-            uint num;
-            uint.TryParse(new string(data?.Substring(data.IndexOf(pattern) + pattern.Length)?.TakeWhile(c => c != '\r')?.ToArray()),
-                         NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | numberStyles,
-                         CultureInfo.InvariantCulture,
-                         out num);
+            uint[] num = new uint[6];
+            string snum = new string(data?.Substring(data.IndexOf(pattern) + pattern.Length)?.TakeWhile(c => ((c != '\r') && (c != 'p')))?.ToArray());
+            if (((numberStyles == NumberStyles.HexNumber) && (snum.Length <= 8)) || 
+                ((numberStyles == NumberStyles.Number) && (snum.Length <= 10)))
+            {
+                uint.TryParse(snum,
+                             NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | numberStyles,
+                             CultureInfo.InvariantCulture,
+                             out num[0]);
+            }
+            else
+            {
+                for (int i = 0; i < snum.Length / 8; i++)
+                {
+                    uint.TryParse(new string(snum.Skip(i * 8).Take(8).ToArray()),
+                                 NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | numberStyles,
+                                 CultureInfo.InvariantCulture,
+                                 out num[i]);
+                }
+            }
             return num;
         }
     }
