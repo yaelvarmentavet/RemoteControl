@@ -1,18 +1,14 @@
-﻿using System;
-
+﻿
 using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
 using Android.Hardware.Usb;
 using Android.Content;
-using System.Reflection;
-using System.Collections;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Autofac;
+using RemoteControl.Models;
+using Autofac.Extras.CommonServiceLocator;
+using CommonServiceLocator;
 
 //[assembly: Xamarin.Forms.Dependency(typeof(DeviceInfo))]
 namespace RemoteControl.Droid
@@ -24,12 +20,23 @@ namespace RemoteControl.Droid
         //public static PendingIntent mPermissionIntent = null;
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            Xamarin.Forms.DependencyService.Register<RemoteControlUsbDevice>();
+            //Xamarin.Forms.DependencyService.Register<UsbDevice>();
 
             base.OnCreate(savedInstanceState);
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
+
+            //ContainerBuilder builder = new ContainerBuilder();
+            //builder.RegisterType<Data>().AsSelf();
+            //builder.RegisterType<UsbDevice>().As<IUsbDevice>();
+
+            //IContainer container = builder.Build();
+
+            //AutofacServiceLocator asl = new AutofacServiceLocator(container);
+            //ServiceLocator.SetLocatorProvider(() => asl);
+            Bootstrap.Initialize();
+            
             LoadApplication(new App());
            
             Manager = GetSystemService(Context.UsbService) as UsbManager;

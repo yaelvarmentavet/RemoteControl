@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommonServiceLocator;
+using RemoteControl.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xamarin.Forms;
@@ -29,8 +31,8 @@ namespace RemoteControl.Views
                 HorizontalTextAlignment = TextAlignment.End,
             };
             lblpuls.SetDynamicResource(Label.StyleProperty, "LabelSmall");
-
-            Label lblpulsval = new Label();
+                
+            Label lblpulsval = new Label() { BindingContext = App.DataModel};
             lblpulsval.SetDynamicResource(Label.StyleProperty, "LabelSmall");
             lblpulsval.SetBinding(Label.TextProperty, "Remaining");
 

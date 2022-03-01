@@ -1,11 +1,9 @@
-﻿using RemoteControl.Models;
-using RemoteControl.ViewModels;
+﻿using Autofac;
+using CommonServiceLocator;
+using RemoteControl.Models;
 using RemoteControl.Views;
-using System;
 using System.Linq;
-using System.Threading;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace RemoteControl
 {
@@ -14,13 +12,18 @@ namespace RemoteControl
         public App()
         {
             InitializeComponent();
+            
+            DataModel = ServiceLocator.Current.GetInstance<DataModel>();
 
             var color = Resources.Where(r => r.Key == "BackgroundDark").FirstOrDefault().Value;
             MainPage = new NavigationPage(new MainPage())
             {
                 BarBackgroundColor = color == null ? Color.Default : (Color)color,
             };
+            
         }
+
+        public static DataModel DataModel;
 
         protected override void OnStart()
         {

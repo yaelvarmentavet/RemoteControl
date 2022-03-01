@@ -1,9 +1,8 @@
-﻿using RemoteControl.Views;
-using System;
-using System.Collections.Generic;
+﻿using CommonServiceLocator;
+using RemoteControl.Views;
 using System.ComponentModel;
-using System.Text;
 using Xamarin.Forms;
+using RemoteControl.Models;
 
 namespace RemoteControl.ViewModels
 {

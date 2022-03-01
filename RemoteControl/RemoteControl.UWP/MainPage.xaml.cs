@@ -19,9 +19,11 @@ namespace RemoteControl.UWP
     {
         public MainPage()
         {
-            Xamarin.Forms.DependencyService.Register<RemoteControlUsbDevice>();
+            //Xamarin.Forms.DependencyService.Register<UsbDevice>();
 
             this.InitializeComponent();
+
+            Bootstrap.Initialize();
 
             LoadApplication(new RemoteControl.App());
         }

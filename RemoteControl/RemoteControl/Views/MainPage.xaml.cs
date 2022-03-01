@@ -56,7 +56,7 @@ namespace RemoteControl.Views
             };
             lblamid.SetDynamicResource(StyleProperty, "LabelSmall");
 
-            Label lblamval = new Label();
+            Label lblamval = new Label() { BindingContext = App.DataModel };
             lblamval.SetDynamicResource(StyleProperty, "LabelSmall");
             lblamval.SetBinding(Label.TextProperty, "SNum");
             //lblamval.BindingContext = BindingContext;
@@ -68,7 +68,7 @@ namespace RemoteControl.Views
             };
             lblaptid.SetDynamicResource(StyleProperty, "LabelSmall");
 
-            Label lblaptval = new Label();
+            Label lblaptval = new Label() { BindingContext = App.DataModel };
             lblaptval.SetDynamicResource(StyleProperty, "LabelSmall");
             lblaptval.SetBinding(Label.TextProperty, "AptId");
             //lblaptval.BindingContext = BindingContext;

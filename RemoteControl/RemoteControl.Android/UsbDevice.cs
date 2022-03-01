@@ -2,13 +2,11 @@
 using Android.Hardware.Usb;
 using System.Linq;
 using System.Collections.Generic;
-using Java.Nio;
 using System.Text;
 using System.Threading;
 using Android.Runtime;
 using Android.App;
 using Android.Content;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 //[assembly: Xamarin.Forms.Dependency(typeof(DeviceInfo))]
@@ -27,15 +25,18 @@ namespace RemoteControl.Droid
         }
     }
 
-    public class RemoteControlUsbDevice : IRemoteControlUsbDevice
+    public class UsbDevice : IUsbDevice
     {
-        static private RemoteControlUsbDevice singletone = null;
-        public RemoteControlUsbDevice()
+        public void Open() { }
+        public void Read(string portName, byte[] buffer) { }
+        public void Write(string portName, byte[] buffer) { }
+        //static private UsbDevice singletone = null;
+        public UsbDevice()
         {
-            if (singletone != null)
-                return;
+            //if (singletone != null)
+            //    return;
 
-            singletone = this;
+            //singletone = this;
 
             new Thread(async () =>
             {
@@ -45,7 +46,7 @@ namespace RemoteControl.Droid
 
                     //Java.Util.HashMap devices = (Java.Util.HashMap)(manager?.DeviceList);
                     var devices = MainActivity.Manager?.DeviceList;
-                    UsbDevice device = (devices as IDictionary<string, UsbDevice>)?.Values.FirstOrDefault();
+                    Android.Hardware.Usb.UsbDevice device = (devices as IDictionary<string, Android.Hardware.Usb.UsbDevice>)?.Values.FirstOrDefault();
 
                     if (device != null)
                     {
@@ -133,7 +134,7 @@ namespace RemoteControl.Droid
                                             Xamarin.Forms.Device.BeginInvokeOnMainThread((Action)(() =>
                                             {
                                                 Data = strRx;
-                                                RemoteControlUsbDevice.EventHendle?.Invoke((object)this, (EventArgs)new EventArgs());
+                                                UsbDevice.EventHendle?.Invoke((object)this, (EventArgs)new EventArgs());
                                             }));
                                         }
                                     }

@@ -1,12 +1,10 @@
-﻿using RemoteControl.Models;
+﻿using CommonServiceLocator;
+using RemoteControl.Models;
 using RemoteControl.Views;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using Xamarin.Forms;
 
@@ -34,11 +32,14 @@ namespace RemoteControl.ViewModels
                 //await Application.Current.MainPage.Navigation.PushAsync(new CowIdPage());
             });
 
-            DependencyService.Get<IRemoteControlUsbDevice>().Event(async (sender, eventArgs) =>
+            //DataModel dataModel = ServiceLocator.Current.GetInstance<DataModel>();
+            //DependencyService.Get<IUsbDevice>().Event(async (sender, eventArgs) =>
+            App.DataModel.UsbDevice.Event(async (sender, eventArgs) =>
             {
-                string data = DependencyService.Get<IRemoteControlUsbDevice>().GetData();
+                //string data = DependencyService.Get<IUsbDevice>().GetData();
+                string data = App.DataModel.UsbDevice.GetData();
 
-                if (SNum == 0)
+                if (App.DataModel.SNum == DataModel.Error)
                 {
                     //if (data.Contains("str,serial_num:"))
                     //{
@@ -48,10 +49,12 @@ namespace RemoteControl.ViewModels
                     if (data.Contains("SNUM"))
                     {
                         uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
-                        SNum = snum[0];
+                        App.DataModel.SNum = snum[0];
                     }
                 }
-                if ((aptId[0] == 0) || (aptId[1] == 0) || (aptId[2] == 0))
+                if ((App.DataModel.aptId[0] == DataModel.Error) || 
+                    (App.DataModel.aptId[1] == DataModel.Error) || 
+                    (App.DataModel.aptId[2] == DataModel.Error))
                 {
                     //if (data.Contains("CS 3 ADR: 1000 W:"))
                     //{
@@ -77,24 +80,30 @@ namespace RemoteControl.ViewModels
                     if (data.Contains("readid Device_id"))
                     {
                         uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-                        aptId[0] = aptid[0];
-                        aptId[1] = aptid[1];
-                        aptId[2] = aptid[2];
-                        AptId = AptId;
+                        App.DataModel.aptId[0] = aptid[0];
+                        App.DataModel.aptId[1] = aptid[1];
+                        App.DataModel.aptId[2] = aptid[2];
+                        App.DataModel.AptId = App.DataModel.AptId;
                     }
                 }
-                if (Remaining == 0)
+                if ((App.DataModel.Current == DataModel.Error) || (App.DataModel.Maxi == DataModel.Error))
                 {
                     //if (data.Contains("pulses written"))
                     //{
                     //    uint remaining = DataParse(data, "pulses written", NumberStyles.Number);
                     //    Remaining = remaining;
                     //}
+                    if (data.Contains("MAXI"))
+                    {
+                        uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
+                        App.DataModel.Maxi = maxi[0];
+                    }
                     if (data.Contains("Found:"))
                     {
-                        uint[] remaining = DataParse(data, "Found:", NumberStyles.Number);
-                        Remaining = remaining[0];
+                        uint[] current = DataParse(data, "Found:", NumberStyles.Number);
+                        App.DataModel.Current = current[0];
                     }
+                    App.DataModel.Remaining = App.DataModel.Maxi - App.DataModel.Current;
                 }
                 if (data.Contains("Done Init"))
                 {
@@ -121,12 +130,17 @@ namespace RemoteControl.ViewModels
                 while (true)
                 {
                     Thread.Sleep(1000);
-                    if (SNum == 0)
-                        DependencyService.Get<IRemoteControlUsbDevice>().Send("testread,3#");
-                    else if (Remaining == 0)
-                        DependencyService.Get<IRemoteControlUsbDevice>().Send("find,3#");
-                    else if ((aptId[0] == 0) || (aptId[1] == 0) || (aptId[2] == 0))
-                        DependencyService.Get<IRemoteControlUsbDevice>().Send("readid#");
+                    if (App.DataModel.SNum == DataModel.Error)
+                        //DependencyService.Get<IUsbDevice>().Send("testread,3#");
+                        App.DataModel.UsbDevice.Send("testread,3#");
+                    else if (App.DataModel.Current == DataModel.Error)
+                        //DependencyService.Get<IUsbDevice>().Send("find,3#");
+                        App.DataModel.UsbDevice.Send("find,3#");
+                    else if ((App.DataModel.aptId[0] == DataModel.Error) || 
+                             (App.DataModel.aptId[1] == DataModel.Error) || 
+                             (App.DataModel.aptId[2] == DataModel.Error))
+                        //DependencyService.Get<IUsbDevice>().Send("readid#");
+                        App.DataModel.UsbDevice.Send("readid#");
                 }
             })
             { Name = "UsbTx" }.Start();
@@ -134,48 +148,50 @@ namespace RemoteControl.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        uint snum;
-        public uint SNum
-        {
-            get => snum;
-            set
-            {
-                snum = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SNum)));
-            }
-        }
+        //const uint Error = 0xffffffff;
 
-        uint[] aptid = new uint[3];
+        //uint snum = Error;
+        //public uint SNum
+        //{
+        //    get => snum;
+        //    set
+        //    {
+        //        snum = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SNum)));
+        //    }
+        //}
+
+        //uint[] aptid = new uint[3] { Error, Error, Error};
         
-        public uint[] aptId
-        {
-            get => aptid;
-            set
-            {
-                aptid = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptId)));
-            }
-        }
+        //public uint[] aptId
+        //{
+        //    get => aptid;
+        //    set
+        //    {
+        //        aptid = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptId)));
+        //    }
+        //}
 
-        public string AptId
-        {
-            get => aptid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
-            set
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptId)));
-            }
-        }
+        //public string AptId
+        //{
+        //    get => aptid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptId)));
+        //    }
+        //}
 
-        uint remaining;
-        public uint Remaining
-        {
-            get => remaining;
-            set
-            {
-                remaining = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
-            }
-        }
+        //uint remaining = Error;
+        //public uint Remaining
+        //{
+        //    get => remaining;
+        //    set
+        //    {
+        //        remaining = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+        //    }
+        //}
         
         private bool DoneInit;
 
