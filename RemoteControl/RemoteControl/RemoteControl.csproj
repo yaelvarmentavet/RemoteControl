@@ -30,7 +30,9 @@
   <ItemGroup>
     <None Remove="Icons\ap_clean.bmp" />
     <None Remove="Icons\ap_red.bmp" />
+    <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
+    <None Remove="Icons\height.png" />
     <None Remove="Icons\home.png" />
     <None Remove="Icons\n2.bmp" />
     <None Remove="Icons\n5.bmp" />
@@ -44,6 +46,8 @@
     <None Remove="Icons\pulseNo.bmp" />
     <None Remove="Icons\pulseYes.bmp" />
     <None Remove="Icons\settings.png" />
+    <None Remove="Icons\side.png" />
+    <None Remove="Icons\tilt.png" />
     <None Remove="Icons\w.bmp" />
     <None Remove="Icons\w_cropped.bmp" />
     <None Remove="Icons\w_cropped.xcf" />
@@ -54,7 +58,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\ap_clean.bmp" />
     <EmbeddedResource Include="Icons\ap_red.bmp" />
+    <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
+    <EmbeddedResource Include="Icons\height.png" />
     <EmbeddedResource Include="Icons\home.png" />
     <EmbeddedResource Include="Icons\n2.bmp" />
     <EmbeddedResource Include="Icons\n5.bmp" />
@@ -68,6 +74,8 @@
     <EmbeddedResource Include="Icons\pulseNo.bmp" />
     <EmbeddedResource Include="Icons\pulseYes.bmp" />
     <EmbeddedResource Include="Icons\settings.png" />
+    <EmbeddedResource Include="Icons\side.png" />
+    <EmbeddedResource Include="Icons\tilt.png" />
     <EmbeddedResource Include="Icons\w.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.xcf" />
@@ -95,10 +103,31 @@
     <Compile Update="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\AndroidView.xaml.cs">
+      <DependentUpon>AndroidView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Views\BottomView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\CowIdPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\ManualCowIdPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\ProcessPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\TopView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\AndroidView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\UWPView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

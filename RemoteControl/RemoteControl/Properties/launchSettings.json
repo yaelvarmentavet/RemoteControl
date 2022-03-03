@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RemoteControl": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

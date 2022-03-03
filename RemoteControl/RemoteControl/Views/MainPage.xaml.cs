@@ -1,10 +1,5 @@
 ﻿using RemoteControl.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace RemoteControl.Views
@@ -13,13 +8,23 @@ namespace RemoteControl.Views
     {
         public MainPage()
         {
+            //Initialize Component
             //InitializeComponent();
-            InitMainPage();
+
+            if (Device.RuntimePlatform == Device.Android)
+                InitMainPageAndroid();
+            if (Device.RuntimePlatform == Device.UWP)
+                //InitMainPageUWP();
+                InitializeComponent();
         }
 
-        void InitMainPage()
+        private void InitMainPageUWP()
         {
-            BindingContext = new MainViewModel();
+        }
+
+        private void InitMainPageAndroid()
+        {
+            BindingContext = new MainViewModelAndroid();
             
             Label lbltitle = new Label
             {

@@ -9,6 +9,8 @@ namespace RemoteControl
 {
     public partial class App : Application
     {
+        public static DataModel DataModel;
+
         public App()
         {
             InitializeComponent();
@@ -22,8 +24,6 @@ namespace RemoteControl
             };
             
         }
-
-        public static DataModel DataModel;
 
         protected override void OnStart()
         {

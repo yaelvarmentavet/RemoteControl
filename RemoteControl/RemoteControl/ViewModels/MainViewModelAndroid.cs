@@ -10,9 +10,9 @@ using Xamarin.Forms;
 
 namespace RemoteControl.ViewModels
 {
-    class MainViewModel : INotifyPropertyChanged
+    class MainViewModelAndroid : INotifyPropertyChanged
     {
-        public MainViewModel()
+        public MainViewModelAndroid()
         {
             NextPageSettings = new Command(async () =>
             {

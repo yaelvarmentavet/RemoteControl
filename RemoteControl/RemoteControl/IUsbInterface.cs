@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.SerialCommunication;
 
 namespace RemoteControl
 {
-    public interface IUsbDevice
+    public interface IUsbInterface
     {
-        void Open();
-        void Read(string portName, byte[] buffer);
+        IEnumerable<string> GetPorts();
+        Task<string> Read(string portName, byte[] buffer);
         void Write(string portName, byte[] buffer);
         string GetData();
         void Event(EventHandler eventHandler);

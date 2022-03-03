@@ -25,13 +25,14 @@ namespace RemoteControl.Droid
         }
     }
 
-    public class UsbDevice : IUsbDevice
+    public class UsbInterface : IUsbInterface
     {
-        public void Open() { }
-        public void Read(string portName, byte[] buffer) { }
+        public IEnumerable<string> GetPorts() { return null; }
+
+        public async Task<string> Read(string portName, byte[] buffer) { return null; }
         public void Write(string portName, byte[] buffer) { }
         //static private UsbDevice singletone = null;
-        public UsbDevice()
+        public UsbInterface()
         {
             //if (singletone != null)
             //    return;
@@ -55,7 +56,7 @@ namespace RemoteControl.Droid
                         bool? hasPermision = MainActivity.Manager?.HasPermission(device);
                         if (hasPermision == true)
                         {
-                            UsbInterface intf = device?.GetInterface(0);
+                            Android.Hardware.Usb.UsbInterface intf = device?.GetInterface(0);
                             UsbEndpoint endpointRx = intf?.GetEndpoint(0);
                             //UsbEndpoint 
                             EndpointTx = intf?.GetEndpoint(1);
@@ -134,7 +135,7 @@ namespace RemoteControl.Droid
                                             Xamarin.Forms.Device.BeginInvokeOnMainThread((Action)(() =>
                                             {
                                                 Data = strRx;
-                                                UsbDevice.EventHendle?.Invoke((object)this, (EventArgs)new EventArgs());
+                                                UsbInterface.EventHendle?.Invoke((object)this, (EventArgs)new EventArgs());
                                             }));
                                         }
                                     }

@@ -11,7 +11,7 @@ namespace RemoteControl.Droid
         {
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterType<DataModel>().AsSelf();
-            builder.RegisterType<UsbDevice>().As<IUsbDevice>();
+            builder.RegisterType<UsbInterface>().As<IUsbInterface>();
 
             IContainer container = builder.Build();
 

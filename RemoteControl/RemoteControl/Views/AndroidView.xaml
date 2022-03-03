@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:RemoteControl.Views"
+             x:Class="RemoteControl.Views.AndroidView">
+    <ContentView.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="5*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDark}">
+                </Frame>
+                <Frame Grid.Row="0" Style="{StaticResource FrameLight}">
+                    <StackLayout>
+                        <views:TopView/>
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="1" Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="3*"/>
+                            <RowDefinition Height="6*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Row="0" Grid.ColumnSpan="3" Style="{StaticResource LabelTitle}" Text="APTX II – Welcome"/>
+                        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonLarge}" Text="CMT"/>
+                        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource ButtonLarge}" Text="TREATMENT" Command="{Binding NextPageTreatment}"/>
+                        <Button Grid.Row="1" Grid.Column="2" Style="{StaticResource ButtonLarge}" Text="COW ID Management"/>
+                        <Label Grid.Row="4" Grid.Column="0" Style="{StaticResource LabelSmall}" Text="AM ID : 987653"/>
+                        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelSmall}" Text="APT ID : 234876"/>
+                    </Grid>
+                </Frame>
+                <Frame Grid.Row="2" Style="{StaticResource FrameLight}">
+                    <views:BottomView/>
+                </Frame>
+            </Grid>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:localResources="clr-namespace:RemoteControl.Resources"
+             xmlns:localBinding="clr-namespace:RemoteControl.Models"
+             xmlns:localViewModels="clr-namespace:RemoteControl.ViewModels"
+             x:Class="RemoteControl.Views.ManualCowIdPage">
+    <ContentPage.BindingContext>
+        <localViewModels:ManualCowIdViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.ARmentaSmall.png}"/>
+                <Editor Grid.Row="2" Grid.Column="1" Placeholder="Please write Cow ID" Text="{Binding CowId}">
+                    <Editor.BindingContext>
+                        <localBinding:DataModel/>
+                    </Editor.BindingContext>
+                </Editor>
+                <Button Grid.Row="3" Grid.Column="1" Text="Approve" Command="{Binding Approve}"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
