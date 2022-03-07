@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:binding="clr-namespace:RemoteControl.Models"
              x:Class="RemoteControl.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -31,6 +32,10 @@
             <Style x:Key="IconFrame" TargetType="Image">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLight}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
+            <Style x:Key="FrameBorder" TargetType="Frame">
+                <Setter Property="BorderColor" Value="{StaticResource BackgroundDark}"/>
+                <Setter Property="CornerRadius" Value="10"/>
             </Style>
             <Style x:Key="LabelTitle" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=24, Tablet=24, Desktop=24}"/>
@@ -80,9 +85,18 @@
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
+            <Style x:Key="LabelStartTreatment" TargetType="Label">
+                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
             <Style x:Key="EditorSmall" TargetType="Editor">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
+            <Style x:Key="EditorCentered" TargetType="Editor">
+                <!--Setter Property="BindingContext" Value="{binding:DataModel}"/-->
             </Style>
         </ResourceDictionary>
     </Application.Resources>

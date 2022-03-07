@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:localResources="clr-namespace:RemoteControl.Resources"
+             xmlns:resources="clr-namespace:RemoteControl.Resources"
              x:Class="RemoteControl.Views.BottomView">
   <ContentView.Content>
       <StackLayout>
@@ -15,10 +15,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.pr1h.bmp}"/>
-                <Image Grid.Column="1" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.pulseYes.bmp}"/>
-                <Image Grid.Column="2" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.bat_1.bmp}"/>
-                <Image Grid.Column="3" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.ap_clean.bmp}"/>
+                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.pr1h.bmp}"/>
+                <Image Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.pulseYes.bmp}"/>
+                <Image Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.bat_1.bmp}"/>
+                <Image Grid.Column="3" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.ap_clean.bmp}"/>
             </Grid>
         </StackLayout>
   </ContentView.Content>

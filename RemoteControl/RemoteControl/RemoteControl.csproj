@@ -15,6 +15,7 @@
     <Compile Remove="COWIDManagementPage.xaml.cs" />
     <Compile Remove="MainPage.xaml.cs" />
     <Compile Remove="MainPageViewModel.cs" />
+    <Compile Remove="Models\UsbModel.cs" />
     <Compile Remove="SupportPage.xaml.cs" />
     <Compile Remove="TreatmentPage.xaml.cs" />
   </ItemGroup>
@@ -28,12 +29,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Icons\4quarters.png" />
     <None Remove="Icons\ap_clean.bmp" />
     <None Remove="Icons\ap_red.bmp" />
     <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
+    <None Remove="Icons\down.png" />
+    <None Remove="Icons\fl.png" />
+    <None Remove="Icons\fr.png" />
     <None Remove="Icons\height.png" />
     <None Remove="Icons\home.png" />
+    <None Remove="Icons\home40.png" />
+    <None Remove="Icons\left.png" />
     <None Remove="Icons\n2.bmp" />
     <None Remove="Icons\n5.bmp" />
     <None Remove="Icons\n7.bmp" />
@@ -45,23 +52,37 @@
     <None Remove="Icons\prlow.bmp" />
     <None Remove="Icons\pulseNo.bmp" />
     <None Remove="Icons\pulseYes.bmp" />
+    <None Remove="Icons\rccw.png" />
+    <None Remove="Icons\rcw.png" />
+    <None Remove="Icons\right.png" />
+    <None Remove="Icons\rl.png" />
+    <None Remove="Icons\rr.png" />
     <None Remove="Icons\settings.png" />
+    <None Remove="Icons\settings40.png" />
     <None Remove="Icons\side.png" />
     <None Remove="Icons\tilt.png" />
+    <None Remove="Icons\top.png" />
+    <None Remove="Icons\up.png" />
     <None Remove="Icons\w.bmp" />
     <None Remove="Icons\w_cropped.bmp" />
     <None Remove="Icons\w_cropped.xcf" />
     <None Remove="Icons\‏‏bat_l.bmp" />
     <None Remove="Icons\‏‏pulseY.bmp" />
+    <None Remove="Models\UsbModel.cs.bck" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Icons\4quarters.png" />
     <EmbeddedResource Include="Icons\ap_clean.bmp" />
     <EmbeddedResource Include="Icons\ap_red.bmp" />
     <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
-    <EmbeddedResource Include="Icons\height.png" />
+    <EmbeddedResource Include="Icons\down.png" />
+    <EmbeddedResource Include="Icons\fl.png" />
+    <EmbeddedResource Include="Icons\fr.png" />
     <EmbeddedResource Include="Icons\home.png" />
+    <EmbeddedResource Include="Icons\home40.png" />
+    <EmbeddedResource Include="Icons\left.png" />
     <EmbeddedResource Include="Icons\n2.bmp" />
     <EmbeddedResource Include="Icons\n5.bmp" />
     <EmbeddedResource Include="Icons\n7.bmp" />
@@ -73,9 +94,16 @@
     <EmbeddedResource Include="Icons\prlow.bmp" />
     <EmbeddedResource Include="Icons\pulseNo.bmp" />
     <EmbeddedResource Include="Icons\pulseYes.bmp" />
+    <EmbeddedResource Include="Icons\rccw.png" />
+    <EmbeddedResource Include="Icons\rcw.png" />
+    <EmbeddedResource Include="Icons\right.png" />
+    <EmbeddedResource Include="Icons\rl.png" />
+    <EmbeddedResource Include="Icons\rr.png" />
     <EmbeddedResource Include="Icons\settings.png" />
+    <EmbeddedResource Include="Icons\settings40.png" />
     <EmbeddedResource Include="Icons\side.png" />
-    <EmbeddedResource Include="Icons\tilt.png" />
+    <EmbeddedResource Include="Icons\top.png" />
+    <EmbeddedResource Include="Icons\up.png" />
     <EmbeddedResource Include="Icons\w.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.xcf" />
@@ -100,6 +128,9 @@
     <Compile Update="Views\CowIdPage.xaml.cs">
       <DependentUpon>CowIdPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\KinematicPage.xaml.cs">
+      <DependentUpon>KinematicPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
@@ -118,7 +149,10 @@
     <EmbeddedResource Update="Views\ManualCowIdPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\ProcessPage.xaml">
+    <EmbeddedResource Update="Views\KinematicPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\StartTreatmentPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\TopView.xaml">

@@ -14,8 +14,10 @@ namespace RemoteControl.Views
             if (Device.RuntimePlatform == Device.Android)
                 InitMainPageAndroid();
             if (Device.RuntimePlatform == Device.UWP)
+            {
                 //InitMainPageUWP();
                 InitializeComponent();
+            }
         }
 
         private void InitMainPageUWP()

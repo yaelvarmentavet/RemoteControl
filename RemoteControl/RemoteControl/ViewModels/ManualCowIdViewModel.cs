@@ -13,7 +13,7 @@ namespace RemoteControl.ViewModels
         {
             Approve = new Command(async () =>
             {
-                await App.Current.MainPage.Navigation.PushAsync(new ProcessPage());
+                await App.Current.MainPage.Navigation.PushAsync(new KinematicPage());
             });
         }
         public event PropertyChangedEventHandler PropertyChanged;

@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace RemoteControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ProcessPage : ContentPage
+    public partial class StartTreatmentPage : ContentPage
     {
-        public ProcessPage()
+        public StartTreatmentPage()
         {
             InitializeComponent();
         }

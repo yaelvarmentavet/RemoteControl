@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:localViewModels="clr-namespace:RemoteControl.ViewModels"
              xmlns:views="clr-namespace:RemoteControl.Views"
-             xmlns:localResources="clr-namespace:RemoteControl.Resources"
+             xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
              x:Class="RemoteControl.Views.MainPage">
+             <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
     <!--NavigationPage.HasNavigationBar="False">-->
 
     <ContentPage.BindingContext>
-        <localViewModels:MainViewModelUWP/>
+        <viewModels:MainViewModelUWP/>
+        <!--<binding:DataModel/>-->
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>

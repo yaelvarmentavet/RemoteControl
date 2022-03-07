@@ -27,10 +27,10 @@ namespace RemoteControl.Droid
 
     public class UsbInterface : IUsbInterface
     {
+        public bool GetInitDone(){ return false; }
         public IEnumerable<string> GetPorts() { return null; }
-
         public async Task<string> Read(string portName, byte[] buffer) { return null; }
-        public void Write(string portName, byte[] buffer) { }
+        public async Task Write(string portName, byte[] buffer) { }
         //static private UsbDevice singletone = null;
         public UsbInterface()
         {
@@ -177,8 +177,8 @@ namespace RemoteControl.Droid
                 //resp = Connection?.BulkTransfer(EndpointTx, bytesTx, bytesTx.Length, 0); //do in another thread
                 foreach (byte b in bytesTx)
                 {
-                    resp = Connection?.BulkTransfer(EndpointTx, new byte[] { b }, 1, 0); //do in another thread
                     Thread.Sleep(100);
+                    resp = Connection?.BulkTransfer(EndpointTx, new byte[] { b }, 1, 0); //do in another thread
                 }
 
                 // Tx

@@ -15,6 +15,8 @@ namespace RemoteControl.Views
         public ManualCowIdPage()
         {
             InitializeComponent();
+            EdCowId.BindingContext = App.DataModel;
+            EdCowId.SetBinding(Editor.TextProperty, "SNum");
         }
     }
 }

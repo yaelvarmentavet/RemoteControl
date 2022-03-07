@@ -1,85 +1,19 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace RemoteControl.Models
 {
-    public class DataModel : INotifyPropertyChanged
+    public class UsbModel
     {
-        public const uint Error = 0xffffffff;
-
-        uint cowid = Error;
-        public uint CowId
-        {
-            get => cowid;
-            set
-            {
-                cowid = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CowId)));
-            }
-        }
-
-        uint snum = Error;
-        public uint SNum
-        {
-            get => snum;
-            set
-            {
-                snum = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SNum)));
-            }
-        }
-
-        uint current = Error;
-        public uint Current { get => current; set => current = value; }
-
-        uint maxi = Error;
-        public uint Maxi { get => maxi; set => maxi = value; }
-        
-        uint remaining = Error;
-        public uint Remaining
-        {
-            get => remaining;
-            set
-            {
-                remaining = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
-            }
-        }
-
-        uint[] aptid = new uint[3] { Error, Error, Error };
-
-        public uint[] aptxId
-        {
-            get => aptid;
-            set
-            {
-                aptid = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptxId)));
-            }
-        }
-
-        public string AptId
-        {
-            get => aptid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
-            set
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptId)));
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        //public DataModel() { }
-
         public IUsbInterface UsbDevice;
         public string APTXPort = string.Empty;
         public string EcomilkPort = string.Empty;
 
-        public DataModel(IUsbInterface usbDevice)
+        public UsbModel(IUsbInterface usbDevice)
         {
             UsbDevice = usbDevice;
 
@@ -125,7 +59,7 @@ namespace RemoteControl.Models
                     byte[] buffer = new byte[1024];
                     data += await UsbDevice.Read(APTXPort, buffer);
                     string data1 = Encoding.UTF8.GetString(buffer);
-                    if (SNum == Error)
+                    if (App.DataModel.SNum == DataModel.Error)
                     {
                         //if (data.Contains("str,serial_num:"))
                         //{
@@ -135,12 +69,12 @@ namespace RemoteControl.Models
                         if (data.Contains("SNUM"))
                         {
                             uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
-                            SNum = snum[0];
+                            App.DataModel.SNum = snum[0];
                         }
                     }
-                    if ((aptxId[0] == Error) ||
-                        (aptxId[1] == Error) ||
-                        (aptxId[2] == Error))
+                    if ((App.DataModel.aptxId[0] == DataModel.Error) ||
+                        (App.DataModel.aptxId[1] == DataModel.Error) ||
+                        (App.DataModel.aptxId[2] == DataModel.Error))
                     {
                         //if (data.Contains("CS 3 ADR: 1000 W:"))
                         //{
@@ -166,13 +100,13 @@ namespace RemoteControl.Models
                         if (data.Contains("readid Device_id"))
                         {
                             uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-                            aptxId[0] = aptid[0];
-                            aptxId[1] = aptid[1];
-                            aptxId[2] = aptid[2];
-                            AptId = AptId;
+                            App.DataModel.aptxId[0] = aptid[0];
+                            App.DataModel.aptxId[1] = aptid[1];
+                            App.DataModel.aptxId[2] = aptid[2];
+                            App.DataModel.AptId = App.DataModel.AptId;
                         }
                     }
-                    if ((Current == Error) || (Maxi == Error))
+                    if ((App.DataModel.Current == DataModel.Error) || (App.DataModel.Maxi == DataModel.Error))
                     {
                         //if (data.Contains("pulses written"))
                         //{
@@ -182,15 +116,15 @@ namespace RemoteControl.Models
                         if (data.Contains("MAXI"))
                         {
                             uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
-                            Maxi = maxi[0];
+                            App.DataModel.Maxi = maxi[0];
                         }
                         if (data.Contains("Found:"))
                         {
                             uint[] current = DataParse(data, "Found:", NumberStyles.Number);
-                            Current = current[0];
+                            App.DataModel.Current = current[0];
                         }
-                        if ((Current != Error) && (Maxi != Error))
-                            Remaining = Maxi - Current;
+                        if ((App.DataModel.Current != DataModel.Error) && (App.DataModel.Maxi != DataModel.Error))
+                            App.DataModel.Remaining = App.DataModel.Maxi - App.DataModel.Current;
                     }
                     //if (data.Contains("Done Init"))
                     //{
@@ -234,14 +168,14 @@ namespace RemoteControl.Models
                 {
                     Thread.Sleep(1000);
 
-                    if (SNum == Error)
+                    if (App.DataModel.SNum == DataModel.Error)
                         await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("testread,3#"));
-                    else if (Current == Error)
+                    else if (App.DataModel.Current == DataModel.Error)
                         //App.DataModel.UsbDevice.Send("find,3#");
                         await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("find,3#"));
-                    else if ((aptxId[0] == Error) ||
-                             (aptxId[1] == Error) ||
-                             (aptxId[2] == Error))
+                    else if ((App.DataModel.aptxId[0] == DataModel.Error) ||
+                             (App.DataModel.aptxId[1] == DataModel.Error) ||
+                             (App.DataModel.aptxId[2] == DataModel.Error))
                         //App.DataModel.UsbDevice.Send("readid#");
                         await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("readid#"));
                 }
@@ -272,72 +206,6 @@ namespace RemoteControl.Models
                 }
             }
             return num;
-        }
-
-        public async Task ZRCWStart()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("rcw 1"));
-        }
-
-        public async Task ZRCWStop()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("rcw 0"));
-        }
-
-        public async Task ZRCCWStart()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("rccw 1"));
-        }
-
-        public async Task ZRCCWStop()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("rccw 0"));
-        }
-
-
-
-
-        public async Task AYFStart()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("ayf 1"));
-        }
-
-        public async Task AYFStop()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("ayf 0"));
-        }
-
-        public async Task AYBStart()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("ayb 1"));
-        }
-
-        public async Task AYBStop()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("ayb 0"));
-        }
-
-
-
-
-        public async Task MZUStart()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("mzu 1"));
-        }
-
-        public async Task MZUStop()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("mzu 0"));
-        }
-
-        public async Task MZDStart()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("mzd 1"));
-        }
-
-        public async Task MZDStop()
-        {
-            await UsbDevice.Write(EcomilkPort, Encoding.UTF8.GetBytes("mzd 0"));
         }
     }
 }

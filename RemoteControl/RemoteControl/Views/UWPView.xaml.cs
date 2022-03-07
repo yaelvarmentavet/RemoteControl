@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemoteControl.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,8 @@ namespace RemoteControl.Views
         public UWPView()
         {
             InitializeComponent();
+            EdCowId.BindingContext = App.DataModel;
+            EdCowId.SetBinding(Editor.TextProperty, "SNum");
         }
     }
 }

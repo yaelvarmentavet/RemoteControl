@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:RemoteControl.Resources"
+             xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
+             x:Class="RemoteControl.Views.KinematicPage">
+    <ContentPage.BindingContext>
+        <viewModels:KinematicViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Row="3" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.top.png}"/>
+                <Image Grid.Row="3" Grid.Column="4" Grid.RowSpan="4" Grid.ColumnSpan="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.top.png}"/>
+                <Image Grid.Row="3" Grid.Column="8" Grid.RowSpan="4" Grid.ColumnSpan="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.side.png}"/>
+                <Image x:Name="ImgRCW" Grid.Row="7" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.rcw.png}"/>
+                <Image x:Name="ImgRCCW" Grid.Row="7" Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.rccw.png}"/>
+                <Image x:Name="ImgAYF" Grid.Row="7" Grid.Column="5" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.left.png}"/>
+                <Image x:Name="ImgAYB" Grid.Row="7" Grid.Column="6" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.right.png}"/>
+                <Image x:Name="ImgMZU" Grid.Row="7" Grid.Column="9" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.up.png}"/>
+                <Image x:Name="ImgMZD" Grid.Row="7" Grid.Column="10" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.down.png}"/>
+                <Button Grid.Row="4" Grid.Column="12" Grid.ColumnSpan="2" Text="Empty Bath" Style="{StaticResource ButtonLarge}" Command="{Binding Approve}"/>
+                <Button Grid.Row="5" Grid.Column="12" Grid.ColumnSpan="2" Text="Manual Enable" Style="{StaticResource ButtonLarge}" Command="{Binding Approve}"/>
+                <Button Grid.Row="6" Grid.Column="12" Grid.ColumnSpan="2" Text="Brakes On/Off" Style="{StaticResource ButtonLarge}" Command="{Binding Approve}"/>
+                <Button Grid.Row="7" Grid.Column="12" Grid.ColumnSpan="2" Text="Next" Style="{StaticResource ButtonLarge}" Command="{Binding StartTreatmentPage}"/>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

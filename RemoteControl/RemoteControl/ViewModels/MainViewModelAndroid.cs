@@ -52,9 +52,9 @@ namespace RemoteControl.ViewModels
                         App.DataModel.SNum = snum[0];
                     }
                 }
-                if ((App.DataModel.aptId[0] == DataModel.Error) || 
-                    (App.DataModel.aptId[1] == DataModel.Error) || 
-                    (App.DataModel.aptId[2] == DataModel.Error))
+                if ((App.DataModel.aptxId[0] == DataModel.Error) || 
+                    (App.DataModel.aptxId[1] == DataModel.Error) || 
+                    (App.DataModel.aptxId[2] == DataModel.Error))
                 {
                     //if (data.Contains("CS 3 ADR: 1000 W:"))
                     //{
@@ -80,9 +80,9 @@ namespace RemoteControl.ViewModels
                     if (data.Contains("readid Device_id"))
                     {
                         uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-                        App.DataModel.aptId[0] = aptid[0];
-                        App.DataModel.aptId[1] = aptid[1];
-                        App.DataModel.aptId[2] = aptid[2];
+                        App.DataModel.aptxId[0] = aptid[0];
+                        App.DataModel.aptxId[1] = aptid[1];
+                        App.DataModel.aptxId[2] = aptid[2];
                         App.DataModel.AptId = App.DataModel.AptId;
                     }
                 }
@@ -136,9 +136,9 @@ namespace RemoteControl.ViewModels
                     else if (App.DataModel.Current == DataModel.Error)
                         //DependencyService.Get<IUsbDevice>().Send("find,3#");
                         App.DataModel.UsbDevice.Send("find,3#");
-                    else if ((App.DataModel.aptId[0] == DataModel.Error) || 
-                             (App.DataModel.aptId[1] == DataModel.Error) || 
-                             (App.DataModel.aptId[2] == DataModel.Error))
+                    else if ((App.DataModel.aptxId[0] == DataModel.Error) || 
+                             (App.DataModel.aptxId[1] == DataModel.Error) || 
+                             (App.DataModel.aptxId[2] == DataModel.Error))
                         //DependencyService.Get<IUsbDevice>().Send("readid#");
                         App.DataModel.UsbDevice.Send("readid#");
                 }
