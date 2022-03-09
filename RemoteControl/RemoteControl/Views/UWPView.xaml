@@ -18,14 +18,14 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.ARmentaSmall.png}"/>
+                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
                 <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Cow ID / RFID12345"/>
                 <!--<Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Cow ID / RFID12345" Text="{Binding SNum}">
                     <Editor.BindingContext>
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor>-->
-                <Button Grid.Row="3" Grid.Column="1" Text="Insert Cow ID manually" Command="{Binding NextPageCowId}"/>
+                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.id.png}"/>
             </Grid>
         </StackLayout>
     </ContentView.Content>

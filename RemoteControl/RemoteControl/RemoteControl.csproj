@@ -18,6 +18,9 @@
     <Compile Remove="Models\UsbModel.cs" />
     <Compile Remove="SupportPage.xaml.cs" />
     <Compile Remove="TreatmentPage.xaml.cs" />
+    <Compile Remove="ViewModels\TopViewModel.cs" />
+    <Compile Remove="Views\GridBottom.cs" />
+    <Compile Remove="Views\GridMain.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,21 +33,28 @@
 
   <ItemGroup>
     <None Remove="Icons\4quarters.png" />
+    <None Remove="Icons\approve.png" />
     <None Remove="Icons\ap_clean.bmp" />
     <None Remove="Icons\ap_red.bmp" />
     <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
+    <None Remove="Icons\break.png" />
     <None Remove="Icons\down.png" />
+    <None Remove="Icons\empty.png" />
     <None Remove="Icons\fl.png" />
     <None Remove="Icons\fr.png" />
     <None Remove="Icons\height.png" />
     <None Remove="Icons\home.png" />
     <None Remove="Icons\home40.png" />
+    <None Remove="Icons\id.png" />
     <None Remove="Icons\left.png" />
+    <None Remove="Icons\logo.png" />
+    <None Remove="Icons\manual.png" />
     <None Remove="Icons\n2.bmp" />
     <None Remove="Icons\n5.bmp" />
     <None Remove="Icons\n7.bmp" />
     <None Remove="Icons\n8.bmp" />
+    <None Remove="Icons\next.png" />
     <None Remove="Icons\pr1h.bmp" />
     <None Remove="Icons\pr1l.bmp" />
     <None Remove="Icons\prh.bmp" />
@@ -60,6 +70,7 @@
     <None Remove="Icons\settings.png" />
     <None Remove="Icons\settings40.png" />
     <None Remove="Icons\side.png" />
+    <None Remove="Icons\start.png" />
     <None Remove="Icons\tilt.png" />
     <None Remove="Icons\top.png" />
     <None Remove="Icons\up.png" />
@@ -69,24 +80,34 @@
     <None Remove="Icons\‏‏bat_l.bmp" />
     <None Remove="Icons\‏‏pulseY.bmp" />
     <None Remove="Models\UsbModel.cs.bck" />
+    <None Remove="Views\GridBottom.cs.bck" />
+    <None Remove="Views\GridMain.cs.bck" />
+    <None Remove="Views\GridTop.cs.bck" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Icons\4quarters.png" />
+    <EmbeddedResource Include="Icons\approve.png" />
     <EmbeddedResource Include="Icons\ap_clean.bmp" />
     <EmbeddedResource Include="Icons\ap_red.bmp" />
     <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
+    <EmbeddedResource Include="Icons\break.png" />
     <EmbeddedResource Include="Icons\down.png" />
+    <EmbeddedResource Include="Icons\empty.png" />
     <EmbeddedResource Include="Icons\fl.png" />
     <EmbeddedResource Include="Icons\fr.png" />
     <EmbeddedResource Include="Icons\home.png" />
     <EmbeddedResource Include="Icons\home40.png" />
+    <EmbeddedResource Include="Icons\id.png" />
     <EmbeddedResource Include="Icons\left.png" />
+    <EmbeddedResource Include="Icons\logo.png" />
+    <EmbeddedResource Include="Icons\manual.png" />
     <EmbeddedResource Include="Icons\n2.bmp" />
     <EmbeddedResource Include="Icons\n5.bmp" />
     <EmbeddedResource Include="Icons\n7.bmp" />
     <EmbeddedResource Include="Icons\n8.bmp" />
+    <EmbeddedResource Include="Icons\next.png" />
     <EmbeddedResource Include="Icons\pr1h.bmp" />
     <EmbeddedResource Include="Icons\pr1l.bmp" />
     <EmbeddedResource Include="Icons\prh.bmp" />
@@ -102,6 +123,7 @@
     <EmbeddedResource Include="Icons\settings.png" />
     <EmbeddedResource Include="Icons\settings40.png" />
     <EmbeddedResource Include="Icons\side.png" />
+    <EmbeddedResource Include="Icons\start.png" />
     <EmbeddedResource Include="Icons\top.png" />
     <EmbeddedResource Include="Icons\up.png" />
     <EmbeddedResource Include="Icons\w.bmp" />
@@ -114,8 +136,9 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
-    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
+    <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.0" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>

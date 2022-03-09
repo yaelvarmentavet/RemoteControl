@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:localResources="clr-namespace:RemoteControl.Resources"
-             xmlns:localViewModels="clr-namespace:RemoteControl.ViewModels"
+             xmlns:resources="clr-namespace:RemoteControl.Resources"
              x:Class="RemoteControl.Views.TopView">
     <ContentView.Content>
         <StackLayout>
@@ -17,20 +16,20 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.home.png}">
+                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.home.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer 
+                                    Command="{Binding NextPageHome}">
+                        </TapGestureRecognizer>
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource LabelSmall}" Text="Pulses: 150,000"/>
+                <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer 
                                     Command="{Binding NextPageSettings}">
                         </TapGestureRecognizer>
                     </Image.GestureRecognizers>
-                </Image>
-                <Label Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource LabelSmall}" Text="Pulses: 150,000"/>
-                <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{localResources:ImageResource RemoteControl.Icons.settings.png}">
-                    <!--<Image.GestureRecognizers>
-                            <TapGestureRecognizer 
-                                    Tapped="Settings_Tapped">
-                            </TapGestureRecognizer>
-                        </Image.GestureRecognizers>-->
                 </Image>
             </Grid>
         </StackLayout>

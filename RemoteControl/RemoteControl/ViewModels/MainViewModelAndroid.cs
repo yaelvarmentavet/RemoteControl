@@ -28,7 +28,7 @@ namespace RemoteControl.ViewModels
             });
             NextPageCowId = new Command(async () =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new COWIDManagementPage());
+                await Application.Current.MainPage.Navigation.PushAsync(new CowIdPage());
                 //await Application.Current.MainPage.Navigation.PushAsync(new CowIdPage());
             });
 

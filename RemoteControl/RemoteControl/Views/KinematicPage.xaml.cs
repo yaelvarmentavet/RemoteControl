@@ -1,4 +1,6 @@
 ﻿
+using RemoteControl.ViewModels;
+using Xamarin.CommunityToolkit.Effects;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -11,57 +13,75 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
-            TapGestureRecognizer tapZRCWStart = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
-            tapZRCWStart.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCWStart");
-            ImgRCW.GestureRecognizers.Add(tapZRCWStart);
+            TapGestureRecognizer tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCWStart");
+            ImgRCW.GestureRecognizers.Add(tap);
 
-            TapGestureRecognizer tapZRCWStop = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            tapZRCWStop.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCWStop");
-            ImgRCW.GestureRecognizers.Add(tapZRCWStop);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCWStop");
+            ImgRCWStop.GestureRecognizers.Add(tap);
 
-            TapGestureRecognizer tapZRCCWStart = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
-            tapZRCCWStart.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCCWStart");
-            ImgRCCW.GestureRecognizers.Add(tapZRCCWStart);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCCWStart");
+            ImgRCCW.GestureRecognizers.Add(tap);
 
-            TapGestureRecognizer tapZRCCWStop = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            tapZRCCWStop.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCCWStop");
-            ImgRCCW.GestureRecognizers.Add(tapZRCCWStop);
-
-
-
-            TapGestureRecognizer tapAYFStart = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
-            tapAYFStart.SetBinding(TapGestureRecognizer.CommandProperty, "AYFStart");
-            ImgAYF.GestureRecognizers.Add(tapAYFStart);
-
-            TapGestureRecognizer tapAYFStop = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            tapAYFStop.SetBinding(TapGestureRecognizer.CommandProperty, "AYFStop");
-            ImgAYF.GestureRecognizers.Add(tapAYFStop);
-
-            TapGestureRecognizer tapAYBStart = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
-            tapAYBStart.SetBinding(TapGestureRecognizer.CommandProperty, "AYBStart");
-            ImgAYB.GestureRecognizers.Add(tapAYBStart);
-
-            TapGestureRecognizer tapAYBStop = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            tapAYBStop.SetBinding(TapGestureRecognizer.CommandProperty, "AYBStop");
-            ImgAYB.GestureRecognizers.Add(tapAYBStop);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "ZRCCWStop");
+            ImgRCCWStop.GestureRecognizers.Add(tap);
 
 
 
-            TapGestureRecognizer tapMZUStart = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
-            tapMZUStart.SetBinding(TapGestureRecognizer.CommandProperty, "MZUStart");
-            ImgMZU.GestureRecognizers.Add(tapMZUStart);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "AYFStart");
+            ImgAYF.GestureRecognizers.Add(tap);
 
-            TapGestureRecognizer tapMZUStop = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            tapMZUStop.SetBinding(TapGestureRecognizer.CommandProperty, "MZUStop");
-            ImgMZU.GestureRecognizers.Add(tapMZUStop);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "AYFStop");
+            ImgAYFStop.GestureRecognizers.Add(tap);
 
-            TapGestureRecognizer tapMZDStart = new TapGestureRecognizer() { NumberOfTapsRequired = 2 };
-            tapMZDStart.SetBinding(TapGestureRecognizer.CommandProperty, "MZDStart");
-            ImgMZD.GestureRecognizers.Add(tapMZDStart);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "AYBStart");
+            ImgAYB.GestureRecognizers.Add(tap);
 
-            TapGestureRecognizer tapMZDStop = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-            tapMZDStop.SetBinding(TapGestureRecognizer.CommandProperty, "MZDStop");
-            ImgMZD.GestureRecognizers.Add(tapMZDStop);
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "AYBStop");
+            ImgAYBStop.GestureRecognizers.Add(tap);
+
+
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "MZUStart");
+            ImgMZU.GestureRecognizers.Add(tap);
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "MZUStop");
+            ImgMZUStop.GestureRecognizers.Add(tap);
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "MZDStart");
+            ImgMZD.GestureRecognizers.Add(tap);
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "MZDStop");
+            ImgMZDStop.GestureRecognizers.Add(tap);
+
+
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "StartTreatmentPage");
+            ImgEmpty.GestureRecognizers.Add(tap);
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "StartTreatmentPage");
+            ImgMan.GestureRecognizers.Add(tap);
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "StartTreatmentPage");
+            ImgBreak.GestureRecognizers.Add(tap);
+
+            tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "StartTreatmentPage");
+            ImgNext.GestureRecognizers.Add(tap);
         }
     }
 }

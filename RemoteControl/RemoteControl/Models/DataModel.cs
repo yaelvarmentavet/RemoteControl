@@ -95,7 +95,7 @@ namespace RemoteControl.Models
                         //try
                         //{
                         byte[] buffer = new byte[1024];
-                        data += await UsbDevice.Read(port, buffer);
+                        try { data += await UsbDevice.Read(port, buffer); } catch { }
                         string data1 = Encoding.UTF8.GetString(buffer);
 
                         //if (string.IsNullOrEmpty(APTXPort) || string.IsNullOrEmpty(EcomilkPort))

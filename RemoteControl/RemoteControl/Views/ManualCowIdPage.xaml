@@ -22,14 +22,14 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.ARmentaSmall.png}"/>
+                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
                 <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Please write Cow ID"/>
                 <!--<Editor Grid.Row="2" Grid.Column="1" Placeholder="Please write Cow ID" Text="{Binding SNum}">
                     <Editor.BindingContext>
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor-->
-                <Button Grid.Row="3" Grid.Column="1" Text="Approve" Command="{Binding Approve}"/>
+                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.approve.png}"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

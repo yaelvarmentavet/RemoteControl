@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -15,6 +10,16 @@ namespace RemoteControl.Views
         public StartTreatmentPage()
         {
             InitializeComponent();
+
+            EdCowId.BindingContext = App.DataModel;
+            EdCowId.SetBinding(Editor.TextProperty, "SNum");
+
+            EdInfo.BindingContext = App.DataModel;
+            EdInfo.SetBinding(Editor.TextProperty, "SNum");
+
+            TapGestureRecognizer tap = new TapGestureRecognizer();
+            tap.SetBinding(TapGestureRecognizer.CommandProperty, "Start");
+            ImgStart.GestureRecognizers.Add(tap);
         }
     }
 }
