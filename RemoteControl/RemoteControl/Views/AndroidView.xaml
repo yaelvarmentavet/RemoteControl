@@ -41,8 +41,10 @@
                         <Button Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ButtonLarge}" Text="CMT"/>
                         <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonLarge}" Text="PROCEDURE" Command="{Binding NextPageTreatment}"/>
                         <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonLarge}" Text="COW ID Management" Command="{Binding NextPageCowId}"/>
-                        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelSmall}" Text="AM ID : 987653"/>
-                        <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource LabelSmall}" Text="APT ID : 234876"/>
+                        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelSmallAligned}" Text="AM ID :"/>
+                        <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource LabelSmall}" Text="987653"/>
+                        <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource LabelSmallAligned}" Text="APT ID :"/>
+                        <Label x:Name="LblAptxId" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource LabelSmall}" Text="234876"/>
                     </Grid>
                 </Frame>
                 <Frame Grid.Row="2" Style="{StaticResource FrameLight}">

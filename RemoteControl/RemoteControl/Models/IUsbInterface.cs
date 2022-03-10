@@ -6,12 +6,10 @@ namespace RemoteControl
 {
     public interface IUsbInterface
     {
-        bool GetInitDone();
+        Task<bool> Connect();
         IEnumerable<string> GetPorts();
         Task<string> Read(string portName, byte[] buffer);
         Task Write(string portName, byte[] buffer);
-        string GetData();
-        void Event(EventHandler eventHandler);
-        Task<int> Send(string data);
+        void Event(EventHandler eventRemoved, EventHandler eventAdded);
     }
 }

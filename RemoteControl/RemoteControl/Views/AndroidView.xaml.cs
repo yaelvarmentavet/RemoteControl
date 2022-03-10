@@ -15,6 +15,12 @@ namespace RemoteControl.Views
         public AndroidView()
         {
             InitializeComponent();
+
+            LblAmId.BindingContext = App.DataModel;
+            LblAmId.SetBinding(Label.TextProperty, "SNum");
+
+            LblAptxId.BindingContext = App.DataModel;
+            LblAptxId.SetBinding(Label.TextProperty, "AptxId");
         }
     }
 }

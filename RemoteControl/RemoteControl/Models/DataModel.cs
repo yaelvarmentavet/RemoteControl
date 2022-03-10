@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -50,24 +51,24 @@ namespace RemoteControl.Models
             }
         }
 
-        uint[] aptid = new uint[3] { Error, Error, Error };
+        uint[] aptxid = new uint[3] { Error, Error, Error };
 
         public uint[] aptxId
         {
-            get => aptid;
+            get => aptxid;
             set
             {
-                aptid = value;
+                aptxid = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptxId)));
             }
         }
 
-        public string AptId
+        public string AptxId
         {
-            get => aptid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
+            get => aptxid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
             set
             {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptId)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptxId)));
             }
         }
 
@@ -78,175 +79,177 @@ namespace RemoteControl.Models
         public IUsbInterface UsbDevice;
         public string APTXPort = string.Empty;
         public string EcomilkPort = string.Empty;
+        bool UsbConnected = false;
 
         public DataModel(IUsbInterface usbDevice)
         {
             UsbDevice = usbDevice;
 
-            new Thread(async () =>
-            {
-                string data = string.Empty;
-                while (!UsbDevice.GetInitDone()) ;
-
-                foreach (string port in UsbDevice.GetPorts())
+            UsbDevice.Event(
+                new EventHandler((sender, args) =>
                 {
-                    while (true)
+                    APTXPort = string.Empty;
+                    EcomilkPort = string.Empty;
+                    UsbConnected = false;
+                }),
+                new EventHandler((sender, args) =>
+                {
+                    UsbConnected = true;
+                    new Thread(async () =>
                     {
-                        //try
-                        //{
-                        byte[] buffer = new byte[1024];
-                        try { data += await UsbDevice.Read(port, buffer); } catch { }
-                        string data1 = Encoding.UTF8.GetString(buffer);
-
-                        //if (string.IsNullOrEmpty(APTXPort) || string.IsNullOrEmpty(EcomilkPort))
-                        if (string.IsNullOrEmpty(APTXPort))
+                        string data = string.Empty;
+                        while (UsbConnected)
                         {
-                            if (data.Contains("1F-85-01"))
+                            while (!(await UsbDevice.Connect())) ;
+
+                            foreach (string port in UsbDevice.GetPorts())
                             {
-                                APTXPort = port;
+                                while (string.IsNullOrEmpty(APTXPort))
+                                {
+                                    byte[] buffer = new byte[1024];
+                                    try { data += await UsbDevice.Read(port, buffer); } catch { }
+                                    string data1 = Encoding.UTF8.GetString(buffer);
+
+                                    //if (string.IsNullOrEmpty(APTXPort) || string.IsNullOrEmpty(EcomilkPort))
+                                    if (data.Contains("1F-85-01"))
+                                    {
+                                        APTXPort = port;
+                                    }
+                                    if (data.Contains("ECOMILK"))
+                                    {
+                                        EcomilkPort = port;
+                                    }
+                                }
                             }
-                            if (data.Contains("ECOMILK"))
+
+                            data = string.Empty;
+                            while (UsbConnected)
                             {
-                                EcomilkPort = port;
+                                byte[] buffer = new byte[1024];
+                                try { data += await UsbDevice.Read(APTXPort, buffer); } catch { }
+                                string data1 = Encoding.UTF8.GetString(buffer);
+                                if (SNum == Error)
+                                {
+                                    //if (data.Contains("str,serial_num:"))
+                                    //{
+                                    //    uint snum = DataParse(data, "str,serial_num:", NumberStyles.Number);
+                                    //    SNum = snum;
+                                    //}
+                                    if (data.Contains("SNUM"))
+                                    {
+                                        uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
+                                        SNum = snum[0];
+                                    }
+                                }
+                                if ((aptxId[0] == Error) ||
+                                    (aptxId[1] == Error) ||
+                                    (aptxId[2] == Error))
+                                {
+                                    //if (data.Contains("CS 3 ADR: 1000 W:"))
+                                    //{
+                                    //    uint aptid = DataParse(data, "CS 3 ADR: 1000 W:", NumberStyles.HexNumber);
+                                    //    aptId[0] = aptid;
+                                    //    aptId = aptId;
+                                    //    AptId = AptId;
+                                    //}
+                                    //if (data.Contains("CS 3 ADR: 1004 W:"))
+                                    //{
+                                    //    uint aptid = DataParse(data, "CS 3 ADR: 1004 W:", NumberStyles.HexNumber);
+                                    //    aptId[1] = aptid;
+                                    //    aptId = aptId;
+                                    //    AptId = AptId;
+                                    //}
+                                    //if (data.Contains("CS 3 ADR: 1008 W:"))
+                                    //{
+                                    //    uint aptid = DataParse(data, "CS 3 ADR: 1008 W:", NumberStyles.HexNumber);
+                                    //    aptId[2] = aptid;
+                                    //    aptId = aptId;
+                                    //    AptId = AptId;
+                                    //}
+                                    if (data.Contains("readid Device_id"))
+                                    {
+                                        uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
+                                        aptxId[0] = aptid[0];
+                                        aptxId[1] = aptid[1];
+                                        aptxId[2] = aptid[2];
+                                        AptxId = AptxId;
+                                    }
+                                }
+                                if ((Current == Error) || (Maxi == Error))
+                                {
+                                    //if (data.Contains("pulses written"))
+                                    //{
+                                    //    uint remaining = DataParse(data, "pulses written", NumberStyles.Number);
+                                    //    Remaining = remaining;
+                                    //}
+                                    if (data.Contains("MAXI"))
+                                    {
+                                        uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
+                                        Maxi = maxi[0];
+                                    }
+                                    if (data.Contains("Found:"))
+                                    {
+                                        uint[] current = DataParse(data, "Found:", NumberStyles.Number);
+                                        Current = current[0];
+                                    }
+                                    if ((Current != Error) && (Maxi != Error))
+                                        Remaining = Maxi - Current;
+                                }
+                                //if (data.Contains("Done Init"))
+                                //{
+                                //    DoneInit = true;
+                                //}
+
+                                //if ((BindingContext != null) &&
+                                //    (BindingContext as CowIdViewModel)?.IsPageOpened == true)
+                                //    return;
+                                //
+                                //BindingContext = new CowIdViewModel()
+                                //{
+                                //    Id = DependencyService.Get<IRemoteControlUsbDevice>().GetData(),
+                                //};
+                                //await Current.MainPage.Navigation.PushAsync(new CowIdPage());
+                                //}
+                                //catch { }
                             }
                         }
-                        else
-                            break;
-                        //}
-                        //catch { }
-                    }
-                }
+                    })
+                    { Name = "UsbRx" }.Start();
 
-                data = string.Empty;
-                while (true)
-                {
-                    //try
-                    //{
-                    byte[] buffer = new byte[1024];
-                    data += await UsbDevice.Read(APTXPort, buffer);
-                    string data1 = Encoding.UTF8.GetString(buffer);
-                    if (SNum == Error)
+                    new Thread(async () =>
                     {
-                        //if (data.Contains("str,serial_num:"))
-                        //{
-                        //    uint snum = DataParse(data, "str,serial_num:", NumberStyles.Number);
-                        //    SNum = snum;
-                        //}
-                        if (data.Contains("SNUM"))
+                        while (UsbConnected)
                         {
-                            uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
-                            SNum = snum[0];
+                            while (!(await UsbDevice.Connect())) ;
+
+                            while (string.IsNullOrEmpty(APTXPort))
+                            {
+                                Thread.Sleep(1000);
+
+                                //if (string.IsNullOrEmpty(APTXPort) || string.IsNullOrEmpty(EcomilkPort))
+                                foreach (string port in UsbDevice.GetPorts())
+                                    await UsbDevice.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
+                            }
+
+                            while (UsbConnected)
+                            {
+                                Thread.Sleep(1000);
+
+                                if (SNum == Error)
+                                    await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("testread,3#"));
+                                else if (Current == Error)
+                                    //App.DataModel.UsbDevice.Send("find,3#");
+                                    await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("find,3#"));
+                                else if ((aptxId[0] == Error) ||
+                                         (aptxId[1] == Error) ||
+                                         (aptxId[2] == Error))
+                                    //App.DataModel.UsbDevice.Send("readid#");
+                                    await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("readid#"));
+                            }
                         }
-                    }
-                    if ((aptxId[0] == Error) ||
-                        (aptxId[1] == Error) ||
-                        (aptxId[2] == Error))
-                    {
-                        //if (data.Contains("CS 3 ADR: 1000 W:"))
-                        //{
-                        //    uint aptid = DataParse(data, "CS 3 ADR: 1000 W:", NumberStyles.HexNumber);
-                        //    aptId[0] = aptid;
-                        //    aptId = aptId;
-                        //    AptId = AptId;
-                        //}
-                        //if (data.Contains("CS 3 ADR: 1004 W:"))
-                        //{
-                        //    uint aptid = DataParse(data, "CS 3 ADR: 1004 W:", NumberStyles.HexNumber);
-                        //    aptId[1] = aptid;
-                        //    aptId = aptId;
-                        //    AptId = AptId;
-                        //}
-                        //if (data.Contains("CS 3 ADR: 1008 W:"))
-                        //{
-                        //    uint aptid = DataParse(data, "CS 3 ADR: 1008 W:", NumberStyles.HexNumber);
-                        //    aptId[2] = aptid;
-                        //    aptId = aptId;
-                        //    AptId = AptId;
-                        //}
-                        if (data.Contains("readid Device_id"))
-                        {
-                            uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-                            aptxId[0] = aptid[0];
-                            aptxId[1] = aptid[1];
-                            aptxId[2] = aptid[2];
-                            AptId = AptId;
-                        }
-                    }
-                    if ((Current == Error) || (Maxi == Error))
-                    {
-                        //if (data.Contains("pulses written"))
-                        //{
-                        //    uint remaining = DataParse(data, "pulses written", NumberStyles.Number);
-                        //    Remaining = remaining;
-                        //}
-                        if (data.Contains("MAXI"))
-                        {
-                            uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
-                            Maxi = maxi[0];
-                        }
-                        if (data.Contains("Found:"))
-                        {
-                            uint[] current = DataParse(data, "Found:", NumberStyles.Number);
-                            Current = current[0];
-                        }
-                        if ((Current != Error) && (Maxi != Error))
-                            Remaining = Maxi - Current;
-                    }
-                    //if (data.Contains("Done Init"))
-                    //{
-                    //    DoneInit = true;
-                    //}
-
-                    //if ((BindingContext != null) &&
-                    //    (BindingContext as CowIdViewModel)?.IsPageOpened == true)
-                    //    return;
-                    //
-                    //BindingContext = new CowIdViewModel()
-                    //{
-                    //    Id = DependencyService.Get<IRemoteControlUsbDevice>().GetData(),
-                    //};
-                    //await Current.MainPage.Navigation.PushAsync(new CowIdPage());
-                    //}
-                    //catch { }
-                }
-            })
-            { Name = "UsbRx" }.Start();
-
-            new Thread(async () =>
-            {
-                while (!UsbDevice.GetInitDone()) ;
-
-                while (true)
-                {
-                    Thread.Sleep(1000);
-
-                    //if (string.IsNullOrEmpty(APTXPort) || string.IsNullOrEmpty(EcomilkPort))
-                    if (string.IsNullOrEmpty(APTXPort))
-                    {
-                        foreach (string port in UsbDevice.GetPorts())
-                            await UsbDevice.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-                    }
-                    else
-                        break;
-                }
-
-                while (true)
-                {
-                    Thread.Sleep(1000);
-
-                    if (SNum == Error)
-                        await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("testread,3#"));
-                    else if (Current == Error)
-                        //App.DataModel.UsbDevice.Send("find,3#");
-                        await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("find,3#"));
-                    else if ((aptxId[0] == Error) ||
-                             (aptxId[1] == Error) ||
-                             (aptxId[2] == Error))
-                        //App.DataModel.UsbDevice.Send("readid#");
-                        await UsbDevice.Write(APTXPort, Encoding.UTF8.GetBytes("readid#"));
-                }
-            })
-            { Name = "UsbTx" }.Start();
+                    })
+                    { Name = "UsbTx" }.Start();
+                }));
         }
 
         private uint[] DataParse(string data, string pattern, NumberStyles numberStyles)

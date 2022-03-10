@@ -15,6 +15,9 @@ namespace RemoteControl.Views
         public TopView()
         {
             InitializeComponent();
+
+            LblRem.BindingContext = App.DataModel;
+            LblRem.SetBinding(Label.TextProperty, "Remaining");
         }
     }
 }

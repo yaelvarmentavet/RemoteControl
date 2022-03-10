@@ -16,7 +16,7 @@ namespace RemoteControl.Droid
     [Activity(Label = "Armenta - Remote Control Application", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        public static UsbManager Manager = null;
+        public static UsbManager Manager;
         //public static PendingIntent mPermissionIntent = null;
         protected override void OnCreate(Bundle savedInstanceState)
         {

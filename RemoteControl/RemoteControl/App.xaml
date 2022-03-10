@@ -10,7 +10,8 @@
             <Color x:Key="BackgroundInfo">LightGreen</Color>
             <Color x:Key="TextInfo">White</Color>
             <Color x:Key="BackgroundTreat">AliceBlue</Color>
-            <Color x:Key="TextTreat">Blue</Color>
+            <Color x:Key="TextTreat">DarkCyan</Color>
+            <Color x:Key="BackgroundProgress">DarkCyan</Color>
             <Color x:Key="BackgroundFront">Green</Color>
             <Color x:Key="BackgroundRear">Red</Color>
             <Style x:Key="FrameDark" TargetType="Frame">
@@ -56,20 +57,35 @@
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
+            <Style x:Key="LabelSmallAligned" TargetType="Label">
+                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="HorizontalTextAlignment" Value="End"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
             <Style x:Key="LabelMilli" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=12}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelInfo" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=12}"/>
+                <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=16}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundInfo}"/>
                 <Setter Property="TextColor" Value="{StaticResource TextInfo}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelTreat" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundTreat}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextTreat}"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
+            <Style x:Key="LabelProgress" TargetType="Label">
+                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundProgress}"/>
                 <Setter Property="TextColor" Value="{StaticResource TextTreat}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
