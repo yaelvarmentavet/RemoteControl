@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace RemoteControl
 {
-    public interface IUsbInterface
+    public interface IUsbSerial
     {
         Task<bool> Connect();
         IEnumerable<string> GetPorts();

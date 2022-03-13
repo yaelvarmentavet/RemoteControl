@@ -43,13 +43,15 @@ namespace RemoteControl.Droid
         }
     }
 
-    public class UsbInterface : IUsbInterface
+    public class UsbSerial : IUsbSerial
     {
         private Dictionary<string, SerialDevice> SerialPorts = new Dictionary<string, SerialDevice>();
         private EventHandler EventAdded;
         private EventHandler EventRemoved;
+        private bool Connected = false;
+        private bool TryConnect = false;
 
-        public UsbInterface()
+        public UsbSerial()
         {
             //PendingIntent mAttachedIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(UsbManager.ActionUsbDeviceAttached), 0);
             BroadcastReceiverSystem usbReciever = new BroadcastReceiverSystem();
@@ -60,12 +62,11 @@ namespace RemoteControl.Droid
 
         private void usbAttached(object sender, EventArgs e)
         {
-            EventAdded.Invoke(this, EventArgs.Empty);
+            //EventAdded.Invoke(this, EventArgs.Empty);
         }
 
         public async Task<bool> Connect()
         {
-
             //new Thread(async () =>
             //    {
             //        while (true)
@@ -73,41 +74,52 @@ namespace RemoteControl.Droid
             //UsbManager manager = GetSystemService(Context.UsbService) as UsbManager;
 
             //Java.Util.HashMap devices = (Java.Util.HashMap)(manager?.DeviceList);
-            var devices = MainActivity.Manager?.DeviceList;
-
-            foreach (UsbDevice device in (devices as IDictionary<string, UsbDevice>)?.Values)
+            if (!Connected)
             {
-                PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
-                bool? hasPermision = false;
-                while (hasPermision != true)
+                if (!TryConnect)
                 {
-                    MainActivity.Manager?.RequestPermission(device, mPermissionIntent);
-                    hasPermision = MainActivity.Manager?.HasPermission(device);
+                    TryConnect = true;
+                    var devices = MainActivity.Manager?.DeviceList;
+                    if (devices != null)
+                    {
+                        foreach (UsbDevice device in (devices as IDictionary<string, UsbDevice>).Values)
+                        {
+                            PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
+
+                            bool hasPermision = false;
+                            MainActivity.Manager.RequestPermission(device, mPermissionIntent);
+                            hasPermision = MainActivity.Manager.HasPermission(device);
+
+                            if (hasPermision)
+                            {
+                                UsbInterface intf = device.GetInterface(0);
+                                UsbEndpoint endpointRx = intf.GetEndpoint(0);
+                                UsbEndpoint endpointTx = intf.GetEndpoint(1);
+                                UsbDeviceConnection connection = MainActivity.Manager.OpenDevice(device);
+                                if (connection != null)
+                                {
+                                    connection.ClaimInterface(intf, true);
+                                    int resp = -1;
+
+                                    resp = connection.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
+                                    resp = connection.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
+                                    resp = connection.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
+                                    resp = connection.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
+                                    resp = connection.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
+                                    resp = connection.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
+                                }
+
+                                SerialPorts.Add(device.DeviceName, new SerialDevice() { UsbDevice = device, Connection = connection, EndpointRx = endpointRx, EndpointTx = endpointTx });
+                                Connected = true;
+                            }
+                        }
+                    }
+                    TryConnect = false;
                 }
-
-                Android.Hardware.Usb.UsbInterface intf = device?.GetInterface(0);
-                UsbEndpoint endpointRx = intf?.GetEndpoint(0);
-                UsbEndpoint EndpointTx = intf?.GetEndpoint(1);
-                UsbDeviceConnection Connection = MainActivity.Manager?.OpenDevice(device);
-                if (Connection != null)
-                {
-                    Connection?.ClaimInterface(intf, true);
-                    int? resp = -1;
-
-                    resp = Connection?.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
-                    resp = Connection?.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
-                    resp = Connection?.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
-                    resp = Connection?.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
-                    resp = Connection?.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
-                    resp = Connection?.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
-                }
-
-                SerialPorts.Add(device.DeviceName, new SerialDevice() { UsbDevice = device, Connection = Connection, EndpointRx = endpointRx, EndpointTx = EndpointTx });
             }
-            if (SerialPorts.Any())
-                return true;
-            return false;
+            return Connected;
         }
+
         public IEnumerable<string> GetPorts()
         {
             //return SerialPorts.Keys;

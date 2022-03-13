@@ -17,9 +17,9 @@ namespace RemoteControl.ViewModels
                 await Application.Current.MainPage.Navigation.PushAsync(new SettingsPage());
             });
 
-            TappedView = new Command<Label>((lbl) =>
+            TappedFL = new Command(() =>
             {
-                lbl.TextColor = Color.Red;
+                App.DataModel.FL = true;
             });
         }
 
@@ -28,6 +28,6 @@ namespace RemoteControl.ViewModels
         public Command NextPageHome { get; }
         public Command NextPageSettings { get; }
 
-        public Command TappedView { get; }
+        public Command TappedFL { get; }
     }
 }

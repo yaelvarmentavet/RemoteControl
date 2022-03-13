@@ -1,10 +1,4 @@
-﻿using RemoteControl.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -17,6 +11,9 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
             //InitMainPage();
+            
+            LblFL.BindingContext = App.DataModel;
+            LblFL.SetBinding(Label.BackgroundColorProperty, "FL");
         }
 
         //void InitMainPage()

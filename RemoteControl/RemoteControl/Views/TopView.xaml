@@ -2,6 +2,7 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="RemoteControl.Views.TopView">
     <ContentView.Content>
         <StackLayout>
@@ -16,7 +17,8 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.home.png}">
+                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.home.png}"
+                    xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer 
                                     Command="{Binding NextPageHome}">
@@ -25,7 +27,8 @@
                 </Image>
                 <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelSmallAligned}" Text="Pulses:"/>
                 <Label x:Name="LblRem" Grid.Column="2" Grid.ColumnSpan="1" Style="{StaticResource LabelSmall}" Text="150,000"/>
-                <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}">
+                <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}"
+                    xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer 
                                     Command="{Binding NextPageSettings}">

@@ -11,6 +11,7 @@
             <Color x:Key="TextInfo">White</Color>
             <Color x:Key="BackgroundTreat">AliceBlue</Color>
             <Color x:Key="TextTreat">DarkCyan</Color>
+            <Color x:Key="BackgroundPressed">Cyan</Color>
             <Color x:Key="BackgroundProgress">DarkCyan</Color>
             <Color x:Key="BackgroundFront">Green</Color>
             <Color x:Key="BackgroundRear">Red</Color>

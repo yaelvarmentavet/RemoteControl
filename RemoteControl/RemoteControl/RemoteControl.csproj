@@ -80,6 +80,7 @@
     <None Remove="Icons\‏‏bat_l.bmp" />
     <None Remove="Icons\‏‏pulseY.bmp" />
     <None Remove="Models\UsbModel.cs.bck" />
+    <None Remove="ViewModels\TopViewModel.cs.bck" />
     <None Remove="Views\GridBottom.cs.bck" />
     <None Remove="Views\GridMain.cs.bck" />
     <None Remove="Views\GridTop.cs.bck" />
