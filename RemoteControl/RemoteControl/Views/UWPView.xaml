@@ -19,13 +19,17 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
-                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Cow ID / RFID12345"/>
+                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Cow ID / RFID12345" Text="{Binding CowId}"/>
                 <!--<Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Cow ID / RFID12345" Text="{Binding SNum}">
                     <Editor.BindingContext>
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor>-->
-                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.id.png}"/>
+                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.id.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
+                    </Image.GestureRecognizers>
+                </Image>
             </Grid>
         </StackLayout>
     </ContentView.Content>

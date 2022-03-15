@@ -20,9 +20,7 @@
                 <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.home.png}"
                     xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
                     <Image.GestureRecognizers>
-                        <TapGestureRecognizer 
-                                    Command="{Binding NextPageHome}">
-                        </TapGestureRecognizer>
+                        <TapGestureRecognizer Command="{Binding NextPageHome}"/>
                     </Image.GestureRecognizers>
                 </Image>
                 <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelSmallAligned}" Text="Pulses:"/>
@@ -30,9 +28,7 @@
                 <Image Grid.Column="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}"
                     xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
                     <Image.GestureRecognizers>
-                        <TapGestureRecognizer 
-                                    Command="{Binding NextPageSettings}">
-                        </TapGestureRecognizer>
+                        <TapGestureRecognizer Command="{Binding NextPageSettings}"/>
                     </Image.GestureRecognizers>
                 </Image>
             </Grid>

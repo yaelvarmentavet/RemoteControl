@@ -23,13 +23,17 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
-                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Please write Cow ID"/>
+                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource EditorCentered}" Placeholder="Please write Cow ID" Text="{Binding CowId}"/>
                 <!--<Editor Grid.Row="2" Grid.Column="1" Placeholder="Please write Cow ID" Text="{Binding SNum}">
                     <Editor.BindingContext>
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor-->
-                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.approve.png}"/>
+                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.approve.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Approve}"/>
+                    </Image.GestureRecognizers>
+                </Image>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

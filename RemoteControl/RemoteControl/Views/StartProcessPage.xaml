@@ -2,7 +2,11 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
-             x:Class="RemoteControl.Views.StartTreatmentPage">
+             xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
+             x:Class="RemoteControl.Views.StartProcessPage">
+    <ContentPage.BindingContext>
+        <viewModels:StartProcessViewModel/>
+    </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
             <Grid>
@@ -10,7 +14,19 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                 </Grid.ColumnDefinitions>
-                <Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Choose quarter" Style="{StaticResource LabelTitle}"/>
+                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <ProgressBar Grid.Row="1" Grid.Column="1" />
+                <Image Grid.Row="1" Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.stop.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding StopProcess}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+                <Image Grid.Row="2" Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.pause.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding PauseResumeProcess}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+                <!--<Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Choose quarter" Style="{StaticResource LabelTitle}"/>
                 <Image Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.rl.png}"/>
                 <Image Grid.Row="3" Grid.Column="3" Grid.RowSpan="3" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.fl.png}"/>
                 <Image Grid.Row="9" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.rr.png}"/>
@@ -18,7 +34,7 @@
                 <Image Grid.Row="7" Grid.Column="5" Grid.RowSpan="1"  Grid.ColumnSpan="1" Scale="5" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.4quarters.png}"/>
                 <Editor x:Name="EdCowId" Grid.Row="3" Grid.Column="7" Grid.RowSpan="3" Grid.ColumnSpan="2" Placeholder="Cow ID / RFID12345" Style="{StaticResource EditorCentered}"/>
                 <Editor x:Name="EdInfo" Grid.Row="6" Grid.Column="7" Grid.RowSpan="5" Grid.ColumnSpan="2" Placeholder="Cow Info(treatment data/history)" Style="{StaticResource EditorCentered}"/>
-                <Image x:Name="ImgStart" Grid.Row="12" Grid.Column="7" Grid.RowSpan="2" Grid.ColumnSpan="2" Scale="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.start.png}"/>
+                <Image x:Name="ImgStart" Grid.Row="12" Grid.Column="7" Grid.RowSpan="2" Grid.ColumnSpan="2" Scale="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.start.png}"/>-->
             </Grid>
         </StackLayout>
     </ContentPage.Content>

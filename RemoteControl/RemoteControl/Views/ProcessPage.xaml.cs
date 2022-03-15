@@ -1,19 +1,27 @@
 ﻿
+using RemoteControl.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace RemoteControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class TreatmentPage : ContentPage
+    public partial class ProcessPage : ContentPage
     {
-        public TreatmentPage()
+        public ProcessPage()
         {
             InitializeComponent();
             //InitMainPage();
             
             LblFL.BindingContext = App.DataModel;
-            LblFL.SetBinding(Label.BackgroundColorProperty, "FL");
+            LblRL.BindingContext = App.DataModel;
+            LblFR.BindingContext = App.DataModel;
+            LblRR.BindingContext = App.DataModel;
+            //LblFL.SetBinding(BackgroundColorProperty, "FL");
+
+            //TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();
+            //tapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandProperty, "TappedFL");
+            //LblFL.GestureRecognizers.Add(tapGestureRecognizer);
         }
 
         //void InitMainPage()

@@ -19,7 +19,7 @@ namespace RemoteControl.ViewModels
             });
             NextPageTreatment = new Command(async () =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new TreatmentPage());
+                await Application.Current.MainPage.Navigation.PushAsync(new ProcessPage());
             });
             NextPageCowId = new Command(async () =>
             {

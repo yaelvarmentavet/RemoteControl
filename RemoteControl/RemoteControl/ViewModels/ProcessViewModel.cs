@@ -4,9 +4,9 @@ using Xamarin.Forms;
 
 namespace RemoteControl.ViewModels
 {
-    class TreatmentViewModel : INotifyPropertyChanged
+    class ProcessViewModel : INotifyPropertyChanged
     {
-        public TreatmentViewModel()
+        public ProcessViewModel()
         {
             NextPageHome = new Command(async () =>
             {
@@ -16,18 +16,11 @@ namespace RemoteControl.ViewModels
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new SettingsPage());
             });
-
-            TappedFL = new Command(() =>
-            {
-                App.DataModel.FL = true;
-            });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Command NextPageHome { get; }
         public Command NextPageSettings { get; }
-
-        public Command TappedFL { get; }
     }
 }

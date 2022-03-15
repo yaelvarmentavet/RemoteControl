@@ -4,10 +4,9 @@
              xmlns:views="clr-namespace:RemoteControl.Views"
              xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             x:Class="RemoteControl.Views.TreatmentPage">
+             x:Class="RemoteControl.Views.ProcessPage">
     <ContentPage.BindingContext>
-        <viewModels:TreatmentViewModel/>
-        <!--<binding:DataModel/>-->
+        <viewModels:ProcessViewModel/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
@@ -62,23 +61,36 @@
                         <Label Grid.Row="7" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="2" Text="Auto Transition" Style="{StaticResource LabelSmallAligned}"/>
                         <Label x:Name="LblFL" Grid.Row="7" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Left" Style="{StaticResource LabelTreat}"
                             xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
-                            xct:TouchEffect.Command="{Binding TappedFL}">
+                            BackgroundColor="{Binding FL}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedFL}"/>
+                                <!--Command="{Binding TappedFL}" CommandParameter="{x:Reference LblFL}">-->
                             </Label.GestureRecognizers>
                         </Label>
                         <Label Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" Text="N" Style="{StaticResource LabelFront}"/>
-                        <Label Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Left" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
+                        <Label x:Name="LblRL" Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Left" Style="{StaticResource LabelTreat}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                            BackgroundColor="{Binding RL}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding TappedRL}"/>
+                            </Label.GestureRecognizers>
                         </Label>
                         <Label Grid.Row="10" Grid.Column="1" Grid.RowSpan="2" Text="2" Style="{StaticResource LabelRear}"/>
                         <Editor Grid.Row="8" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Text="000000" Style="{StaticResource EditorCentered}"/>
-                        <Label Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
+                        <Label x:Name="LblFR" Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelTreat}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                            BackgroundColor="{Binding FR}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding TappedFR}"/>
+                            </Label.GestureRecognizers>
                         </Label>
                         <Label Grid.Row="7" Grid.Column="4" Grid.RowSpan="2" Text="T" Style="{StaticResource LabelFront}"/>
-                        <Label Grid.Row="10" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Right" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}">
+                        <Label x:Name="LblRR" Grid.Row="10" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Right" Style="{StaticResource LabelTreat}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                            BackgroundColor="{Binding RR}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding TappedRR}"/>
+                            </Label.GestureRecognizers>
                         </Label>
                         <Label Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Text="3" Style="{StaticResource LabelRear}"/>
                     </Grid>

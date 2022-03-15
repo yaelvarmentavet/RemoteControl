@@ -8,38 +8,38 @@ namespace RemoteControl.ViewModels
     {
         public KinematicViewModel()
         {
-            ZRCWStart = new Command(async () =>
+            RCWStart = new Command(async () =>
             {
-                App.DataModel.ZRCWStart();
+                App.DataModel.RCWStart();
             });
-            ZRCWStop = new Command(async () =>
+            RCWStop = new Command(async () =>
             {
-                App.DataModel.ZRCWStop();
+                App.DataModel.RCWStop();
             });
-            ZRCCWStart = new Command(async () =>
+            RCCWStart = new Command(async () =>
             {
-                App.DataModel.ZRCCWStart();
+                App.DataModel.RCCWStart();
             });
-            ZRCCWStop = new Command(async () =>
+            RCCWStop = new Command(async () =>
             {
-                App.DataModel.ZRCCWStop();
+                App.DataModel.RCCWStop();
             });
 
-            AYFStart = new Command(async () =>
+            AFStart = new Command(async () =>
             {
-                App.DataModel.AYFStart();
+                App.DataModel.AFStart();
             });
-            AYFStop = new Command(async () =>
+            AFStop = new Command(async () =>
             {
-                App.DataModel.AYFStop();
+                App.DataModel.AFStop();
             });
-            AYBStart = new Command(async () =>
+            ABStart = new Command(async () =>
             {
-                App.DataModel.AYBStart();
+                App.DataModel.ABStart();
             });
-            AYBStop = new Command(async () =>
+            ABStop = new Command(async () =>
             {
-                App.DataModel.AYBStop();
+                App.DataModel.ABStop();
             });
 
             MZUStart = new Command(async () =>
@@ -58,31 +58,42 @@ namespace RemoteControl.ViewModels
             {
                 App.DataModel.MZDStop();
             });
-
-            StartTreatmentPage = new Command(async () =>
+            TCWStart = new Command(async () =>
             {
-                await Application.Current.MainPage.Navigation.PushAsync(new StartTreatmentPage());
+                App.DataModel.TCWStart();
+            });
+            XFStart = new Command(async () =>
+            {
+                App.DataModel.XFStart();
+            });
+
+            StartProcessPage = new Command(async () =>
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new StartProcessPage());
+                await App.DataModel.StartProcess();
             });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Command ZRCWStart { get; }
-        public Command ZRCWStop { get; }
-        public Command ZRCCWStart { get; }
-        public Command ZRCCWStop { get; }
-        public Command AYFStart { get; }
-        public Command AYFStop { get; }
-        public Command AYBStart { get; }
-        public Command AYBStop { get; }
+        public Command RCWStart { get; }
+        public Command RCWStop { get; }
+        public Command RCCWStart { get; }
+        public Command RCCWStop { get; }
+        public Command AFStart { get; }
+        public Command AFStop { get; }
+        public Command ABStart { get; }
+        public Command ABStop { get; }
         public Command MZUStart { get; }
         public Command MZUStop { get; }
         public Command MZDStart { get; }
         public Command MZDStop { get; }
+        public Command TCWStart { get; }
+        public Command XFStart { get; }
 
-        public Command EmptyBath { get; }
-        public Command ManualEnable { get; }
-        public Command BrakesOnOff { get; }
-        public Command StartTreatmentPage { get; }
+        //public Command EmptyBath { get; }
+        //public Command ManualEnable { get; }
+        //public Command BrakesOnOff { get; }
+        public Command StartProcessPage { get; }
     }
 }

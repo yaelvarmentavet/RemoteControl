@@ -45,6 +45,8 @@ namespace RemoteControl.Droid
 
     public class UsbSerial : IUsbSerial
     {
+        private const int ERROR = -1;
+
         private Dictionary<string, SerialDevice> SerialPorts = new Dictionary<string, SerialDevice>();
         private EventHandler EventAdded;
         private EventHandler EventRemoved;
@@ -126,8 +128,16 @@ namespace RemoteControl.Droid
             return SerialPorts.Keys ?? Enumerable.Empty<string>();
         }
 
-        public async Task<string> Read(string portName, byte[] buffer)
+        public async Task<int> Read(string portName, byte[] buffer)
         {
+            if (SerialPorts.TryGetValue(portName, out SerialDevice port))
+            {
+                port.Connection.BulkTransfer(port.EndpointRx, buffer, buffer.Length, 10);
+                //buffer = buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).ToArray();
+                //string data = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                return buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).Count();
+            }
+            return ERROR;
             //int size = 1024;
             //int sizeRx = 0;
             //byte[]? bytesRx = null;
@@ -146,7 +156,7 @@ namespace RemoteControl.Droid
 
             // Rx
             //bytesRx = new byte[size];
-            SerialPorts.GetValueOrDefault(portName)?.Connection.BulkTransfer(SerialPorts.GetValueOrDefault(portName)?.EndpointRx, buffer, buffer.Length, 1000);
+            //port.Connection.BulkTransfer(port.EndpointRx, buffer, buffer.Length, 1000);
 
             //strRx = Encoding.UTF8.GetString(bytesRx);
 
@@ -178,10 +188,9 @@ namespace RemoteControl.Droid
             //bytesBufferRx.Flip();
             //bytesBufferRx.Get(bytesRx, 0, bytesBufferRx.Limit());
 
-            buffer = buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).ToArray();
-            string data = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-            return data;
-
+            //buffer = buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).ToArray();
+            //string data = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+            //return buffer.Length;
             //if ((bytesRx != null) && (bytesRx.Length > 0))
             //{
             //    strRx += Encoding.UTF8.GetString(bytesRx, 0, bytesRx.Length);
@@ -205,15 +214,19 @@ namespace RemoteControl.Droid
         //    return Data;
         //}
         //
-        public void Event(EventHandler eventRemoved, EventHandler eventAdded)
-        {
-            EventRemoved = eventRemoved;
-            EventAdded = eventAdded;
-        }
-
         //public async Task<int> Send(string data)
-        public async Task Write(string portName, byte[] buffer)
+        public async Task<int> Write(string portName, byte[] buffer)
         {
+            if (SerialPorts.TryGetValue(portName, out SerialDevice port))
+            {
+                foreach (byte b in buffer)
+                {
+                    Thread.Sleep(100);
+                    port.Connection.BulkTransfer(port.EndpointTx, new byte[] { b }, 1, 10);
+                }
+                return buffer.Length;
+            }
+            return ERROR;
             //if ((Connection != null) && (EndpointTx != null))
             //{
             //int size = 64;
@@ -224,11 +237,11 @@ namespace RemoteControl.Droid
 
             //bytesTx = Encoding.UTF8.GetBytes(data);
             //resp = Connection?.BulkTransfer(EndpointTx, bytesTx, bytesTx.Length, 0); //do in another thread
-            foreach (byte b in buffer)
-            {
-                Thread.Sleep(100);
-                SerialPorts.GetValueOrDefault(portName)?.Connection.BulkTransfer(SerialPorts.GetValueOrDefault(portName)?.EndpointTx, new byte[] { b }, 1, 0);
-            }
+            //    foreach (byte b in buffer)
+            //{
+            //    Thread.Sleep(100);
+            //    SerialPorts.GetValueOrDefault(portName)?.Connection.BulkTransfer(SerialPorts.GetValueOrDefault(portName)?.EndpointTx, new byte[] { b }, 1, 0);
+            //}
 
             // Tx
             //UsbRequest requestTx = new UsbRequest();
@@ -253,5 +266,10 @@ namespace RemoteControl.Droid
             //return -1;
         }
 
+        public void Event(EventHandler eventRemoved, EventHandler eventAdded)
+        {
+            EventRemoved = eventRemoved;
+            EventAdded = eventAdded;
+        }
     }
 }

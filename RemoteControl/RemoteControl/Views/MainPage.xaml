@@ -8,12 +8,12 @@
     <!--NavigationPage.HasNavigationBar="False">-->
 
     <ContentPage.BindingContext>
-        <viewModels:MainViewModelAndroid/>
+        <viewModels:MainViewModelUWP/>
         <!--<binding:DataModel/>-->
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <views:AndroidView/>
+            <views:UWPView/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

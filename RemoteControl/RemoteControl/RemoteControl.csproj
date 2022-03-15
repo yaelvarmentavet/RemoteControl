@@ -55,6 +55,7 @@
     <None Remove="Icons\n7.bmp" />
     <None Remove="Icons\n8.bmp" />
     <None Remove="Icons\next.png" />
+    <None Remove="Icons\pause.png" />
     <None Remove="Icons\pr1h.bmp" />
     <None Remove="Icons\pr1l.bmp" />
     <None Remove="Icons\prh.bmp" />
@@ -71,6 +72,7 @@
     <None Remove="Icons\settings40.png" />
     <None Remove="Icons\side.png" />
     <None Remove="Icons\start.png" />
+    <None Remove="Icons\stop.png" />
     <None Remove="Icons\tilt.png" />
     <None Remove="Icons\top.png" />
     <None Remove="Icons\up.png" />
@@ -109,6 +111,7 @@
     <EmbeddedResource Include="Icons\n7.bmp" />
     <EmbeddedResource Include="Icons\n8.bmp" />
     <EmbeddedResource Include="Icons\next.png" />
+    <EmbeddedResource Include="Icons\pause.png" />
     <EmbeddedResource Include="Icons\pr1h.bmp" />
     <EmbeddedResource Include="Icons\pr1l.bmp" />
     <EmbeddedResource Include="Icons\prh.bmp" />
@@ -125,6 +128,7 @@
     <EmbeddedResource Include="Icons\settings40.png" />
     <EmbeddedResource Include="Icons\side.png" />
     <EmbeddedResource Include="Icons\start.png" />
+    <EmbeddedResource Include="Icons\stop.png" />
     <EmbeddedResource Include="Icons\top.png" />
     <EmbeddedResource Include="Icons\up.png" />
     <EmbeddedResource Include="Icons\w.bmp" />
@@ -161,6 +165,12 @@
     <Compile Update="Views\AndroidView.xaml.cs">
       <DependentUpon>AndroidView.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\StartProcessPage.xaml.cs">
+      <DependentUpon>StartProcessPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ProcessPage.xaml.cs">
+      <DependentUpon>ProcessPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -176,7 +186,7 @@
     <EmbeddedResource Update="Views\KinematicPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\StartTreatmentPage.xaml">
+    <EmbeddedResource Update="Views\StartProcessPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\TopView.xaml">

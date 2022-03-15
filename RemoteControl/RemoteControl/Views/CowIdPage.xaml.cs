@@ -17,9 +17,11 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
+            EdCowId.BindingContext = App.DataModel;
             EdTagId.BindingContext = App.DataModel;
-            EdCowId.SetBinding(Editor.TextProperty, "CowId");
-            EdTagId.SetBinding(Editor.TextProperty, "TagId");
+            BtnAddCow.BindingContext = App.DataModel;
+            //EdCowId.SetBinding(Editor.TextProperty, "CowId");
+            //EdTagId.SetBinding(Editor.TextProperty, "TagId");
 
             //CowIdPageInit();
         }
