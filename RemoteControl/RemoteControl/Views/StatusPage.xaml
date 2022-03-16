@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:RemoteControl.Resources"
+             xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
+             x:Class="RemoteControl.Views.StatusPage">
+    <ContentPage.BindingContext>
+        <viewModels:StatusViewModel/>
+        <!--<binding:DataModel/>-->
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <Label x:Name="LblAptx1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
+                <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
+                <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
+                <Label x:Name="LblAptx4" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
+                <Image Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.begin.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NextPage}"/>
+                    </Image.GestureRecognizers>
+                </Image>
+            </Grid>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -30,6 +30,11 @@
                         <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
                     </Image.GestureRecognizers>
                 </Image>
+                <Image Grid.Row="3" Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.next.png}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NextPageStatus}"/>
+                    </Image.GestureRecognizers>
+                </Image>
             </Grid>
         </StackLayout>
     </ContentView.Content>

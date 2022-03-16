@@ -15,10 +15,15 @@ namespace RemoteControl.ViewModels
             {
                 await App.Current.MainPage.Navigation.PushAsync(new ManualCowIdPage());
             });
+            NextPageStatus = new Command(async () =>
+            {
+                await App.Current.MainPage.Navigation.PushAsync(new StatusPage());
+            });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Command NextPageCowId { get; }
+        public Command NextPageCowId{ get; }
+        public Command NextPageStatus { get; }
     }
 }

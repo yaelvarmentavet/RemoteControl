@@ -8,6 +8,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -38,6 +43,7 @@
     <None Remove="Icons\ap_red.bmp" />
     <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
+    <None Remove="Icons\begin.png" />
     <None Remove="Icons\break.png" />
     <None Remove="Icons\down.png" />
     <None Remove="Icons\empty.png" />
@@ -95,6 +101,7 @@
     <EmbeddedResource Include="Icons\ap_red.bmp" />
     <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
+    <EmbeddedResource Include="Icons\begin.png" />
     <EmbeddedResource Include="Icons\break.png" />
     <EmbeddedResource Include="Icons\down.png" />
     <EmbeddedResource Include="Icons\empty.png" />
@@ -187,6 +194,9 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\StartProcessPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\StatusPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\TopView.xaml">
