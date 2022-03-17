@@ -11,10 +11,10 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
-            LblAptx1.BindingContext = App.DataModel.Aptx[0];
-            LblAptx2.BindingContext = App.DataModel.Aptx[1];
-            LblAptx3.BindingContext = App.DataModel.Aptx[2];
-            LblAptx4.BindingContext = App.DataModel.Aptx[3];
+            LblAptx1.BindingContext = App.DataModel.Aptxs[0];
+            LblAptx2.BindingContext = App.DataModel.Aptxs[1];
+            LblAptx3.BindingContext = App.DataModel.Aptxs[2];
+            LblAptx4.BindingContext = App.DataModel.Aptxs[3];
         }
     }
 }

@@ -11,7 +11,7 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
-            PrgPulses.BindingContext = App.DataModel.Aptx[0];
+            PrgPulses.BindingContext = App.DataModel;
             //EdCowId.BindingContext = App.DataModel;
             //EdCowId.SetBinding(Editor.TextProperty, "SNum");
 

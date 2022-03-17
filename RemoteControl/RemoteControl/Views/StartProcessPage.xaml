@@ -15,7 +15,7 @@
                 <Grid.ColumnDefinitions>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
-                <ProgressBar x:Name="PrgPulses" Grid.Row="1" Grid.Column="1" Progress="{Binding Pulses}"/>
+                <ProgressBar x:Name="PrgPulses" Grid.Row="1" Grid.Column="1" Progress="{Binding Progress}"/>
                 <Image Grid.Row="1" Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.stop.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding StopProcess}"/>
