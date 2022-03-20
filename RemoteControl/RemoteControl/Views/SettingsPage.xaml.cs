@@ -27,35 +27,35 @@ namespace RemoteControl.Views
         //    {
         //        Text = "Technician Mode",
         //    };
-        //    ltitle.SetDynamicResource(Label.StyleProperty, "LabelTitle");
+        //    ltitle.SetDynamicResource(Label.StyleProperty, "Label24");
 
         //    Button btn1 = new Button
         //    {
         //        Text = "Battery V: XX[V] I: XX[A]"
         //    };
-        //    Resources.Where(r => r.Key == "ButtonLarge");
-        //    btn1.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+        //    Resources.Where(r => r.Key == "ButtonCornerRadius10");
+        //    btn1.SetDynamicResource(Button.StyleProperty, "ButtonCornerRadius10");
         //    //btn1.SetBinding(Button.CommandProperty, "");
 
         //    Button btn2 = new Button
         //    {
         //        Text = "Valid touch XXX[%]"
         //    };
-        //    btn2.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+        //    btn2.SetDynamicResource(Button.StyleProperty, "ButtonCornerRadius10");
         //    //btn2.SetBinding(Button.CommandProperty, "");
 
         //    Button btn3 = new Button
         //    {
         //        Text = "Pressure XX[Bar]"
         //    };
-        //    btn3.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+        //    btn3.SetDynamicResource(Button.StyleProperty, "ButtonCornerRadius10");
         //    //btn3.SetBinding(Button.CommandProperty, "");
 
         //    Button btn4 = new Button
         //    {
         //        Text = "KTU Speed XX.X[m / sec]"
         //    };
-        //    btn4.SetDynamicResource(Button.StyleProperty, "ButtonLarge");
+        //    btn4.SetDynamicResource(Button.StyleProperty, "ButtonCornerRadius10");
         //    //btn4.SetBinding(Button.CommandProperty, "");
 
         //    Grid gridmid = new Grid()

@@ -79,7 +79,7 @@ namespace RemoteControl.Models
                     int i = buffer.ToList().IndexOf(b);
                     if ((buffer.Length - i) >= size)
                     {
-                        if (buffer[i + size - 2 - 1] == Eop)
+                        if (buffer[i + size - 1 - 2] == Eop)
                         {
                             buffer = buffer.Skip(i).ToArray();
                             return true;
@@ -570,6 +570,17 @@ namespace RemoteControl.Models
 
     public class DataModel : INotifyPropertyChanged
     {
+        private uint cmt = UERROR;
+        public uint Cmt
+        {
+            get => cmt;
+            set
+            {
+                cmt = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cmt)));
+            }
+        }
+
         private uint cowid = UERROR;
         public uint CowId
         {
@@ -703,7 +714,7 @@ namespace RemoteControl.Models
                 //FL = lbl.BackgroundColor == Color.Cyan ? Color.AliceBlue : Color.Cyan;
                 fl = fl ? false : true;
                 FL = FL;
-                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundPressed");
+                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundCyan");
             });
 
             TappedRL = new Command(() =>
@@ -711,7 +722,7 @@ namespace RemoteControl.Models
                 //FL = lbl.BackgroundColor == Color.Cyan ? Color.AliceBlue : Color.Cyan;
                 rl = rl ? false : true;
                 RL = RL;
-                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundPressed");
+                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundCyan");
             });
 
             TappedFR = new Command(() =>
@@ -719,7 +730,7 @@ namespace RemoteControl.Models
                 //FL = lbl.BackgroundColor == Color.Cyan ? Color.AliceBlue : Color.Cyan;
                 fr = fr ? false : true;
                 FR = FR;
-                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundPressed");
+                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundCyan");
             });
 
             TappedRR = new Command(() =>
@@ -727,7 +738,7 @@ namespace RemoteControl.Models
                 //FL = lbl.BackgroundColor == Color.Cyan ? Color.AliceBlue : Color.Cyan;
                 rr = rr ? false : true;
                 RR = RR;
-                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundPressed");
+                //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundCyan");
             });
 
             //UsbSerial.Event(
@@ -1005,6 +1016,7 @@ namespace RemoteControl.Models
                     case REMOTE:
                         RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
                         RxBuffer[10] = Aptx.STX;
+                        RxBuffer[11] = Aptx.APTXIDs[0];
                         RxBuffer[10 + 32] = Aptx.ETX;
                         Aptx aptx = new Aptx();
                         RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];

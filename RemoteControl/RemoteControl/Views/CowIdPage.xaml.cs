@@ -34,35 +34,35 @@ namespace RemoteControl.Views
         //    {
         //        Text = "Enter a new COW",
         //    };
-        //    ltitle.SetDynamicResource(StyleProperty, "LabelTitle");
+        //    ltitle.SetDynamicResource(StyleProperty, "Label24");
 
         //    Label lblid = new Label
         //    {
         //        Text = "ID :",
         //    };
-        //    lblid.SetDynamicResource(StyleProperty, "LabelSmall");
+        //    lblid.SetDynamicResource(StyleProperty, "Label16");
 
         //    Editor edtid = new Editor();
-        //    edtid.SetDynamicResource(StyleProperty, "EditorSmall");
+        //    edtid.SetDynamicResource(StyleProperty, "Editor16");
 
         //    Label lbltagid = new Label
         //    {
         //        Text = "Tag ID:",
         //    };
-        //    lbltagid.SetDynamicResource(StyleProperty, "LabelSmall");
+        //    lbltagid.SetDynamicResource(StyleProperty, "Label16");
 
         //    Editor edttagid = new Editor
         //    {
         //        Placeholder = "*should be auto fill from cow tag",
         //    };
-        //    edttagid.SetDynamicResource(StyleProperty, "EditorSmall");
+        //    edttagid.SetDynamicResource(StyleProperty, "Editor16");
         //    edttagid.SetBinding(Editor.TextProperty, "Id");
 
         //    Button btnadd = new Button
         //    {
         //        Text = "Add COW",
         //    };
-        //    btnadd.SetDynamicResource(StyleProperty, "ButtonLarge");
+        //    btnadd.SetDynamicResource(StyleProperty, "ButtonCornerRadius10");
 
         //    Grid gridmid = new Grid()
         //    {

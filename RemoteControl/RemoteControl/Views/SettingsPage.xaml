@@ -19,14 +19,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDark}">
+                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDarkGray}">
                 </Frame>
-                <Frame Grid.Row="0" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="0" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:TopView/>
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="1" Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
+                <Frame Grid.Row="1" Style="{StaticResource FrameWhite}" VerticalOptions="CenterAndExpand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -40,15 +40,15 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.RowSpan="1" Grid.ColumnSpan="4" Style="{StaticResource LabelTitle}" Text="Technician Mode"/>
-                        <Button Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Style="{StaticResource ButtonLarge}" Text="Battery V: XX[V] I: XX[A]"/>
-                        <Button Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource ButtonLarge}" Text="Valid touch XXX[%]"/>
-                        <Button Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Style="{StaticResource ButtonLarge}" Text="Pressure XX[Bar]"/>
-                        <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Style="{StaticResource ButtonLarge}" Text="KTU Speed XX.X[m / sec]"/>
-                        <!--<Button Grid.Row="1" Grid.Column="2" Style="{StaticResource ButtonLarge}" Text="COW ID Management"/>-->
+                        <Label Grid.Row="0" Grid.RowSpan="1" Grid.ColumnSpan="4" Style="{StaticResource Label24}" Text="Technician Mode"/>
+                        <Button Grid.Row="1" Grid.Column="0" Grid.RowSpan="2" Style="{StaticResource ButtonCornerRadius10}" Text="Battery V: XX[V] I: XX[A]"/>
+                        <Button Grid.Row="1" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource ButtonCornerRadius10}" Text="Valid touch XXX[%]"/>
+                        <Button Grid.Row="1" Grid.Column="2" Grid.RowSpan="2" Style="{StaticResource ButtonCornerRadius10}" Text="Pressure XX[Bar]"/>
+                        <Button Grid.Row="1" Grid.Column="3" Grid.RowSpan="2" Style="{StaticResource ButtonCornerRadius10}" Text="KTU Speed XX.X[m / sec]"/>
+                        <!--<Button Grid.Row="1" Grid.Column="2" Style="{StaticResource ButtonCornerRadius10}" Text="COW ID Management"/>-->
                     </Grid>
                 </Frame>
-                <Frame Grid.Row="2" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:BottomView/>
                     </StackLayout>

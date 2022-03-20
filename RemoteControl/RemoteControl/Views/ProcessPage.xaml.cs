@@ -32,126 +32,126 @@ namespace RemoteControl.Views
         //    {
         //        Text = "Enter CMT Results"
         //    };
-        //    btncmtres.SetDynamicResource(StyleProperty, "ButtonLarge");
+        //    btncmtres.SetDynamicResource(StyleProperty, "ButtonCornerRadius10");
         //    btncmtres.SetBinding(Button.CommandProperty, "CMTResult");
 
         //    Label lbltitle = new Label
         //    {
         //        Text = "Clinical Treatment – Cow ID ####",
         //    };
-        //    lbltitle.SetDynamicResource(StyleProperty, "LabelTitle");
+        //    lbltitle.SetDynamicResource(StyleProperty, "Label24");
 
         //    Label lblcmt = new Label
         //    {
         //        Text = "CMT INFO:",
         //    };
-        //    lblcmt.SetDynamicResource(StyleProperty, "LabelInfo");
+        //    lblcmt.SetDynamicResource(StyleProperty, "LabelLightGreen");
 
         //    Label lblcmtval1 = new Label
         //    {
         //        Text = "(T) 200K – 400K",
         //    };
-        //    lblcmtval1.SetDynamicResource(StyleProperty, "LabelInfo");
+        //    lblcmtval1.SetDynamicResource(StyleProperty, "LabelLightGreen");
         //    //lblcmtval1.SetBinding(Label.TextProperty, "CMT1");
 
         //    Label lblcmtval2 = new Label
         //    {
         //        Text = "(1) 400K – 1200K",
         //    };
-        //    lblcmtval2.SetDynamicResource(StyleProperty, "LabelInfo");
+        //    lblcmtval2.SetDynamicResource(StyleProperty, "LabelLightGreen");
         //    //lblcmtval2.SetBinding(Label.TextProperty, "CMT2");
 
         //    Label lblcmtval3 = new Label
         //    {
         //        Text = "(2) 1200K – 5000K",
         //    };
-        //    lblcmtval3.SetDynamicResource(StyleProperty, "LabelInfo");
+        //    lblcmtval3.SetDynamicResource(StyleProperty, "LabelLightGreen");
         //    //lblcmtval3.SetBinding(Label.TextProperty, "CMT3");
 
         //    Label lblcmtval4 = new Label
         //    {
         //        Text = "(3) > 5000K",
         //    };
-        //    lblcmtval4.SetDynamicResource(StyleProperty, "LabelInfo");
+        //    lblcmtval4.SetDynamicResource(StyleProperty, "LabelLightGreen");
         //    //lblcmtval4.SetBinding(Label.TextProperty, "CMT4");
 
         //    Frame frminfo = new Frame();
-        //    frminfo.SetDynamicResource(StyleProperty, "FrameInfo");
+        //    frminfo.SetDynamicResource(StyleProperty, "FrameLightGreen");
 
         //    Label lblselect = new Label
         //    {
         //        Text = "Select Quarter for to start treatment",
         //    };
-        //    lblselect.SetDynamicResource(StyleProperty, "LabelSubtitle");
+        //    lblselect.SetDynamicResource(StyleProperty, "Label20");
 
         //    Label lblautobtn = new Label
         //    {
         //        BackgroundColor = Color.LightBlue,
         //        //HorizontalTextAlignment = TextAlignment.End,
         //    };
-        //    lblautobtn.SetDynamicResource(StyleProperty, "LabelMilli");
+        //    lblautobtn.SetDynamicResource(StyleProperty, "Label12");
 
         //    Label lblauto = new Label
         //    {
         //        Text = "Auto Transition",
         //        //HorizontalTextAlignment = TextAlignment.End,
         //    };
-        //    lblauto.SetDynamicResource(StyleProperty, "LabelMilli");
+        //    lblauto.SetDynamicResource(StyleProperty, "Label12");
 
         //    Label lblpulse = new Label
         //    {
         //        Text = "0000"
         //    };
-        //    lblpulse.SetDynamicResource(StyleProperty, "LabelTreat");
+        //    lblpulse.SetDynamicResource(StyleProperty, "LabelAliceBlue");
         //    //btncmt.SetBinding(Button.CommandProperty, "Treat");
 
         //    Label lblfl = new Label
         //    {
         //        Text = "Front Left",
         //    };
-        //    lblfl.SetDynamicResource(StyleProperty, "LabelTreat");
+        //    lblfl.SetDynamicResource(StyleProperty, "LabelAliceBlue");
 
         //    Label lblflv = new Label
         //    {
         //        Text = "T",
         //    };
-        //    lblflv.SetDynamicResource(StyleProperty, "LabelFront");
+        //    lblflv.SetDynamicResource(StyleProperty, "LabelGreen");
 
         //    Label lblrl = new Label
         //    {
         //        Text = "Rear Left",
         //    };
-        //    lblrl.SetDynamicResource(StyleProperty, "LabelTreat");
+        //    lblrl.SetDynamicResource(StyleProperty, "LabelAliceBlue");
 
         //    Label lblrlv = new Label
         //    {
         //        Text = "2",
         //    };
-        //    lblrlv.SetDynamicResource(StyleProperty, "LabelRear");
+        //    lblrlv.SetDynamicResource(StyleProperty, "LabelRed");
 
         //    Label lblfr = new Label
         //    {
         //        Text = "Front Right",
         //    };
-        //    lblfr.SetDynamicResource(StyleProperty, "LabelTreat");
+        //    lblfr.SetDynamicResource(StyleProperty, "LabelAliceBlue");
 
         //    Label lblfrv = new Label
         //    {
         //        Text = "1",
         //    };
-        //    lblfrv.SetDynamicResource(StyleProperty, "LabelFront");
+        //    lblfrv.SetDynamicResource(StyleProperty, "LabelGreen");
 
         //    Label lblrr = new Label
         //    {
         //        Text = "Rear Right",
         //    };
-        //    lblrr.SetDynamicResource(StyleProperty, "LabelTreat");
+        //    lblrr.SetDynamicResource(StyleProperty, "LabelAliceBlue");
 
         //    Label lblrrv = new Label
         //    {
         //        Text = "3",
         //    };
-        //    lblrrv.SetDynamicResource(StyleProperty, "LabelRear");
+        //    lblrrv.SetDynamicResource(StyleProperty, "LabelRed");
 
         //    Grid gridmid = new Grid()
         //    {

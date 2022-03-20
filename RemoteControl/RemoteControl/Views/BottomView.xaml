@@ -15,10 +15,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.pr1h.bmp}"/>
-                <Image Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.pulseYes.bmp}"/>
-                <Image Grid.Column="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.bat_1.bmp}"/>
-                <Image Grid.Column="3" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.ap_clean.bmp}"/>
+                <Image Grid.Column="0" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pr1h.bmp}"/>
+                <Image Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pulseYes.bmp}"/>
+                <Image Grid.Column="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.bat_1.bmp}"/>
+                <Image Grid.Column="3" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.ap_clean.bmp}"/>
             </Grid>
         </StackLayout>
   </ContentView.Content>

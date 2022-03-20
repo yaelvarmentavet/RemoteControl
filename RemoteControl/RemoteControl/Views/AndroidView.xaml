@@ -14,14 +14,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDark}">
+                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDarkGray}">
                 </Frame>
-                <Frame Grid.Row="0" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="0" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:TopView/>
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="1" Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
+                <Frame Grid.Row="1" Style="{StaticResource FrameWhite}" VerticalOptions="CenterAndExpand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -37,17 +37,17 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Style="{StaticResource LabelTitle}" Text="APTX II – Welcome"/>
-                        <Button Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ButtonLarge}" Text="CMT"/>
-                        <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonLarge}" Text="PROCEDURE" Command="{Binding NextPageTreatment}"/>
-                        <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonLarge}" Text="COW ID Management" Command="{Binding NextPageCowId}"/>
-                        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelSmallAligned}" Text="AM ID :"/>
-                        <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource LabelSmall}" Text="987653"/>
-                        <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource LabelSmallAligned}" Text="APT ID :"/>
-                        <Label x:Name="LblAptxId" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource LabelSmall}" Text="234876"/>
+                        <Label Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Style="{StaticResource Label24}" Text="APTX II – Welcome"/>
+                        <Button Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="CMT" Command="{Binding NextPageCMT}"/>
+                        <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="PROCEDURE" Command="{Binding NextPageTreatment}"/>
+                        <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="COW ID Management" Command="{Binding NextPageCowId}"/>
+                        <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="AM ID :"/>
+                        <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource Label16}" Text="987653"/>
+                        <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="APT ID :"/>
+                        <Label x:Name="LblAptxId" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="234876"/>
                     </Grid>
                 </Frame>
-                <Frame Grid.Row="2" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:BottomView/>
                     </StackLayout>

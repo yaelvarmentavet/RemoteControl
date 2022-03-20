@@ -5,122 +5,130 @@
              x:Class="RemoteControl.App">
     <Application.Resources>
         <ResourceDictionary>
-            <Color x:Key="BackgroundDark">Gray</Color>
-            <Color x:Key="BackgroundLight">White</Color>
-            <Color x:Key="BackgroundInfo">LightGreen</Color>
-            <Color x:Key="TextInfo">White</Color>
-            <Color x:Key="BackgroundTreat">AliceBlue</Color>
-            <Color x:Key="TextTreat">DarkCyan</Color>
-            <Color x:Key="BackgroundPressed">Cyan</Color>
-            <Color x:Key="BackgroundProgress">DarkCyan</Color>
-            <Color x:Key="BackgroundFront">Green</Color>
-            <Color x:Key="BackgroundRear">Red</Color>
-            <Style x:Key="FrameDark" TargetType="Frame">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDark}"/>
+            <Color x:Key="BackgroundDarkGray">Gray</Color>
+            <Color x:Key="BackgroundWhite">White</Color>
+            <Color x:Key="BackgroundLightGreen">LightGreen</Color>
+            <Color x:Key="BackgroundAliceBlue">AliceBlue</Color>
+            <Color x:Key="TextWhite">White</Color>
+            <Color x:Key="TextDarkCyan">DarkCyan</Color>
+            <Color x:Key="TextYellowGreen">YellowGreen</Color>
+            <Color x:Key="BackgroundCyan">Cyan</Color>
+            <Color x:Key="BackgroundDarkCyan">DarkCyan</Color>
+            <Color x:Key="BackgroundGreen">Green</Color>
+            <Color x:Key="BackgroundRed">Red</Color>
+            <Style x:Key="FrameDarkGray" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkGray}"/>
+                <Setter Property="CornerRadius" Value="10"/>
+            </Style>
+            <Style x:Key="FrameWhite" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundWhite}"/>
                 <Setter Property="CornerRadius" Value="0"/>
             </Style>
-            <Style x:Key="FrameLight" TargetType="Frame">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLight}"/>
-                <Setter Property="CornerRadius" Value="0"/>
-            </Style>
-            <Style x:Key="FrameInfo" TargetType="Frame">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundInfo}"/>
+            <Style x:Key="FrameLightGreen" TargetType="Frame">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLightGreen}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="ButtonLarge" TargetType="Button">
+            <Style x:Key="ButtonCornerRadius10" TargetType="Button">
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="IconFrame" TargetType="Image">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLight}"/>
+            <Style x:Key="IconWhite" TargetType="Image">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundWhite}"/>
                 <!--<Setter Property="Scale" Value="2"/>-->
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="IconStop" TargetType="Image">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundRear}"/>
+            <Style x:Key="IconRed" TargetType="Image">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundRed}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="FrameBorder" TargetType="Frame">
-                <Setter Property="BorderColor" Value="{StaticResource BackgroundDark}"/>
-                <Setter Property="CornerRadius" Value="10"/>
-            </Style>
-            <Style x:Key="LabelTitle" TargetType="Label">
+            <Style x:Key="Label24" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=24, Tablet=24, Desktop=48}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelSubtitle" TargetType="Label">
+            <Style x:Key="Label20" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=20, Tablet=20, Desktop=20}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelSmall" TargetType="Label">
+            <Style x:Key="Label16" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelSmallAligned" TargetType="Label">
+            <Style x:Key="LabelAlignedEnd" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
                 <Setter Property="HorizontalTextAlignment" Value="End"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelMilli" TargetType="Label">
+            <Style x:Key="Label12" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=12}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelInfo" TargetType="Label">
+            <Style x:Key="LabelLightGreen" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=16}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundInfo}"/>
-                <Setter Property="TextColor" Value="{StaticResource TextInfo}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLightGreen}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextWhite}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelTreat" TargetType="Label">
+            <Style x:Key="LabelAliceBlue" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundTreat}"/>
-                <Setter Property="TextColor" Value="{StaticResource TextTreat}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundAliceBlue}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextDarkCyan}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelProgress" TargetType="Label">
+            <Style x:Key="LabelYellowGreen" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundProgress}"/>
-                <Setter Property="TextColor" Value="{StaticResource TextTreat}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextYellowGreen}"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelFront" TargetType="Label">
+            <Style x:Key="LabelDarkCyan" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundFront}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkCyan}"/>
+                <Setter Property="TextColor" Value="{StaticResource TextWhite}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelRear" TargetType="Label">
+            <Style x:Key="LabelGreen" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundRear}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundGreen}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="LabelStartTreatment" TargetType="Label">
+            <Style x:Key="LabelRed" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundRed}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="EditorSmall" TargetType="Editor">
+            <Style x:Key="Editor16" TargetType="Editor">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
-            <Style x:Key="EditorCentered" TargetType="Editor">
+            <Style x:Key="Editor30" TargetType="Editor">
                 <Setter Property="FontSize" Value="{OnIdiom Phone=30, Tablet=30, Desktop=30}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
                 <!--Setter Property="BindingContext" Value="{binding:DataModel}"/-->
+            </Style>
+            <Style x:Key="SwitchDarkCyan" TargetType="Switch">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkCyan}"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
+            <Style x:Key="ListViewCyan" TargetType="ListView">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundCyan}"/>
+                <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>

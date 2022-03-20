@@ -39,12 +39,15 @@
   <ItemGroup>
     <None Remove="Icons\4quarters.png" />
     <None Remove="Icons\approve.png" />
+    <None Remove="Icons\approve1.png" />
     <None Remove="Icons\ap_clean.bmp" />
     <None Remove="Icons\ap_red.bmp" />
     <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
     <None Remove="Icons\begin.png" />
     <None Remove="Icons\break.png" />
+    <None Remove="Icons\cancel.png" />
+    <None Remove="Icons\cow.png" />
     <None Remove="Icons\down.png" />
     <None Remove="Icons\empty.png" />
     <None Remove="Icons\fl.png" />
@@ -97,12 +100,15 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\4quarters.png" />
     <EmbeddedResource Include="Icons\approve.png" />
+    <EmbeddedResource Include="Icons\approve1.png" />
     <EmbeddedResource Include="Icons\ap_clean.bmp" />
     <EmbeddedResource Include="Icons\ap_red.bmp" />
     <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
     <EmbeddedResource Include="Icons\begin.png" />
     <EmbeddedResource Include="Icons\break.png" />
+    <EmbeddedResource Include="Icons\cancel.png" />
+    <EmbeddedResource Include="Icons\cow.png" />
     <EmbeddedResource Include="Icons\down.png" />
     <EmbeddedResource Include="Icons\empty.png" />
     <EmbeddedResource Include="Icons\fl.png" />

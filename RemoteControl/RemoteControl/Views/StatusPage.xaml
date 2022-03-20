@@ -23,12 +23,12 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
-                <Label x:Name="LblAptx1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
-                <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
-                <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
-                <Label x:Name="LblAptx4" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelTreat}"/>
-                <Image Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.begin.png}">
+                <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <Label x:Name="LblAptx1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx4" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Image Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.begin.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPage}"/>
                     </Image.GestureRecognizers>

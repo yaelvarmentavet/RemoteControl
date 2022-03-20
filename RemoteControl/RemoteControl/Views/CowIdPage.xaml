@@ -19,14 +19,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDark}">
+                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDarkGray}">
                 </Frame>
-                <Frame Grid.Row="0" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="0" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:TopView/>
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="1" Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
+                <Frame Grid.Row="1" Style="{StaticResource FrameWhite}" VerticalOptions="CenterAndExpand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -41,17 +41,17 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.RowSpan="1" Grid.ColumnSpan="5" Style="{StaticResource LabelTitle}" Text="Enter a new COW"/>
-                        <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource LabelSmall}" Text="Cow ID :"/>
-                        <Editor x:Name="EdCowId" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource EditorSmall}"
+                        <Label Grid.Row="0" Grid.RowSpan="1" Grid.ColumnSpan="5" Style="{StaticResource Label24}" Text="Enter a new COW"/>
+                        <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Label16}" Text="Cow ID :"/>
+                        <Editor x:Name="EdCowId" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource Editor16}"
                                 Text="{Binding CowId}"/>
-                        <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource LabelSmall}" Text="Tag ID:"/>
-                        <Editor x:Name="EdTagId" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource EditorSmall}" Placeholder="*should be auto fill from cow tag"
+                        <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource Label16}" Text="Tag ID:"/>
+                        <Editor x:Name="EdTagId" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource Editor16}" Placeholder="*should be auto fill from cow tag"
                                 Text="{Binding TagId}"/>
-                        <Button x:Name="BtnAddCow" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource ButtonLarge}" Text="Add COW" Command="{Binding AddCow}"/>
+                        <Button x:Name="BtnAddCow" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource ButtonCornerRadius10}" Text="Add COW" Command="{Binding AddCow}"/>
                     </Grid>
                 </Frame>
-                <Frame Grid.Row="2" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:BottomView/>
                     </StackLayout>

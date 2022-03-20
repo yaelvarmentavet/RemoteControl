@@ -32,28 +32,28 @@ namespace RemoteControl.Views
         //    {
         //        Text = "APTX II – Welcome",
         //    };
-        //    lbltitle.SetDynamicResource(StyleProperty, "LabelTitle");
+        //    lbltitle.SetDynamicResource(StyleProperty, "Label24");
 
         //    Button btncmt = new Button
         //    {
         //        Text = "CMT"
         //    };
-        //    Resources.Where(r => r.Key == "ButtonLarge");
-        //    btncmt.SetDynamicResource(StyleProperty, "ButtonLarge");
+        //    Resources.Where(r => r.Key == "ButtonCornerRadius10");
+        //    btncmt.SetDynamicResource(StyleProperty, "ButtonCornerRadius10");
         //    btncmt.SetBinding(Button.CommandProperty, "NextPageCMT");
 
         //    Button btntreat = new Button
         //    {
         //        Text = "Treatment"
         //    };
-        //    btntreat.SetDynamicResource(StyleProperty, "ButtonLarge");
+        //    btntreat.SetDynamicResource(StyleProperty, "ButtonCornerRadius10");
         //    btntreat.SetBinding(Button.CommandProperty, "NextPageTreatment");
 
         //    Button btncowid = new Button
         //    {
         //        Text = "COW ID Management"
         //    };
-        //    btncowid.SetDynamicResource(StyleProperty, "ButtonLarge");
+        //    btncowid.SetDynamicResource(StyleProperty, "ButtonCornerRadius10");
         //    btncowid.SetBinding(Button.CommandProperty, "NextPageCowId");
 
         //    Label lblamid = new Label
@@ -61,10 +61,10 @@ namespace RemoteControl.Views
         //        Text = "AM ID :",
         //        HorizontalTextAlignment = TextAlignment.End,
         //    };
-        //    lblamid.SetDynamicResource(StyleProperty, "LabelSmall");
+        //    lblamid.SetDynamicResource(StyleProperty, "Label16");
 
         //    Label lblamval = new Label() { BindingContext = App.DataModel };
-        //    lblamval.SetDynamicResource(StyleProperty, "LabelSmall");
+        //    lblamval.SetDynamicResource(StyleProperty, "Label16");
         //    lblamval.SetBinding(Label.TextProperty, "SNum");
         //    //lblamval.BindingContext = BindingContext;
 
@@ -73,10 +73,10 @@ namespace RemoteControl.Views
         //        Text = "APT ID :",
         //        HorizontalTextAlignment = TextAlignment.End,
         //    };
-        //    lblaptid.SetDynamicResource(StyleProperty, "LabelSmall");
+        //    lblaptid.SetDynamicResource(StyleProperty, "Label16");
 
         //    Label lblaptval = new Label() { BindingContext = App.DataModel };
-        //    lblaptval.SetDynamicResource(StyleProperty, "LabelSmall");
+        //    lblaptval.SetDynamicResource(StyleProperty, "Label16");
         //    lblaptval.SetBinding(Label.TextProperty, "AptId");
         //    //lblaptval.BindingContext = BindingContext;
 

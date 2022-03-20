@@ -15,6 +15,8 @@ namespace RemoteControl.Views
         public CMTPage()
         {
             InitializeComponent();
+
+            LVFL.BindingContext = App.DataModel;
         }
     }
 }

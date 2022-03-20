@@ -19,7 +19,7 @@ namespace RemoteControl
 
             DataModel = ServiceLocator.Current.GetInstance<DataModel>();
 
-            var color = Resources.Where(r => r.Key == "BackgroundDark").FirstOrDefault().Value;
+            var color = Resources.Where(r => r.Key == "BackgroundDarkGray").FirstOrDefault().Value;
             MainPage = new NavigationPage(new MainPage())
             {
                 BarBackgroundColor = color == null ? Color.Default : (Color)color,

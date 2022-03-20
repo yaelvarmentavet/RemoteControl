@@ -23,84 +23,84 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Row="5" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="6" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.top.png}"/>
-                <Image Grid.Row="5" Grid.Column="4" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="6" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.top.png}"/>
-                <Image Grid.Row="5" Grid.Column="8" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="6" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.side.png}"/>
-                <Image Grid.Row="7" Grid.Column="1" Scale="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.rcw.png}">
+                <Image Grid.Row="5" Grid.Column="0" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="6" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.top.png}"/>
+                <Image Grid.Row="5" Grid.Column="4" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="6" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.top.png}"/>
+                <Image Grid.Row="5" Grid.Column="8" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="6" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.side.png}"/>
+                <Image Grid.Row="7" Grid.Column="1" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.rcw.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding RCWStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
                 <!--<StackLayout BackgroundColor="AliceBlue" xct:TouchEffect.LongPressCommand="{Binding ZRCWStop}"/>-->
-                <Image Grid.Row="7" Grid.Column="2" Scale="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.rccw.png}">
+                <Image Grid.Row="7" Grid.Column="2" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.rccw.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding RCCWStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="7" Grid.Column="5" Scale="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.left.png}">
+                <Image Grid.Row="7" Grid.Column="5" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.left.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding AFStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="7" Grid.Column="6" Scale="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.right.png}">
+                <Image Grid.Row="7" Grid.Column="6" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.right.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ABStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="7" Grid.Column="9" Scale="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.up.png}">
+                <Image Grid.Row="7" Grid.Column="9" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.up.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding MZUStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="7" Grid.Column="10" Scale="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.down.png}">
+                <Image Grid.Row="7" Grid.Column="10" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.down.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding MZDStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
 
-                <Image Grid.Row="8" Grid.Column="1" Scale="1" Style="{StaticResource IconStop}" Source="{resources:ImageResource RemoteControl.Icons.rcw.png}">
+                <Image Grid.Row="8" Grid.Column="1" Scale="1" Style="{StaticResource IconRed}" Source="{resources:ImageResource RemoteControl.Icons.rcw.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding RCWStop}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="8" Grid.Column="2" Scale="1" Style="{StaticResource IconStop}" Source="{resources:ImageResource RemoteControl.Icons.rccw.png}">
+                <Image Grid.Row="8" Grid.Column="2" Scale="1" Style="{StaticResource IconRed}" Source="{resources:ImageResource RemoteControl.Icons.rccw.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding RCCWStop}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="8" Grid.Column="5" Scale="1" Style="{StaticResource IconStop}" Source="{resources:ImageResource RemoteControl.Icons.left.png}">
+                <Image Grid.Row="8" Grid.Column="5" Scale="1" Style="{StaticResource IconRed}" Source="{resources:ImageResource RemoteControl.Icons.left.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding AFStop}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="8" Grid.Column="6" Scale="1" Style="{StaticResource IconStop}" Source="{resources:ImageResource RemoteControl.Icons.right.png}">
+                <Image Grid.Row="8" Grid.Column="6" Scale="1" Style="{StaticResource IconRed}" Source="{resources:ImageResource RemoteControl.Icons.right.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ABStop}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="8" Grid.Column="9" Scale="1" Style="{StaticResource IconStop}" Source="{resources:ImageResource RemoteControl.Icons.up.png}">
+                <Image Grid.Row="8" Grid.Column="9" Scale="1" Style="{StaticResource IconRed}" Source="{resources:ImageResource RemoteControl.Icons.up.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding MZUStop}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="8" Grid.Column="10" Scale="1" Style="{StaticResource IconStop}" Source="{resources:ImageResource RemoteControl.Icons.down.png}">
+                <Image Grid.Row="8" Grid.Column="10" Scale="1" Style="{StaticResource IconRed}" Source="{resources:ImageResource RemoteControl.Icons.down.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding MZDStop}"/>
                     </Image.GestureRecognizers>
                 </Image>
 
-                <Image Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.empty.png}">
+                <Image Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.empty.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding TCWStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <!--<Image x:Name="ImgMan" Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.manual.png}"/>-->
-                <Image Grid.Row="6" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.break.png}">
+                <!--<Image x:Name="ImgMan" Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.manual.png}"/>-->
+                <Image Grid.Row="6" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.break.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding XFStart}"/>
                     </Image.GestureRecognizers>
                 </Image>
-                <Image Grid.Row="8" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.start.png}">
+                <Image Grid.Row="8" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.start.png}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding StartProcessPage}"/>
                     </Image.GestureRecognizers>

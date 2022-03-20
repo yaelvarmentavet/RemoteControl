@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:RemoteControl.Resources"
              xmlns:views="clr-namespace:RemoteControl.Views"
              xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
@@ -19,14 +20,14 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDark}">
+                <Frame Grid.RowSpan="3" Style="{StaticResource FrameDarkGray}">
                 </Frame>
-                <Frame Grid.Row="0" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="0" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:TopView/>
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="1" Style="{StaticResource FrameLight}" VerticalOptions="CenterAndExpand">
+                <Frame Grid.Row="1" Style="{StaticResource FrameWhite}" VerticalOptions="CenterAndExpand">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -48,54 +49,56 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="6" Text="Clinical Procedure – Cow ID ####" Style="{StaticResource LabelTitle}"/>
-                        <Frame Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource FrameInfo}"/>
-                        <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="CMT INFO:" Style="{StaticResource LabelInfo}"/>
-                        <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(N) greater then 200K" Style="{StaticResource LabelInfo}"/>
-                        <Label Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(T) 200K – 400K" Style="{StaticResource LabelInfo}"/>
-                        <Label Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(1) 400K – 1200K" Style="{StaticResource LabelInfo}"/>
-                        <Label Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(2) 1200K – 5000K" Style="{StaticResource LabelInfo}"/>
-                        <Label Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(3) > 5000K" Style="{StaticResource LabelInfo}"/>
-                        <Label Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="5" Text="Select Quarter for to start Procedure" Style="{StaticResource LabelSubtitle}"/>
-                        <Label Grid.Row="5" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource LabelProgress}"/>
-                        <Label Grid.Row="7" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="2" Text="Auto Transition" Style="{StaticResource LabelSmallAligned}"/>
-                        <Label x:Name="LblFL" Grid.Row="7" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Left" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.cow.png}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Clinical Procedure – Cow ID ####" Style="{StaticResource Label24}"/>
+                        <Frame Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource FrameLightGreen}"/>
+                        <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="CMT INFO:" Style="{StaticResource LabelLightGreen}"/>
+                        <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(N) &lt; 200K" Style="{StaticResource LabelLightGreen}"/>
+                        <Label Grid.Row="2" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(T) 200K – 400K" Style="{StaticResource LabelLightGreen}"/>
+                        <Label Grid.Row="2" Grid.Column="3" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(1) 400K – 1200K" Style="{StaticResource LabelLightGreen}"/>
+                        <Label Grid.Row="2" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(2) 1200K – 5000K" Style="{StaticResource LabelLightGreen}"/>
+                        <Label Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(3) > 5000K" Style="{StaticResource LabelLightGreen}"/>
+                        <Label Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="5" Text="Select Quarter for to start Procedure" Style="{StaticResource Label20}"/>
+                        <!--<Label Grid.Row="5" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource LabelDarkCyan}"/>-->
+                        <Switch Grid.Row="5" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource SwitchDarkCyan}"/>
+                        <Label Grid.Row="7" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="2" Text="Auto Transition" Style="{StaticResource LabelAlignedEnd}"/>
+                        <Label x:Name="LblFL" Grid.Row="7" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Left" Style="{StaticResource LabelAliceBlue}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
                             BackgroundColor="{Binding FL}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedFL}"/>
                                 <!--Command="{Binding TappedFL}" CommandParameter="{x:Reference LblFL}">-->
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" Text="N" Style="{StaticResource LabelFront}"/>
-                        <Label x:Name="LblRL" Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Left" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                        <Label Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" Text="N" Style="{StaticResource LabelGreen}"/>
+                        <Label x:Name="LblRL" Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Left" Style="{StaticResource LabelAliceBlue}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
                             BackgroundColor="{Binding RL}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedRL}"/>
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="10" Grid.Column="1" Grid.RowSpan="2" Text="2" Style="{StaticResource LabelRear}"/>
-                        <Editor Grid.Row="8" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Text="000000" Style="{StaticResource EditorCentered}"/>
-                        <Label x:Name="LblFR" Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                        <Label Grid.Row="10" Grid.Column="1" Grid.RowSpan="2" Text="2" Style="{StaticResource LabelRed}"/>
+                        <Editor Grid.Row="8" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Text="000000" Style="{StaticResource Editor30}"/>
+                        <Label x:Name="LblFR" Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelAliceBlue}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
                             BackgroundColor="{Binding FR}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedFR}"/>
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="7" Grid.Column="4" Grid.RowSpan="2" Text="T" Style="{StaticResource LabelFront}"/>
-                        <Label x:Name="LblRR" Grid.Row="10" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Right" Style="{StaticResource LabelTreat}"
-                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundPressed}"
+                        <Label Grid.Row="7" Grid.Column="4" Grid.RowSpan="2" Text="T" Style="{StaticResource LabelGreen}"/>
+                        <Label x:Name="LblRR" Grid.Row="10" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Right" Style="{StaticResource LabelAliceBlue}"
+                            xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
                             BackgroundColor="{Binding RR}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedRR}"/>
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Text="3" Style="{StaticResource LabelRear}"/>
+                        <Label Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Text="3" Style="{StaticResource LabelRed}"/>
                     </Grid>
                 </Frame>
-                <Frame Grid.Row="2" Style="{StaticResource FrameLight}">
+                <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
                     <StackLayout>
                         <views:BottomView/>
                     </StackLayout>
