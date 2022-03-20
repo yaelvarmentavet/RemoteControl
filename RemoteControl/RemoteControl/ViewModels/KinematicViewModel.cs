@@ -70,7 +70,7 @@ namespace RemoteControl.ViewModels
             StartProcessPage = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new StartProcessPage());
-                await App.DataModel.StartProcess();
+                await App.DataModel.ProcessStart();
             });
         }
 

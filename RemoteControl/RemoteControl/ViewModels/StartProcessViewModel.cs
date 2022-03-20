@@ -9,11 +9,11 @@ namespace RemoteControl.ViewModels
         {
             StopProcess = new Command(async () =>
             {
-                await App.DataModel.StopProcess();
+                await App.DataModel.ProcessStop();
             });
             PauseResumeProcess = new Command(async () =>
             {
-                await App.DataModel.PauseResumeProcess();
+                await App.DataModel.ProcessPauseResume();
             });
         }
         public event PropertyChangedEventHandler PropertyChanged;

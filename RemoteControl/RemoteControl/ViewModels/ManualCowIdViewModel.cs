@@ -11,12 +11,12 @@ namespace RemoteControl.ViewModels
     {
         public ManualCowIdViewModel()
         {
-            Approve = new Command(async () =>
+            NextPage = new Command(async () =>
             {
-                await App.Current.MainPage.Navigation.PushAsync(new KinematicPage());
+                await App.Current.MainPage.Navigation.PushAsync(new StatusPage());
             });
         }
         public event PropertyChangedEventHandler PropertyChanged;
-        public Command Approve { get; }
+        public Command NextPage { get; }
     }
 }

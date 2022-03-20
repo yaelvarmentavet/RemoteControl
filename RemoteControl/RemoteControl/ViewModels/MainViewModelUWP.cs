@@ -14,6 +14,9 @@ namespace RemoteControl.ViewModels
             NextPageCowId = new Command(async () =>
             {
                 await App.Current.MainPage.Navigation.PushAsync(new ManualCowIdPage());
+                await App.DataModel.PortConnectRequest("RFID", "");
+                await App.DataModel.PortConnectReply("RFID", "");
+                await App.DataModel.PortConnectReply("REMOTE", "");
             });
             NextPageStatus = new Command(async () =>
             {

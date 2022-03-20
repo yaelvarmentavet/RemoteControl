@@ -132,7 +132,7 @@ namespace RemoteControl.Droid
         {
             if (SerialPorts.TryGetValue(portName, out SerialDevice port))
             {
-                port.Connection.BulkTransfer(port.EndpointRx, buffer, buffer.Length, 10);
+                int responce = port.Connection.BulkTransfer(port.EndpointRx, buffer, buffer.Length, 10);
                 //buffer = buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).ToArray();
                 //string data = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
                 return buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).Count();

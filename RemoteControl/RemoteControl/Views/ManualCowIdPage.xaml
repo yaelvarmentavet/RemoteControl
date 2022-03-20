@@ -31,7 +31,7 @@
                 </Editor-->
                 <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconFrame}" Source="{resources:ImageResource RemoteControl.Icons.approve.png}">
                     <Image.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding Approve}"/>
+                        <TapGestureRecognizer Command="{Binding NextPage}"/>
                     </Image.GestureRecognizers>
                 </Image>
             </Grid>

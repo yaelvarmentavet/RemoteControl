@@ -23,7 +23,7 @@ namespace RemoteControl.UWP
         private EventHandler EventAdded;
         private EventHandler EventRemoved;
         private bool Connected = false;
-        private bool TryConnect = false;
+        private Semaphore SemaphoreConnect = new Semaphore(1, 1);
 
         public UsbSerial()
         {
@@ -46,41 +46,37 @@ namespace RemoteControl.UWP
 
         public async Task<bool> Connect()
         {
+            SemaphoreConnect.WaitOne();
             if (!Connected)
             {
-                if (!TryConnect)
+                DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
+
+                foreach (DeviceInformation serialDeviceInfo in serialDeviceInfos)
                 {
-                    TryConnect = true;
-                    //DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
-                    DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
+                    //SerialDevice serialDevice = await SerialDevice.FromIdAsync(serialDeviceInfo.Id);
+                    SerialDevice serialDevice = await SerialDevice.FromIdAsync(serialDeviceInfo.Id);
 
-                    foreach (DeviceInformation serialDeviceInfo in serialDeviceInfos)
+                    if (serialDevice != null)
                     {
-                        //SerialDevice serialDevice = await SerialDevice.FromIdAsync(serialDeviceInfo.Id);
-                        SerialDevice serialDevice = await SerialDevice.FromIdAsync(serialDeviceInfo.Id);
+                        serialDevice.BaudRate = 115200;
+                        serialDevice.DataBits = 8;
+                        serialDevice.Parity = SerialParity.None;
+                        serialDevice.StopBits = SerialStopBitCount.One;
+                        serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(10);
+                        serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(10);
+                        SerialPorts.Add(serialDevice.PortName, serialDevice);
 
-                        if (serialDevice != null)
-                        {
-                            serialDevice.BaudRate = 115200;
-                            serialDevice.DataBits = 8;
-                            serialDevice.Parity = SerialParity.None;
-                            serialDevice.StopBits = SerialStopBitCount.One;
-                            serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(10);
-                            serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(10);
-                            SerialPorts.Add(serialDevice.PortName, serialDevice);
-
-                            //DataReader dataReader = new DataReader(serialDevice.InputStream);
-                            //dataReader.InputStreamOptions = InputStreamOptions.Partial;
-                            //var bytesAvailable = await dataReader.LoadAsync(1024);
-                            //var byteArray = new byte[bytesAvailable];
-                            //dataReader.ReadBytes(byteArray);
-                            //string data = dataReader.ReadString(bytesAvailable);
-                            //byte readByte = dataReader.ReadByte();
-                            Connected = true;
-                        }
+                        //DataReader dataReader = new DataReader(serialDevice.InputStream);
+                        //dataReader.InputStreamOptions = InputStreamOptions.Partial;
+                        //var bytesAvailable = await dataReader.LoadAsync(1024);
+                        //var byteArray = new byte[bytesAvailable];
+                        //dataReader.ReadBytes(byteArray);
+                        //string data = dataReader.ReadString(bytesAvailable);
+                        //byte readByte = dataReader.ReadByte();
+                        Connected = true;
                     }
-                    TryConnect = false;
                 }
+                SemaphoreConnect.Release();
             }
             return Connected;
         }
@@ -97,7 +93,7 @@ namespace RemoteControl.UWP
             if (SerialPorts.TryGetValue(portName, out SerialDevice port))
             {
                 Buffer ibuffer = new Buffer(1024);
-                IBuffer rsp = await port.InputStream.ReadAsync(ibuffer, ibuffer.Capacity, InputStreamOptions.Partial);
+                IBuffer responce = await port.InputStream.ReadAsync(ibuffer, ibuffer.Capacity, InputStreamOptions.Partial);
                 //DataReader dataReader = DataReader.FromBuffer(ibuffer);
                 //string data = dataReader?.ReadString(ibuffer.Length);
                 //buffer = Encoding.UTF8.GetBytes(data);
