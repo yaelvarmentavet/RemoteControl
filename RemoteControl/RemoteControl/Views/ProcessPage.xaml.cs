@@ -12,11 +12,20 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
             //InitMainPage();
-            
+            LblCowId.BindingContext = App.DataModel;
+
             LblFL.BindingContext = App.DataModel;
             LblRL.BindingContext = App.DataModel;
             LblFR.BindingContext = App.DataModel;
             LblRR.BindingContext = App.DataModel;
+
+            LblCmtFL.BindingContext = App.DataModel;
+            LblCmtRL.BindingContext = App.DataModel;
+            LblCmtFR.BindingContext = App.DataModel;
+            LblCmtRR.BindingContext = App.DataModel;
+
+            EdPulses.BindingContext = App.DataModel.Aptxs[0];
+
             //LblFL.SetBinding(BackgroundColorProperty, "FL");
 
             //TapGestureRecognizer tapGestureRecognizer = new TapGestureRecognizer();

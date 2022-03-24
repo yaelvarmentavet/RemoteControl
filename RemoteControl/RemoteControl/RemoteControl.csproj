@@ -44,6 +44,8 @@
     <None Remove="Icons\ap_red.bmp" />
     <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
+    <None Remove="Icons\bat_1.png" />
+    <None Remove="Icons\bat_l.png" />
     <None Remove="Icons\begin.png" />
     <None Remove="Icons\break.png" />
     <None Remove="Icons\cancel.png" />
@@ -105,6 +107,8 @@
     <EmbeddedResource Include="Icons\ap_red.bmp" />
     <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
+    <EmbeddedResource Include="Icons\bat_1.png" />
+    <EmbeddedResource Include="Icons\bat_l.png" />
     <EmbeddedResource Include="Icons\begin.png" />
     <EmbeddedResource Include="Icons\break.png" />
     <EmbeddedResource Include="Icons\cancel.png" />

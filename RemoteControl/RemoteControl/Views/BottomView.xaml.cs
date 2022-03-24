@@ -15,6 +15,15 @@ namespace RemoteControl.Views
         public BottomView()
         {
             InitializeComponent();
+
+            ImgPressureOK.BindingContext = App.DataModel;
+            ImgPressureLow.BindingContext = App.DataModel;
+            ImgSpeedOfBulletOK.BindingContext = App.DataModel;
+            ImgSpeedOfBulletLow.BindingContext = App.DataModel;
+            ImgBatteryOK.BindingContext = App.DataModel;
+            ImgBatteryLow.BindingContext = App.DataModel;
+            ImgPulsesYes.BindingContext = App.DataModel;
+            ImgPulsesNo.BindingContext = App.DataModel;
         }
     }
 }

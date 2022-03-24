@@ -17,6 +17,18 @@ namespace RemoteControl.Views
             InitializeComponent();
 
             LVFL.BindingContext = App.DataModel;
+            LVRL.BindingContext = App.DataModel;
+            LVFR.BindingContext = App.DataModel;
+            LVRR.BindingContext = App.DataModel;
+            
+            LblCowId.BindingContext = App.DataModel;
+
+            //LVFL.ItemSelected += LVFL_ItemSelected;
         }
+
+        //private void LVFL_ItemSelected(object sender, SelectedItemChangedEventArgs e)
+        //{
+        //    App.DataModel.Cmt[0] = (string)e.SelectedItem;
+        //}
     }
 }

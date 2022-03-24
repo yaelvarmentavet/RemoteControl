@@ -10,12 +10,12 @@ namespace RemoteControl.ViewModels
     {
         public MainViewModelAndroid()
         {
-            Task.Run(async () =>
-            {
-                await App.DataModel.PortConnectRequest("RFID", "");
-                await App.DataModel.PortConnectReply("RFID", "");
-                await App.DataModel.PortConnectReply("REMOTE", "");
-            });
+            //Task.Run(async () =>
+            //{
+            //    await App.DataModel.PortConnectRequest("RFID", "");
+            //    await App.DataModel.PortConnectReply("RFID", "");
+            //    await App.DataModel.PortConnectReply("REMOTE", "");
+            //});
 
             NextPageSettings = new Command(async () =>
             {

@@ -25,16 +25,18 @@
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor>-->
-                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.id.png}">
-                    <Image.GestureRecognizers>
+                <ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
+                       Source="{resources:ImageResource RemoteControl.Icons.id.png}" Command="{Binding NextPageCowId}"/>
+                    <!--<Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
                     </Image.GestureRecognizers>
-                </Image>
-                <Image Grid.Row="3" Grid.Column="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.next.png}">
-                    <Image.GestureRecognizers>
+                </Image>-->
+                <ImageButton Grid.Row="3" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.next.png}" Command="{Binding NextPageStatus}"/>
+                    <!--<Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageStatus}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
             </Grid>
         </StackLayout>
     </ContentView.Content>

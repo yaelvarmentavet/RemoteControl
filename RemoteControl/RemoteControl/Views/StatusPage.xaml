@@ -28,11 +28,12 @@
                 <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
                 <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
                 <Label x:Name="LblAptx4" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
-                <Image Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.begin.png}">
-                    <Image.GestureRecognizers>
+                <ImageButton Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.begin.png}" Command="{Binding NextPage}"/>
+                    <!--<Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPage}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
             </Grid>
         </StackLayout>
     </ContentPage.Content>

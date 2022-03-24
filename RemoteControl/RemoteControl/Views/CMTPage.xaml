@@ -40,6 +40,8 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -50,7 +52,10 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.cow.png}"/>
-                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="UPDATE CMT RESULTS for : cow ID" Style="{StaticResource Label24}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="3" Text="UPDATE CMT RESULTS – Cow ID" 
+                               Style="{StaticResource Label24}"/>
+                        <Label x:Name="LblCowId" Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="2" 
+                               Style="{StaticResource LabelAlignedStart}" Text="{Binding CowId}"/>
                         <Frame Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource FrameLightGreen}"/>
                         <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="CMT INFO:" Style="{StaticResource LabelLightGreen}"/>
                         <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(N) &lt; 200K" Style="{StaticResource LabelLightGreen}"/>
@@ -60,15 +65,15 @@
                         <Label Grid.Row="2" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(3) > 5000K" Style="{StaticResource LabelLightGreen}"/>
                         <Label Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Text="Auto Transition" Style="{StaticResource LabelAlignedEnd}"/>
                         <Label Grid.Row="4" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Left" Style="{StaticResource LabelYellowGreen}"/>
-                        <ListView x:Name="LVFL" Grid.Row="4" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}" SelectedItem="{Binding Cmt}">
+                        <ListView x:Name="LVFL" Grid.Row="4" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}" SelectedItem="{Binding CmtFL, Mode=TwoWay}">
                         <!--<ListView Grid.Row="4" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource ListViewCyan}" ItemsSource="{Binding cmt}">-->
                             <ListView.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
-                                    <x:String>(N)</x:String>
-                                    <x:String>(T)</x:String>
-                                    <x:String>(1)</x:String>
-                                    <x:String>(2)</x:String>
-                                    <x:String>(3)</x:String>
+                                    <x:String>N</x:String>
+                                    <x:String>T</x:String>
+                                    <x:String>1</x:String>
+                                    <x:String>2</x:String>
+                                    <x:String>3</x:String>
                                 </x:Array>    
                             </ListView.ItemsSource>
                             <!--<ListView.ItemTemplate>
@@ -81,43 +86,43 @@
                             </ListView.ItemTemplate>-->
                         </ListView>
                         <Label Grid.Row="7" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Left" Style="{StaticResource LabelYellowGreen}"/>
-                        <ListView Grid.Row="7" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}">
+                        <ListView x:Name="LVRL" Grid.Row="7" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}" SelectedItem="{Binding CmtRL, Mode=TwoWay}">
                             <ListView.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
-                                    <x:String>(N)</x:String>
-                                    <x:String>(T)</x:String>
-                                    <x:String>(1)</x:String>
-                                    <x:String>(2)</x:String>
-                                    <x:String>(3)</x:String>
+                                    <x:String>N</x:String>
+                                    <x:String>T</x:String>
+                                    <x:String>1</x:String>
+                                    <x:String>2</x:String>
+                                    <x:String>3</x:String>
                                 </x:Array>
                             </ListView.ItemsSource>
                         </ListView>
                         <Label Grid.Row="4" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelYellowGreen}"/>
-                        <ListView Grid.Row="4" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}">
+                        <ListView x:Name="LVFR" Grid.Row="4" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}" SelectedItem="{Binding CmtFR, Mode=TwoWay}">
                             <ListView.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
-                                    <x:String>(N)</x:String>
-                                    <x:String>(T)</x:String>
-                                    <x:String>(1)</x:String>
-                                    <x:String>(2)</x:String>
-                                    <x:String>(3)</x:String>
+                                    <x:String>N</x:String>
+                                    <x:String>T</x:String>
+                                    <x:String>1</x:String>
+                                    <x:String>2</x:String>
+                                    <x:String>3</x:String>
                                 </x:Array>
                             </ListView.ItemsSource>
                         </ListView>
                         <Label Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Right" Style="{StaticResource LabelYellowGreen}"/>
-                        <ListView Grid.Row="7" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}">
+                        <ListView x:Name="LVRR" Grid.Row="7" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="1" Style="{StaticResource ListViewCyan}" SelectedItem="{Binding CmtRR, Mode=TwoWay}">
                             <ListView.ItemsSource>
                                 <x:Array Type="{x:Type x:String}">
-                                    <x:String>(N)</x:String>
-                                    <x:String>(T)</x:String>
-                                    <x:String>(1)</x:String>
-                                    <x:String>(2)</x:String>
-                                    <x:String>(3)</x:String>
+                                    <x:String>N</x:String>
+                                    <x:String>T</x:String>
+                                    <x:String>1</x:String>
+                                    <x:String>2</x:String>
+                                    <x:String>3</x:String>
                                 </x:Array>
                             </ListView.ItemsSource>
                         </ListView>
-                        <ImageButton Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"  Source="{resources:ImageResource RemoteControl.Icons.approve1.png}"/>
-                        <ImageButton Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2"  Source="{resources:ImageResource RemoteControl.Icons.cancel.png}"/>
+                        <ImageButton Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource ImageButton}"  Source="{resources:ImageResource RemoteControl.Icons.approve1.png}" Command="{Binding Approve}"/>
+                        <ImageButton Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2"  Source="{resources:ImageResource RemoteControl.Icons.cancel.png}" Command="{Binding Cancel}"/>
                     </Grid>
                 </Frame>
                 <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">

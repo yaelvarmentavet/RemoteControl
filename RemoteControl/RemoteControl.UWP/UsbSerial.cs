@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
+using Windows.Devices.Usb;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using Buffer = Windows.Storage.Streams.Buffer;
@@ -46,14 +47,13 @@ namespace RemoteControl.UWP
 
         public async Task<bool> Connect()
         {
-            SemaphoreConnect.WaitOne();
+            //SemaphoreConnect.WaitOne();
             if (!Connected)
             {
                 DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
 
                 foreach (DeviceInformation serialDeviceInfo in serialDeviceInfos)
                 {
-                    //SerialDevice serialDevice = await SerialDevice.FromIdAsync(serialDeviceInfo.Id);
                     SerialDevice serialDevice = await SerialDevice.FromIdAsync(serialDeviceInfo.Id);
 
                     if (serialDevice != null)
@@ -62,23 +62,48 @@ namespace RemoteControl.UWP
                         serialDevice.DataBits = 8;
                         serialDevice.Parity = SerialParity.None;
                         serialDevice.StopBits = SerialStopBitCount.One;
-                        serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(10);
+                        serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(1);
                         serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(10);
                         SerialPorts.Add(serialDevice.PortName, serialDevice);
-
-                        //DataReader dataReader = new DataReader(serialDevice.InputStream);
-                        //dataReader.InputStreamOptions = InputStreamOptions.Partial;
-                        //var bytesAvailable = await dataReader.LoadAsync(1024);
-                        //var byteArray = new byte[bytesAvailable];
-                        //dataReader.ReadBytes(byteArray);
-                        //string data = dataReader.ReadString(bytesAvailable);
-                        //byte readByte = dataReader.ReadByte();
                         Connected = true;
                     }
                 }
-                SemaphoreConnect.Release();
+                //while (true)
+                //{
+                //    DeviceInformationCollection myDevices = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
+
+                //    if (myDevices.Count > 0)
+                //    {
+                //        //get the device object 
+                //        SerialDevice device = await SerialDevice.FromIdAsync(myDevices[0].Id);
+                //        while (device != null)
+                //        {
+                //            DataWriter DataWriterObject = new DataWriter(device.OutputStream);
+                //            DataWriterObject.WriteString("getid,3#");
+
+                //            DataReader DataReaderObject = new DataReader(device.InputStream);
+                //            DataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
+                //            var loadAsyncTask = DataReaderObject.LoadAsync(1024).AsTask();
+
+                //            UInt32 bytesRead = await loadAsyncTask;
+
+                //            if (bytesRead > 0)
+                //            {
+                //                String temp = DataReaderObject.ReadString(bytesRead);
+                //            }
+                //        }
+                //    }
+                //}
+                //SemaphoreConnect.Release();
             }
             return Connected;
+        }
+
+        public async Task Disconnect()
+        {
+            //SemaphoreConnect.WaitOne();
+            Connected = false;
+            //SemaphoreConnect.Release();
         }
 
         public IEnumerable<string> GetPorts()
@@ -89,37 +114,45 @@ namespace RemoteControl.UWP
 
         public async Task<int> Read(string portName, byte[] buffer)
         {
-            //IBuffer rsp = await SerialPorts.GetValueOrDefault(portName)?.InputStream.ReadAsync(ibuffer, ibuffer.Capacity, InputStreamOptions.Partial);
             if (SerialPorts.TryGetValue(portName, out SerialDevice port))
             {
                 Buffer ibuffer = new Buffer(1024);
-                IBuffer responce = await port.InputStream.ReadAsync(ibuffer, ibuffer.Capacity, InputStreamOptions.Partial);
-                //DataReader dataReader = DataReader.FromBuffer(ibuffer);
-                //string data = dataReader?.ReadString(ibuffer.Length);
-                //buffer = Encoding.UTF8.GetBytes(data);
-                CryptographicBuffer.CopyToByteArray(ibuffer, out buffer);
-                //string data = Encoding.UTF8.GetString(buffer, 0, (int)ibuffer.Length);
+
+                IBuffer response = await port.InputStream.ReadAsync(ibuffer, ibuffer.Capacity, InputStreamOptions.Partial);
+                CryptographicBuffer.CopyToByteArray(ibuffer, out byte[] buf);
+                buf?.CopyTo(buffer, 0);
                 return (int)ibuffer.Length;
+
+                //DataReader DataReaderObject = new DataReader(port.InputStream);
+                //DataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
+                //var loadAsyncTask = DataReaderObject.LoadAsync(1).AsTask();
+
+                //UInt32 bytesRead = await loadAsyncTask;
+
+                //if (bytesRead > 0)
+                //{
+                //    byte[] buf = new byte[1024];
+                //    DataReaderObject.ReadBytes(buf);
+                //    buf?.CopyTo(buffer, 0);
+                //    return (int)bytesRead;
+                //}
             }
             return ERROR;
         }
 
         public async Task<int> Write(string portName, byte[] buffer)
         {
-            //DataWriter dataWriter = new DataWriter(SerialPorts.GetValueOrDefault(portName)?.OutputStream);
-            //uint? resp = dataWriter?.WriteString(Encoding.UTF8.GetString(buffer));
-
-            //var resp = await SerialPorts.GetValueOrDefault(portName)?.OutputStream.WriteAsync(buffer?.AsBuffer());
-
-            //var resp = await SerialPorts.GetValueOrDefault(portName)?.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(buffer));
             if (SerialPorts.TryGetValue(portName, out SerialDevice port))
             {
                 foreach (byte b in buffer)
                 {
                     Thread.Sleep(100);
-                    //await SerialPorts.GetValueOrDefault(portName)?.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(new byte[] { b }));
                     await port.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(new byte[] { b }));
                 }
+
+                //DataWriter DataWriterObject = new DataWriter(port.OutputStream);
+                //DataWriterObject.WriteBuffer(CryptographicBuffer.CreateFromByteArray(buffer));
+
                 return buffer.Length;
             }
             return ERROR;

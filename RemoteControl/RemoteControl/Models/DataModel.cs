@@ -132,13 +132,15 @@ namespace RemoteControl.Models
             }
         }
 
-        private const uint UERROR = 0xFFFFFFFF;
+        private const uint UERROR = 0;// xFFFFFFFF;
         private const byte BERROR = 0xFF;
 
         public const byte PREEMBLE = 0xBB;
         public const byte END_MARK = 0x7E;
         private const byte MSG_TYPE_READ_TYPE_C_UII = 0x00;
+        private const byte MSG_TYPE_RESPONSE = 0x01;
         private const byte CODE_READ_TYPE_C_UII = 0x22;
+        private const byte CODE_ERROR = 0xFF;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -159,26 +161,33 @@ namespace RemoteControl.Models
                 fixed (byte* pbuffer = buffer)
                 {
                     ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
-                    if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
+                    if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
                     {
-                        EPC[0] = readTypeCUIIResponse->EPCMSB;
-                        EPC[1] = readTypeCUIIResponse->EPC1;
-                        EPC[2] = readTypeCUIIResponse->EPC2;
-                        EPC[3] = readTypeCUIIResponse->EPC3;
-                        EPC[4] = readTypeCUIIResponse->EPC4;
-                        EPC[5] = readTypeCUIIResponse->EPC5;
-                        EPC[6] = readTypeCUIIResponse->EPC6;
-                        EPC[7] = readTypeCUIIResponse->EPC7;
-                        EPC[8] = readTypeCUIIResponse->EPC8;
-                        EPC[9] = readTypeCUIIResponse->EPC9;
-                        EPC[10] = readTypeCUIIResponse->EPC10;
-                        EPC[11] = readTypeCUIIResponse->EPCLSB;
-                        buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
-                        return true;
+                        if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
+                        {
+                            if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
+                            {
+                                EPC[0] = readTypeCUIIResponse->EPCMSB;
+                                EPC[1] = readTypeCUIIResponse->EPC1;
+                                EPC[2] = readTypeCUIIResponse->EPC2;
+                                EPC[3] = readTypeCUIIResponse->EPC3;
+                                EPC[4] = readTypeCUIIResponse->EPC4;
+                                EPC[5] = readTypeCUIIResponse->EPC5;
+                                EPC[6] = readTypeCUIIResponse->EPC6;
+                                EPC[7] = readTypeCUIIResponse->EPC7;
+                                EPC[8] = readTypeCUIIResponse->EPC8;
+                                EPC[9] = readTypeCUIIResponse->EPC9;
+                                EPC[10] = readTypeCUIIResponse->EPC10;
+                                EPC[11] = readTypeCUIIResponse->EPCLSB;
+                                buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
+                                return true;
+                            }
+                        }
                     }
                 }
             }
             //}
+            buffer = buffer.Skip(1).ToArray();
             return false;
         }
         
@@ -190,7 +199,7 @@ namespace RemoteControl.Models
 
         public ushort CrcCalc(byte[] buffer)
         {
-            ushort crc = 0;
+            ushort crc = 0xFFFF;
             for (int i = 0; i < buffer.Length; i++)
             {
                 crc ^= (ushort)(buffer[i] << 8);
@@ -221,7 +230,6 @@ namespace RemoteControl.Models
             //}
             return buffer.Concat(UshortToArray(CrcCalc(buffer))).ToArray();
         }
-
     }
 
     public class Aptx : Packet, INotifyPropertyChanged
@@ -258,10 +266,10 @@ namespace RemoteControl.Models
             public byte speed_of_bullet;
             public byte Cow_id_msb;
             public byte Cow_id_lsb;
-            public byte reserved;
-            public byte reserved1;
-            public byte reserved2;
-            public byte reserved3;
+            public byte Sum_pulses_msb;
+            public byte Sum_pulses_2;
+            public byte Sum_pulses_3;
+            public byte Sum_pulses_lsb;
             public byte ETX;
             public byte Check_sum_msb;
             public byte Check_sum_lsb;
@@ -289,31 +297,39 @@ namespace RemoteControl.Models
             }
         }
 
-        private uint current = UERROR;
-        public uint Current { get => current; set => current = value; }
+        //private uint current1 = UERROR;
+        //public uint Current1 { get => current1; set => current1 = value; }
 
         private uint maxi = UERROR;
-        public uint Maxi { get => maxi; set => maxi = value; }
-
-        private uint remaining = UERROR;
-        public uint Remaining
-        {
-            get => remaining;
+        public uint Maxi 
+        { 
+            get => maxi;
             set
             {
-                remaining = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+                maxi = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Maxi)));
             }
         }
 
-        private uint pulses = UERROR;
-        public uint Pulses
+        //private uint remaining = UERROR;
+        public uint Remaining
         {
-            get => pulses;
+            get => Maxi - CurrentPulses;
+            //set
+            //{
+            //    remaining = value;
+            //    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+            //}
+        }
+
+        private uint processPulses = UERROR;
+        public uint ProcessPulses
+        {
+            get => processPulses;
             set
             {
-                pulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pulses)));
+                processPulses = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses)));
             }
         }
 
@@ -425,6 +441,17 @@ namespace RemoteControl.Models
             }
         }
 
+        private uint currentPulses = UERROR;
+        public uint CurrentPulses
+        {
+            get => currentPulses;
+            set
+            {
+                currentPulses = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPulses)));
+            }
+        }
+
         public string StatusMessage
         {
             get
@@ -460,7 +487,7 @@ namespace RemoteControl.Models
                     (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.Cyan : Color.Red;
         }
 
-        private const uint UERROR = 0xFFFFFFFF;
+        private const uint UERROR = 0;// xFFFFFFFF;
         private const int ERROR = -1;
         private const int OK = 0;
 
@@ -515,7 +542,7 @@ namespace RemoteControl.Models
                         Id = packetStatus->APT_SERIAL_NUMBER;
                         SNum = ArrayToUint((byte*)&packetStatus->AM_number_msb);
                         Maxi = ArrayToUint((byte*)&packetStatus->Max_number_msb);
-                        Pulses = ArrayToUint((byte*)&packetStatus->Current_number_msb);
+                        ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number_msb);
                         aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
                         Pressure = packetStatus->Pressure_flag;
                         Battery = packetStatus->Battery_flag;
@@ -525,6 +552,7 @@ namespace RemoteControl.Models
                         MotorVoltage = packetStatus->motor_voltage;
                         SpeedOfBullet = packetStatus->speed_of_bullet;
                         CowId = ArrayToUshort((byte*)&packetStatus->Cow_id_msb);
+                        CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses_msb);
                         buffer = buffer.Skip(sizeof(PacketStatus)).ToArray();
                         return true;
                     }
@@ -570,15 +598,89 @@ namespace RemoteControl.Models
 
     public class DataModel : INotifyPropertyChanged
     {
-        private uint cmt = UERROR;
-        public uint Cmt
+        public bool PressureOK { get => Aptxs[0].Pressure == 1; }
+        public bool PressureLow { get => Aptxs[0].Pressure != 1; }
+        public bool SpeedOfBulletOK { get => Aptxs[0].SpeedOfBullet == 1; }
+        public bool SpeedOfBulletLow { get => Aptxs[0].SpeedOfBullet != 1; }
+        public bool BatteryOK { get => Aptxs[0].Battery == 1; }
+        public bool BatteryLow { get => Aptxs[0].Battery != 1; }
+        public bool PulsesYes { get => Aptxs[0].ProcessPulses == 1; }
+        public bool PulsesNo { get => Aptxs[0].ProcessPulses != 1; }
+
+        private string cmtFL;
+        public string CmtFL
         {
-            get => cmt;
+            get => cmtFL;
             set
             {
-                cmt = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Cmt)));
+                //if (value != null)
+                //{
+                cmtFL = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CmtFL)));
+                //}
             }
+        }
+
+        private string cmtRL;
+        public string CmtRL
+        {
+            get => cmtRL;
+            set
+            {
+                //if (value != null)
+                //{
+                cmtRL = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CmtRL)));
+                //}
+            }
+        }
+
+        private string cmtFR;
+        public string CmtFR
+        {
+            get => cmtFR;
+            set
+            {
+                //if (value != null)
+                //{
+                cmtFR = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CmtFR)));
+                //}
+            }
+        }
+
+        private string cmtRR;
+        public string CmtRR
+        {
+            get => cmtRR;
+            set
+            {
+                //if (value != null)
+                //{
+                cmtRR = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CmtRR)));
+                //}
+            }
+        }
+
+        public Color CmtFLColor
+        {
+            get => cmtFL == "1" || cmtFL == "2" || cmtFL == "3" ? Color.Green : Color.Red;
+        }
+
+        public Color CmtRLColor
+        {
+            get => cmtRL == "1" || cmtRL == "2" || cmtRL == "3" ? Color.Green : Color.Red;
+        }
+
+        public Color CmtFRColor
+        {
+            get => cmtFR == "1" || cmtFR == "2" || cmtFR == "3" ? Color.Green : Color.Red;
+        }
+
+        public Color CmtRRColor
+        {
+            get => cmtRR == "1" || cmtRR == "2" || cmtRR == "3" ? Color.Green : Color.Red;
         }
 
         private uint cowid = UERROR;
@@ -606,7 +708,7 @@ namespace RemoteControl.Models
 
         public float Progress
         {
-            get => (Aptxs[0].Pulses - Aptxs[0].PulsesPrev) / Aptxs[0].PulsesPrev;
+            get => (Aptxs[0].ProcessPulses - Aptxs[0].PulsesPrev) / Aptxs[0].PulsesPrev;
         }
 
         private bool fl = false;
@@ -653,7 +755,7 @@ namespace RemoteControl.Models
             }
         }
 
-        private const uint UERROR = 0xFFFFFFFF;
+        private const uint UERROR = 0;// xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
 
@@ -665,14 +767,16 @@ namespace RemoteControl.Models
         //private const uint APTX_COUNT = 4;
 
         private readonly uint[] STATEs; // = new uint[APTX_COUNT];
-        
-        private const long CONNECT_TIMEOUT = 3000;
-        private const long STATE_TIMEOUT = 3000; // in msec
-        private const long REQUEST_TIMEOUT = 1000; // in msec
-        
-        private const long RXBUFFER_SIZE = 1024;
+        private const int QUARTERS_NUMBER = 4;
+        private const int CONNECT_TIMEOUT = 3000;
+        private const int STATE_TIMEOUT = 3000; // in msec
+        private const int REQUEST_TIMEOUT = 1000; // in msec
+
+        private const int RXBUFFER_SIZE = 1024;
 
         private const string LOGFILE_COWS = "LOGFILE_COWS";
+
+        public string[] Devices;
 
         public Aptx[] Aptxs; // = new Aptx[APTX_COUNT];
 
@@ -692,10 +796,11 @@ namespace RemoteControl.Models
         private Dictionary<string, string> Ports = new Dictionary<string, string>();
         private bool Connected = false;
         private byte PauseResume = Aptx.STOP;
-        private byte[] RxBuffer = new byte[RXBUFFER_SIZE];
+        private byte[] RxBuffer = new byte[1];// RXBUFFER_SIZE];
 
         public DataModel(IUsbSerial usbSerial)
         {
+            Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
             Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
             STATEs = new uint[Aptx.APTXIDs.Length].Select((s, i) => s = (uint)i).ToArray();
 
@@ -753,23 +858,28 @@ namespace RemoteControl.Models
             //new Thread((device) => { TxRx(device); })
             //{ Name = "EcomilkTxRx" }.Start(ECOMILK);
             //Task.Run(TxRxECOMILK);
-            Task.Run(async () => { await TxRx(REMOTE); });
+            //Task.Run(async () => { await TxRx(REMOTE); });
 
             //new Thread((device) => { TxRx(device); })
             //{ Name = "RemoteTxRx" }.Start(REMOTE);
-            Task.Run(async () => { await TxRx(REMOTE); });
+            //Task.Run(async () => { await TxRx(REMOTE); });
 
-            //new Thread((device) => { TxRx(device); })
-            //{ Name = "RfidTxRx" }.Start(RFID);
-            Task.Run(async () => { await TxRx(RFID); });
+            //Task.Run(async () => { await Rx(RFID); });
+            //Task.Run(async () => { await Tx(RFID); });
+            new Thread((device) => { Rx(device); })
+            { Name = "RfidRx" }.Start(RFID);
 
             //new Thread((device) => { TxRx(device); })
             //{ Name = "Aptx1TxRx" }.Start(APTX1);
-            Task.Run(async () => { await TxRx(APTX1); });
+            //Task.Run(async () => { await TxRx(APTX1); });
+            //new Thread((device) => { Rx(device); })
+            //{ Name = "Aptx1Rx" }.Start(APTX1);
+
+            new Thread(() => { Tx(); })
+            { Name = "Tx" }.Start();
         }
 
-        //private async Task TxRxECOMILK() { TxRx(ECOMILK); }
-        private async Task TxRx(object odevice)
+        private async Task Rx(object odevice)
         {
             if (odevice is string)
             {
@@ -777,86 +887,55 @@ namespace RemoteControl.Models
                 string data = string.Empty;
                 while (Connected)
                 {
-                    while (await UsbSerial.Connect())
+                    if (Ports.TryGetValue(device, out string port))
                     {
-                        Stopwatch stopWatch = new Stopwatch();
-                        stopWatch.Start();
-                        while (!Ports.TryGetValue(device, out string prt) || (stopWatch.ElapsedMilliseconds > CONNECT_TIMEOUT))
+                        await PortDataReply(device, port);
+                    }
+                    else
+                    {
+                        string[] ports = UsbSerial.GetPorts().ToArray();
+                        foreach (string prt in ports)
                         {
-                            foreach (string port in UsbSerial.GetPorts())
-                            {
-                                if (stopWatch.ElapsedMilliseconds % REQUEST_TIMEOUT == 0)
-                                    await PortConnectRequest(device, port);
-
-                                //byte[] buffer = new byte[1024];
-                                //data += await UsbSerial.Read(device, buffer);
-                                //await UsbSerial.Read(port, buffer);
-                                if (await PortConnectReply(device, port))
-                                    Ports.Add(device, port);
-                            }
-                        }
-                        //data = string.Empty;
-                        uint state = STATEs.First();
-                        while (Ports.TryGetValue(device, out string port))
-                        {
-                            if (stopWatch.ElapsedMilliseconds % REQUEST_TIMEOUT == 0)
-                            {
-                                if (stopWatch.ElapsedMilliseconds % STATE_TIMEOUT == 0)
-                                    state = state == STATEs.Last() ? STATEs.First() : state++;
-                                await PortDataRequest(device, state);
-                            }
-
-                            //byte[] buffer = new byte[1024];
-                            //data += await UsbSerial.Read(port, buffer);
-                            //if (await UsbSerial.Read(port, buffer) > 0)
-                            //{
-                            if (!await PortDataReply(device, port))
-                                Ports.Remove(device);
+                            if (await PortConnectReply(device, prt))
+                                Ports.Add(device, prt);
                         }
                     }
                 }
             }
         }
-        //{ Name = "UsbTxRx" }.Start();
-        
-        //    new Thread(async () =>
-        //    {
-        //        while (Connected)
-        //        {
-        //            while (await UsbSerial.Connect())
-        //            {
-        //                while (Ports.Count() < UsbSerial.GetPorts().Count())
-        //                //while (string.IsNullOrEmpty(Ports.TryGetValue(REMOTE, out var val) ? val : string.Empty))
-        //                {
-        //                    Thread.Sleep(1000);
 
-        //                    //if (string.IsNullOrEmpty(APTXPort) || string.IsNullOrEmpty(EcomilkPort))
-        //                    foreach (string port in UsbSerial.GetPorts())
-        //                        await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-        //                }
-
-        //                while (Ports.Count() == UsbSerial.GetPorts().Count())
-        //                //while (Connected)
-        //                {
-        //                    Thread.Sleep(1000);
-
-        //                    if (SNum == UERROR)
-        //                        await UsbSerial.Write(Ports.TryGetValue(REMOTE, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("testread,3#"));
-        //                    else if (Current == UERROR)
-        //                        //App.DataModel.UsbDevice.Send("find,3#");
-        //                        await UsbSerial.Write(Ports.TryGetValue(REMOTE, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("find,3#"));
-        //                    else if ((aptxId[0] == UERROR) ||
-        //                              (aptxId[1] == UERROR) ||
-        //                              (aptxId[2] == UERROR))
-        //                        //App.DataModel.UsbDevice.Send("readid#");
-        //                        await UsbSerial.Write(Ports.TryGetValue(REMOTE, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("readid#"));
-        //                }
-        //            }
-        //        }
-        //    })
-        //    { Name = "UsbTx" }.Start();
-        //    //}));
-        //}
+        private async Task Tx()
+        {
+            string data = string.Empty;
+            while (Connected)
+            {
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
+                uint state = STATEs.First();
+                foreach (string device in Devices)
+                {
+                    Thread.Sleep(REQUEST_TIMEOUT);
+                    if (Ports.TryGetValue(device, out string port))
+                    {
+                        if (stopWatch.ElapsedMilliseconds % STATE_TIMEOUT == 0)
+                            state = state == STATEs.Last() ? STATEs.First() : state++;
+                        if (await PortRequest(device, port, state) < 0)
+                        {
+                            Ports.Remove(port);
+                            UsbSerial.Disconnect();
+                        }
+                    }
+                    else
+                    {
+                        UsbSerial.Connect();
+                        foreach (string prt in UsbSerial.GetPorts())
+                        {
+                            await PortRequest(device, prt, 0);
+                        }
+                    }
+                }
+            }
+        }
 
         private async Task<bool> PortDataReply(string device, string port)
         {
@@ -903,7 +982,7 @@ namespace RemoteControl.Models
                                 Aptxs[0].AptxId = Aptxs[0].AptxId;
                             }
                         }
-                        if ((Aptxs[0].Current == UERROR) || (Aptxs[0].Maxi == UERROR))
+                        if ((Aptxs[0].CurrentPulses == UERROR) || (Aptxs[0].Maxi == UERROR))
                         {
                             if (data.Contains("MAXI"))
                             {
@@ -913,10 +992,10 @@ namespace RemoteControl.Models
                             if (data.Contains("Found:"))
                             {
                                 uint[] current = DataParse(data, "Found:", NumberStyles.Number);
-                                Aptxs[0].Current = current[0];
+                                Aptxs[0].CurrentPulses = current[0];
                             }
-                            if ((Aptxs[0].Current != UERROR) && (Aptxs[0].Maxi != UERROR))
-                                Aptxs[0].Remaining = Aptxs[0].Maxi - Aptxs[0].Current;
+                            //if ((Aptxs[0].CurrentPulses != UERROR) && (Aptxs[0].Maxi != UERROR))
+                            //    Aptxs[0].Remaining = Aptxs[0].Maxi - Aptxs[0].CurrentPulses;
                         }
                         break;
                     default:
@@ -927,159 +1006,118 @@ namespace RemoteControl.Models
             return false;
         }
 
-        private async Task PortDataRequest(string device, uint state)
+        private async Task<int> PortRequest(string device, string port, uint state)
         {
+            int ret = ERROR;
             switch (device)
             {
                 case ECOMILK:
+                    ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
                     break;
                 case RFID:
-                    {
-                        await UsbSerial.Write(Ports.TryGetValue(RFID, out string val) ? val : string.Empty,
-                            new RfId().PacketBuild());
-                    }
+                    ret = await UsbSerial.Write(port, new RfId().PacketBuild());
                     break;
                 case REMOTE:
-                    {
-                        await UsbSerial.Write(Ports.TryGetValue(REMOTE, out string val) ? val : string.Empty,
-                            Aptxs[state].PacketBuild());
-                    }
+                    ret = await UsbSerial.Write(port, Aptxs[state].PacketBuild());
                     break;
                 case APTX1:
-                    {
-                        if (Aptxs[0].SNum == UERROR)
-                            await UsbSerial.Write(Ports.TryGetValue(device, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("testread,3#"));
-                        else if (Aptxs[0].Current == UERROR)
-                            await UsbSerial.Write(Ports.TryGetValue(device, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("find,3#"));
-                        else if ((Aptxs[0].aptxId[0] == UERROR) ||
-                                  (Aptxs[0].aptxId[1] == UERROR) ||
-                                  (Aptxs[0].aptxId[2] == UERROR))
-                            await UsbSerial.Write(Ports.TryGetValue(device, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("readid#"));
-                    }
+                    if (Aptxs[0].Id == UERROR)
+                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
+                    if (Aptxs[0].SNum == UERROR)
+                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("testread,3#"));
+                    else if (Aptxs[0].CurrentPulses == UERROR)
+                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("find,3#"));
+                    else if ((Aptxs[0].aptxId[0] == UERROR) ||
+                              (Aptxs[0].aptxId[1] == UERROR) ||
+                              (Aptxs[0].aptxId[2] == UERROR))
+                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("readid#"));
                     break;
             }
+            return ret;
         }
 
-        public async Task PortConnectRequest(string device, string port)
-        {
-            switch (device)
-            {
-                case ECOMILK:
-                case APTX1:
-                    await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-                    break;
-                case RFID:
-                    await UsbSerial.Write(port, new RfId().PacketBuild());
-                    break;
-                case REMOTE:
-                    await UsbSerial.Write(port, Aptxs[0].PacketBuild());
-                    break;
-            }
-        }
+        //public async Task PortConnectRequest(string device, string port)
+        //{
+        //    switch (device)
+        //    {
+        //        case ECOMILK:
+        //        case APTX1:
+        //            await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
+        //            break;
+        //        case RFID:
+        //            await UsbSerial.Write(port, new RfId().PacketBuild());
+        //            break;
+        //        case REMOTE:
+        //            await UsbSerial.Write(port, Aptxs[0].PacketBuild());
+        //            break;
+        //    }
+        //}
 
         public async Task<bool> PortConnectReply(string device, string port)
         {
             byte[] buffer = new byte[1024];
             //data += await UsbSerial.Read(device, buffer);
             int length = await UsbSerial.Read(port, buffer);
-            RxBuffer.Concat(buffer.Take(length));
-
             bool found = false;
-            if (!Ports.ContainsKey(device))
+            if (length > 0)
             {
-                switch (device)
+                RxBuffer = RxBuffer.Concat(buffer.Take(length)).ToArray();
+
+                if (!Ports.ContainsKey(device))
                 {
-                    case ECOMILK:
-                        {
-                            string data = Encoding.UTF8.GetString(RxBuffer);
-                            found = data.Contains(device);
-                            break;
-                        }
-                    case RFID:
-                        RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
-                        RxBuffer[10] = RfId.PREEMBLE;
-                        RxBuffer[10 + 19] = RfId.END_MARK;
-                        RfId rfId = new RfId();
-                        RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
-                        RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
-                        if (found = rfId.PacketParse(ref RxBuffer))
-                        {
-                            unsafe
+                    switch (device)
+                    {
+                        case ECOMILK:
                             {
-                                fixed (byte* pepc = rfId.EPC)
+                                string data = Encoding.UTF8.GetString(RxBuffer);
+                                found = data.Contains(device);
+                                break;
+                            }
+                        case RFID:
+                            //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+                            //RxBuffer[10] = RfId.PREEMBLE;
+                            //RxBuffer[10 + 19] = RfId.END_MARK;
+                            RfId rfId = new RfId();
+                            //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
+                            //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
+                            if (found = rfId.PacketParse(ref RxBuffer))
+                            {
+                                unsafe
                                 {
-                                    CowId = rfId.ArrayToUint(pepc);
+                                    fixed (byte* pepc = rfId.EPC)
+                                    {
+                                        CowId = rfId.ArrayToUint(pepc);
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    case REMOTE:
-                        RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
-                        RxBuffer[10] = Aptx.STX;
-                        RxBuffer[11] = Aptx.APTXIDs[0];
-                        RxBuffer[10 + 32] = Aptx.ETX;
-                        Aptx aptx = new Aptx();
-                        RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
-                        RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
-                        if (found = aptx.PacketParse(ref RxBuffer))
-                        {
-                            if (Aptx.APTXIDs.Contains((byte)aptx.Id))
-                                Aptxs[aptx.Id - 1] = aptx;
-                        }
-                        break;
-                    case APTX1:
-                        {
-                            string data = Encoding.UTF8.GetString(RxBuffer);
-                            found = data.Contains("1F-85-01");
-                        }
-                        break;
-                    default:
-                        return false;
+                            break;
+                        case REMOTE:
+                            //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+                            //RxBuffer[10] = Aptx.STX;
+                            //RxBuffer[11] = Aptx.APTXIDs[0];
+                            //RxBuffer[10 + 32] = Aptx.ETX;
+                            Aptx aptx = new Aptx();
+                            //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
+                            //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
+                            if (found = aptx.PacketParse(ref RxBuffer))
+                            {
+                                if (Aptx.APTXIDs.Contains((byte)aptx.Id))
+                                    Aptxs[aptx.Id - 1] = aptx;
+                            }
+                            break;
+                        case APTX1:
+                            {
+                                string data = Encoding.UTF8.GetString(RxBuffer);
+                                found = data.Contains("1F-85-01");
+                            }
+                            break;
+                        default:
+                            return false;
+                    }
                 }
             }
             return found;
         }
-
-        //private void Aptx1DataParse(byte[] buffer)
-        //{
-        //    string data = Encoding.UTF8.GetString(buffer);
-        //    if (SNum == UERROR)
-        //    {
-        //        if (data.Contains("SNUM"))
-        //        {
-        //            uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
-        //            SNum = snum[0];
-        //        }
-        //    }
-        //    if ((aptxId[0] == UERROR) ||
-        //        (aptxId[1] == UERROR) ||
-        //        (aptxId[2] == UERROR))
-        //    {
-        //        if (data.Contains("readid Device_id"))
-        //        {
-        //            uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-        //            aptxId[0] = aptid[0];
-        //            aptxId[1] = aptid[1];
-        //            aptxId[2] = aptid[2];
-        //            AptxId = AptxId;
-        //        }
-        //    }
-        //    if ((Current == UERROR) || (Maxi == UERROR))
-        //    {
-        //        if (data.Contains("MAXI"))
-        //        {
-        //            uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
-        //            Maxi = maxi[0];
-        //        }
-        //        if (data.Contains("Found:"))
-        //        {
-        //            uint[] current = DataParse(data, "Found:", NumberStyles.Number);
-        //            Current = current[0];
-        //        }
-        //        if ((Current != UERROR) && (Maxi != UERROR))
-        //            Remaining = Maxi - Current;
-        //    }
-        //}
 
         private uint[] DataParse(string data, string pattern, NumberStyles numberStyles)
         {
@@ -1131,7 +1169,7 @@ namespace RemoteControl.Models
             PauseResume = PauseResume == Aptx.STOP ? PauseResume = Aptx.START : PauseResume = Aptx.STOP;
             foreach (Aptx aptx in Aptxs)
             {
-                if (await Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.Pulses - aptx.PulsesPrev))) == ERROR)
+                if (await Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev))) == ERROR)
                     return ERROR;
             }
             return OK;
@@ -1145,7 +1183,7 @@ namespace RemoteControl.Models
             string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
             File.AppendAllText(LOGFILE_COWS, string.Format("Date: {0} {1} Process: {2} Pulses: {3} Cow Id: {4} Current Pulses: {5}\n",
                 DateTime.Now, response == OK ? "OK" : "FAULT", process == Aptx.START ? "START" : "STOP",
-                pulses, CowId, aptx.Pulses));
+                pulses, CowId, aptx.ProcessPulses));
             return response;
         }
 

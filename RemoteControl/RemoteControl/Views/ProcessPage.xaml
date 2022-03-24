@@ -50,7 +50,10 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.cow.png}"/>
-                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Clinical Procedure – Cow ID ####" Style="{StaticResource Label24}"/>
+                        <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="3" Text="Clinical Procedure – Cow ID" 
+                               Style="{StaticResource Label24}"/>
+                        <Label x:Name="LblCowId" Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="2" 
+                               Style="{StaticResource LabelAlignedStart}" Text="{Binding CowId}"/>
                         <Frame Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource FrameLightGreen}"/>
                         <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="CMT INFO:" Style="{StaticResource LabelLightGreen}"/>
                         <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(N) &lt; 200K" Style="{StaticResource LabelLightGreen}"/>
@@ -64,38 +67,38 @@
                         <Label Grid.Row="7" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="2" Text="Auto Transition" Style="{StaticResource LabelAlignedEnd}"/>
                         <Label x:Name="LblFL" Grid.Row="7" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Left" Style="{StaticResource LabelAliceBlue}"
                             xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
-                            BackgroundColor="{Binding FL}">
+                            BackgroundColor="{Binding FL, Mode=TwoWay}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedFL}"/>
                                 <!--Command="{Binding TappedFL}" CommandParameter="{x:Reference LblFL}">-->
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" Text="N" Style="{StaticResource LabelGreen}"/>
+                        <Label x:Name="LblCmtFL" Grid.Row="7" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource LabelRed}" Text="{Binding CmtFL}" BackgroundColor="{Binding CmtFLColor}"/>
                         <Label x:Name="LblRL" Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Left" Style="{StaticResource LabelAliceBlue}"
                             xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
-                            BackgroundColor="{Binding RL}">
+                            BackgroundColor="{Binding RL, Mode=TwoWay}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedRL}"/>
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="10" Grid.Column="1" Grid.RowSpan="2" Text="2" Style="{StaticResource LabelRed}"/>
-                        <Editor Grid.Row="8" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Text="000000" Style="{StaticResource Editor30}"/>
+                        <Label x:Name="LblCmtRL" Grid.Row="10" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource LabelRed}" Text="{Binding CmtRL}" BackgroundColor="{Binding CmtRLColor}"/>
+                        <Editor x:Name="EdPulses" Grid.Row="8" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Style="{StaticResource Editor30}" Text="{Binding ProcessPulses}"/>
                         <Label x:Name="LblFR" Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelAliceBlue}"
                             xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
-                            BackgroundColor="{Binding FR}">
+                            BackgroundColor="{Binding FR, Mode=TwoWay}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedFR}"/>
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="7" Grid.Column="4" Grid.RowSpan="2" Text="T" Style="{StaticResource LabelGreen}"/>
+                        <Label x:Name="LblCmtFR" Grid.Row="7" Grid.Column="4" Grid.RowSpan="2" Style="{StaticResource LabelRed}" Text="{Binding CmtFR}" BackgroundColor="{Binding CmtFRColor}"/>
                         <Label x:Name="LblRR" Grid.Row="10" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Rear  Right" Style="{StaticResource LabelAliceBlue}"
                             xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"
-                            BackgroundColor="{Binding RR}">
+                            BackgroundColor="{Binding RR, Mode=TwoWay}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding TappedRR}"/>
                             </Label.GestureRecognizers>
                         </Label>
-                        <Label Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Text="3" Style="{StaticResource LabelRed}"/>
+                        <Label x:Name="LblCmtRR" Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Style="{StaticResource LabelRed}" Text="{Binding CmtRR}" BackgroundColor="{Binding CmtRRColor}"/>
                     </Grid>
                 </Frame>
                 <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">

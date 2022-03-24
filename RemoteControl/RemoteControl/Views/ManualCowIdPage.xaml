@@ -29,11 +29,12 @@
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor-->
-                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.approve.png}">
-                    <Image.GestureRecognizers>
+                <ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.approve.png}" Command="{Binding NextPage}"/>
+                    <!--<Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPage}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
             </Grid>
         </StackLayout>
     </ContentPage.Content>

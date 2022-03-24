@@ -17,20 +17,24 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="0" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.home.png}"
+                <ImageButton Grid.Column="0" Scale="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.home.png}" Command="{Binding NextPageHome}"/>
+                <!--<Image Grid.Column="0" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.home.png}"
                     xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageHome}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
                 <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelAlignedEnd}" Text="Pulses:"/>
-                <Label x:Name="LblRem" Grid.Column="2" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="150,000"/>
-                <Image Grid.Column="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}"
+                <Label x:Name="LblRem" Grid.Column="2" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding Remaining}"/>
+                <ImageButton Grid.Column="4" Scale="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.settings.png}" Command="{Binding NextPageSettings}"/>
+                <!--<Image Grid.Column="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}"
                     xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageSettings}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
             </Grid>
         </StackLayout>
     </ContentView.Content>

@@ -16,16 +16,18 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
                 <ProgressBar x:Name="PrgPulses" Grid.Row="1" Grid.Column="1" Progress="{Binding Progress}"/>
-                <Image Grid.Row="1" Grid.Column="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.stop.png}">
-                    <Image.GestureRecognizers>
+                <ImageButton Grid.Row="1" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.stop.png}" Command="{Binding StopProcess}"/>
+                    <!--<Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding StopProcess}"/>
                     </Image.GestureRecognizers>
-                </Image>
-                <Image Grid.Row="2" Grid.Column="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pause.png}">
-                    <Image.GestureRecognizers>
+                </Image>-->
+                <ImageButton Grid.Row="2" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.pause.png}" Command="{Binding PauseResumeProcess}"/>
+                    <!--<Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding PauseResumeProcess}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
                 <!--<Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Choose quarter" Style="{StaticResource Label24}"/>
                 <Image Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.rl.png}"/>
                 <Image Grid.Row="3" Grid.Column="3" Grid.RowSpan="3" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.fl.png}"/>

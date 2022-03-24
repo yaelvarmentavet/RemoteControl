@@ -1,6 +1,8 @@
 ﻿
 using RemoteControl.ViewModels;
+using System;
 using Xamarin.CommunityToolkit.Effects;
+using Xamarin.CommunityToolkit.UI.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -82,6 +84,21 @@ namespace RemoteControl.Views
             //tap = new TapGestureRecognizer();
             //tap.SetBinding(TapGestureRecognizer.CommandProperty, "StartTreatmentPage");
             //ImgNext.GestureRecognizers.Add(tap);
+
+            CameraView Cam1 = new CameraView() { CaptureMode = CameraCaptureMode.Video, };
+            Cam1.MediaCaptured += MediaCaptured;
+            Cam1.Shutter();
+            GrKin.Children.Add(Cam1);
+        }
+
+        //private void OnAvailable(object sender, EventArgs e)
+        //{
+        //    Cam1.Shutter();
+        //}
+
+        private void MediaCaptured(object sender, MediaCapturedEventArgs e)
+        {
+            ImgCam1.Source = e.Video.File;
         }
     }
 }
