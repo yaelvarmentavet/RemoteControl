@@ -28,11 +28,16 @@ namespace RemoteControl.UWP
 
         public UsbSerial()
         {
-            DeviceWatcher deviceWatcher = DeviceInformation.CreateWatcher(DeviceClass.All);
-            deviceWatcher.Added += DeviceAdded;
-            deviceWatcher.Removed += DeviceRemoved;
+            DeviceWatcher watcher = DeviceInformation.CreateWatcher(DeviceClass.All);
+            watcher.Added += DeviceAdded;
+            watcher.Removed += DeviceRemoved;
+            watcher.EnumerationCompleted += DeviceEnumerationCompleted;
             //DeviceWatcherTrigger deviceWatcherTrigger = deviceWatcher.GetBackgroundTrigger(new List<DeviceWatcherEventKind>() { DeviceWatcherEventKind.Add, DeviceWatcherEventKind.Remove });
-            deviceWatcher.Start();
+            watcher.Start();
+        }
+
+        private void DeviceEnumerationCompleted(DeviceWatcher sender, object args)
+        {
         }
 
         private void DeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
@@ -47,9 +52,9 @@ namespace RemoteControl.UWP
 
         public async Task<bool> Connect()
         {
-            //SemaphoreConnect.WaitOne();
             if (!Connected)
             {
+                SemaphoreConnect.WaitOne();
                 DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
 
                 foreach (DeviceInformation serialDeviceInfo in serialDeviceInfos)
@@ -63,38 +68,12 @@ namespace RemoteControl.UWP
                         serialDevice.Parity = SerialParity.None;
                         serialDevice.StopBits = SerialStopBitCount.One;
                         serialDevice.ReadTimeout = TimeSpan.FromMilliseconds(1);
-                        serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(10);
+                        serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(1);
                         SerialPorts.Add(serialDevice.PortName, serialDevice);
                         Connected = true;
                     }
                 }
-                //while (true)
-                //{
-                //    DeviceInformationCollection myDevices = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
-
-                //    if (myDevices.Count > 0)
-                //    {
-                //        //get the device object 
-                //        SerialDevice device = await SerialDevice.FromIdAsync(myDevices[0].Id);
-                //        while (device != null)
-                //        {
-                //            DataWriter DataWriterObject = new DataWriter(device.OutputStream);
-                //            DataWriterObject.WriteString("getid,3#");
-
-                //            DataReader DataReaderObject = new DataReader(device.InputStream);
-                //            DataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
-                //            var loadAsyncTask = DataReaderObject.LoadAsync(1024).AsTask();
-
-                //            UInt32 bytesRead = await loadAsyncTask;
-
-                //            if (bytesRead > 0)
-                //            {
-                //                String temp = DataReaderObject.ReadString(bytesRead);
-                //            }
-                //        }
-                //    }
-                //}
-                //SemaphoreConnect.Release();
+                SemaphoreConnect.Release();
             }
             return Connected;
         }

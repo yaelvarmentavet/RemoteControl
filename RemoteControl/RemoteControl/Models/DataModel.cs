@@ -77,13 +77,11 @@ namespace RemoteControl.Models
                 if ((b = buffer.FirstOrDefault(bf => bf == Sop)) != null)
                 {
                     int i = buffer.ToList().IndexOf(b);
-                    if ((buffer.Length - i) >= size)
+                    buffer = buffer.Skip(i).ToArray();
+                    if (buffer.Length >= size)
                     {
-                        if (buffer[i + size - 1 - 2] == Eop)
-                        {
-                            buffer = buffer.Skip(i).ToArray();
+                        if (buffer[size - 1 - 2] == Eop)
                             return true;
-                        }
                     }
                 }
             }
@@ -132,7 +130,7 @@ namespace RemoteControl.Models
             }
         }
 
-        private const uint UERROR = 0;// xFFFFFFFF;
+        private const uint UERROR = 0xFFFFFFFF;
         private const byte BERROR = 0xFF;
 
         public const byte PREEMBLE = 0xBB;
@@ -311,15 +309,15 @@ namespace RemoteControl.Models
             }
         }
 
-        //private uint remaining = UERROR;
+        private uint remaining = UERROR;
         public uint Remaining
         {
-            get => Maxi - CurrentPulses;
-            //set
-            //{
-            //    remaining = value;
-            //    PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
-            //}
+            get => remaining;
+            set
+            {
+                remaining = value;
+                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+            }
         }
 
         private uint processPulses = UERROR;
@@ -487,7 +485,7 @@ namespace RemoteControl.Models
                     (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.Cyan : Color.Red;
         }
 
-        private const uint UERROR = 0;// xFFFFFFFF;
+        private const uint UERROR = 0xFFFFFFFF;
         private const int ERROR = -1;
         private const int OK = 0;
 
@@ -598,6 +596,12 @@ namespace RemoteControl.Models
 
     public class DataModel : INotifyPropertyChanged
     {
+        public class Reply
+        {
+            public bool Found = false;
+            public byte[] RxBuffer;
+        }
+
         public bool PressureOK { get => Aptxs[0].Pressure == 1; }
         public bool PressureLow { get => Aptxs[0].Pressure != 1; }
         public bool SpeedOfBulletOK { get => Aptxs[0].SpeedOfBullet == 1; }
@@ -755,7 +759,7 @@ namespace RemoteControl.Models
             }
         }
 
-        private const uint UERROR = 0;// xFFFFFFFF;
+        private const uint UERROR = 0xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
 
@@ -794,12 +798,185 @@ namespace RemoteControl.Models
         //public string APTXPort = string.Empty;
         //public string EcomilkPort = string.Empty;
         private Dictionary<string, string> Ports = new Dictionary<string, string>();
+        private Semaphore SemaphorePorts = new Semaphore(1, 1);
         private bool Connected = false;
         private byte PauseResume = Aptx.STOP;
-        private byte[] RxBuffer = new byte[1];// RXBUFFER_SIZE];
+        private byte[] RxBufferRfid = new byte[1];// RXBUFFER_SIZE];
+        private byte[] RxBufferAptx1 = new byte[1];// RXBUFFER_SIZE];
+        private byte[] RxBufferEcomilk = new byte[1];// RXBUFFER_SIZE];
+        private byte[] RxBufferRemote = new byte[1];// RXBUFFER_SIZE];
 
         public DataModel(IUsbSerial usbSerial)
         {
+
+            //new Thread(() =>
+            //{
+            //    while (true)
+            //    {
+            //        Thread.Sleep(1000);
+
+            //        UInt32 ftdiDeviceCount = 0;
+            //        FTDI.FT_STATUS ftStatus = FTDI.FT_STATUS.FT_OK;
+
+            //        // Create new instance of the FTDI device class
+            //        FTDI myFtdiDevice = new FTDI();
+
+            //        // Determine the number of FTDI devices connected to the machine
+            //        ftStatus = myFtdiDevice.GetNumberOfDevices(ref ftdiDeviceCount);
+            //        // Check status
+            //        if (ftStatus == FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            Console.WriteLine("Number of FTDI devices: " + ftdiDeviceCount.ToString());
+            //            Console.WriteLine("");
+            //        }
+            //        else
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to get number of devices (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // If no devices available, return
+            //        if (ftdiDeviceCount == 0)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to get number of devices (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // Allocate storage for device info list
+            //        FTDI.FT_DEVICE_INFO_NODE[] ftdiDeviceList = new FTDI.FT_DEVICE_INFO_NODE[ftdiDeviceCount];
+
+            //        // Populate our device list
+            //        ftStatus = myFtdiDevice.GetDeviceList(ftdiDeviceList);
+
+            //        if (ftStatus == FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            for (UInt32 i = 0; i < ftdiDeviceCount; i++)
+            //            {
+            //                Console.WriteLine("Device Index: " + i.ToString());
+            //                Console.WriteLine("Flags: " + String.Format("{0:x}", ftdiDeviceList[i].Flags));
+            //                Console.WriteLine("Type: " + ftdiDeviceList[i].Type.ToString());
+            //                Console.WriteLine("ID: " + String.Format("{0:x}", ftdiDeviceList[i].ID));
+            //                Console.WriteLine("Location ID: " + String.Format("{0:x}", ftdiDeviceList[i].LocId));
+            //                Console.WriteLine("Serial Number: " + ftdiDeviceList[i].SerialNumber.ToString());
+            //                Console.WriteLine("Description: " + ftdiDeviceList[i].Description.ToString());
+            //                Console.WriteLine("");
+            //            }
+            //        }
+
+
+            //        // Open first device in our list by serial number
+            //        ftStatus = myFtdiDevice.OpenBySerialNumber(ftdiDeviceList[0].SerialNumber);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to open device (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // Set up device data parameters
+            //        // Set Baud rate to 9600
+            //        ftStatus = myFtdiDevice.SetBaudRate(115200);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to set Baud rate (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // Set data characteristics - Data bits, Stop bits, Parity
+            //        ftStatus = myFtdiDevice.SetDataCharacteristics(FTDI.FT_DATA_BITS.FT_BITS_8, FTDI.FT_STOP_BITS.FT_STOP_BITS_1, FTDI.FT_PARITY.FT_PARITY_NONE);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to set data characteristics (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // Set flow control - set RTS/CTS flow control
+            //        //ftStatus = myFtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0x11, 0x13);
+            //        ftStatus = myFtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_NONE, 0, 0);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to set flow control (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // Set read timeout to 5 seconds, write timeout to infinite
+            //        ftStatus = myFtdiDevice.SetTimeouts(5000, 0);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to set timeouts (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+            //        // Perform loop back - make sure loop back connector is fitted to the device
+            //        // Write string data to the device
+            //        string dataToWrite = "getid,3#";
+            //        UInt32 numBytesWritten = 0;
+            //        // Note that the Write method is overloaded, so can write string or byte array data
+            //        ftStatus = myFtdiDevice.Write(dataToWrite, dataToWrite.Length, ref numBytesWritten);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to write to device (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+
+
+            //        // Check the amount of data available to read
+            //        // In this case we know how much data we are expecting, 
+            //        // so wait until we have all of the bytes we have sent.
+            //        UInt32 numBytesAvailable = 0;
+            //        //do
+            //        //{
+            //        //    ftStatus = myFtdiDevice.GetRxBytesAvailable(ref numBytesAvailable);
+            //        //    if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        //    {
+            //        //        // Wait for a key press
+            //        //        Console.WriteLine("Failed to get number of bytes available to read (error " + ftStatus.ToString() + ")");
+            //        //        //Console.ReadKey();
+            //        //        //return;
+            //        //    }
+            //        //    Thread.Sleep(10);
+            //        //} while (numBytesAvailable < dataToWrite.Length);
+
+            //        // Now that we have the amount of data we want available, read it
+            //        string readData;
+            //        UInt32 numBytesRead = 0;
+            //        // Note that the Read method is overloaded, so can read string or byte array data
+            //        ftStatus = myFtdiDevice.Read(out readData, numBytesAvailable, ref numBytesRead);
+            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
+            //        {
+            //            // Wait for a key press
+            //            Console.WriteLine("Failed to read data (error " + ftStatus.ToString() + ")");
+            //            //Console.ReadKey();
+            //            //return;
+            //        }
+            //        Console.WriteLine(readData);
+
+            //        // Close our device
+            //        ftStatus = myFtdiDevice.Close();
+
+            //        // Wait for a key press
+            //        Console.WriteLine("Press any key to continue.");
+            //        //Console.ReadKey();
+            //        //return;
+            //    }
+            ////}).Start();
+
+
             Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
             Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
             STATEs = new uint[Aptx.APTXIDs.Length].Select((s, i) => s = (uint)i).ToArray();
@@ -855,25 +1032,12 @@ namespace RemoteControl.Models
             //    new EventHandler((sender, args) =>
             //    {
             Connected = true;
-            //new Thread((device) => { TxRx(device); })
-            //{ Name = "EcomilkTxRx" }.Start(ECOMILK);
-            //Task.Run(TxRxECOMILK);
-            //Task.Run(async () => { await TxRx(REMOTE); });
 
-            //new Thread((device) => { TxRx(device); })
-            //{ Name = "RemoteTxRx" }.Start(REMOTE);
-            //Task.Run(async () => { await TxRx(REMOTE); });
-
-            //Task.Run(async () => { await Rx(RFID); });
-            //Task.Run(async () => { await Tx(RFID); });
             new Thread((device) => { Rx(device); })
-            { Name = "RfidRx" }.Start(RFID);
+            { Name = "RFID" }.Start(RFID);
 
-            //new Thread((device) => { TxRx(device); })
-            //{ Name = "Aptx1TxRx" }.Start(APTX1);
-            //Task.Run(async () => { await TxRx(APTX1); });
-            //new Thread((device) => { Rx(device); })
-            //{ Name = "Aptx1Rx" }.Start(APTX1);
+            new Thread((device) => { Rx(device); })
+            { Name = "APTX1" }.Start(APTX1);
 
             new Thread(() => { Tx(); })
             { Name = "Tx" }.Start();
@@ -881,25 +1045,38 @@ namespace RemoteControl.Models
 
         private async Task Rx(object odevice)
         {
+            byte[] rxBuffer = new byte[1];
             if (odevice is string)
             {
                 string device = odevice as string;
                 string data = string.Empty;
                 while (Connected)
                 {
-                    if (Ports.TryGetValue(device, out string port))
+                    try
                     {
-                        await PortDataReply(device, port);
-                    }
-                    else
-                    {
-                        string[] ports = UsbSerial.GetPorts().ToArray();
-                        foreach (string prt in ports)
+                        if (Ports.TryGetValue(device, out string port))
                         {
-                            if (await PortConnectReply(device, prt))
-                                Ports.Add(device, prt);
+                            Reply reply = await PortReply(device, port, rxBuffer);
+                            rxBuffer = reply.RxBuffer;
+                        }
+                        else
+                        {
+                            string[] ports = UsbSerial.GetPorts().ToArray();
+                            foreach (string prt in ports)
+                            {
+                                Reply reply = await PortReply(device, prt, rxBuffer);
+                                rxBuffer = reply.RxBuffer;
+                                if (reply.Found)
+                                {
+                                    SemaphorePorts.WaitOne();
+                                    Ports.Add(device, prt);
+                                    SemaphorePorts.Release();
+                                }
+                            }
                         }
                     }
+                    catch
+                    { }
                 }
             }
         }
@@ -909,130 +1086,207 @@ namespace RemoteControl.Models
             string data = string.Empty;
             while (Connected)
             {
-                Stopwatch stopWatch = new Stopwatch();
-                stopWatch.Start();
-                uint state = STATEs.First();
-                foreach (string device in Devices)
+                try
                 {
-                    Thread.Sleep(REQUEST_TIMEOUT);
-                    if (Ports.TryGetValue(device, out string port))
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+                    uint state = STATEs.First();
+                    foreach (string device in Devices)
                     {
-                        if (stopWatch.ElapsedMilliseconds % STATE_TIMEOUT == 0)
-                            state = state == STATEs.Last() ? STATEs.First() : state++;
-                        if (await PortRequest(device, port, state) < 0)
+                        Thread.Sleep(REQUEST_TIMEOUT);
+                        if (Ports.TryGetValue(device, out string port))
                         {
-                            Ports.Remove(port);
-                            UsbSerial.Disconnect();
+                            if (stopWatch.ElapsedMilliseconds % STATE_TIMEOUT == 0)
+                                state = state == STATEs.Last() ? STATEs.First() : state++;
+                            if (await PortRequest(device, port, state) < 0)
+                            {
+                                //SemaphorePorts.WaitOne();
+                                //Ports.Remove(device);
+                                //SemaphorePorts.Release();
+                                //UsbSerial.Disconnect();
+                            }
                         }
-                    }
-                    else
-                    {
-                        UsbSerial.Connect();
-                        foreach (string prt in UsbSerial.GetPorts())
+                        else
                         {
-                            await PortRequest(device, prt, 0);
+                            UsbSerial.Connect();
+                            string[] ports = UsbSerial.GetPorts().ToArray();
+                            foreach (string prt in ports)
+                            {
+                                await PortRequest(device, prt, 0);
+                            }
                         }
                     }
                 }
+                catch
+                { }
             }
         }
 
-        private async Task<bool> PortDataReply(string device, string port)
+        private async Task<Reply> PortReply(string device, string port, byte[] rxBuffer)
         {
             byte[] buffer = new byte[1024];
             //data += await UsbSerial.Read(port, buffer);
-            int length;
-            if ((length = await UsbSerial.Read(port, buffer)) > 0)
+            int length = 0;
+            bool found = false;
+            try
             {
-                RxBuffer.Concat(buffer.Take(length));
+                length = await UsbSerial.Read(port, buffer);
+            }
+            catch
+            {
+                if (Ports.Keys.Contains(device))
+                {
+                    SemaphorePorts.WaitOne();
+                    Ports.Remove(device);
+                    SemaphorePorts.Release();
+                }
+                //UsbSerial.Disconnect();
+                //UsbSerial.Connect();
+            }
+            if (length > 0)
+            {
+                rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
                 switch (device)
                 {
                     case ECOMILK:
+                        if (!Ports.ContainsKey(device))
+                        {
+                            string data = Encoding.UTF8.GetString(rxBuffer);
+                            found = data.Contains(device);
+                        }
                         break;
                     case RFID:
+                        //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+                        //RxBuffer[10] = RfId.PREEMBLE;
+                        //RxBuffer[10 + 19] = RfId.END_MARK;
                         RfId rfId = new RfId();
-                        rfId.PacketParse(ref RxBuffer);
+                        //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
+                        //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
+                        if (found = rfId.PacketParse(ref rxBuffer))
+                        {
+                            unsafe
+                            {
+                                fixed (byte* pepc = rfId.EPC)
+                                {
+                                    CowId = rfId.ArrayToUint(pepc);
+                                }
+                            }
+                        }
                         break;
                     case REMOTE:
-                        //Aptxs.Single(aptx => aptx.Id == Aptx.PacketGetId(buffer)).PacketParse(buffer);
+                        //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+                        //RxBuffer[10] = Aptx.STX;
+                        //RxBuffer[11] = Aptx.APTXIDs[0];
+                        //RxBuffer[10 + 32] = Aptx.ETX;
                         Aptx aptx = new Aptx();
-                        if (aptx.PacketParse(ref RxBuffer))
-                            Aptxs[aptx.Id - 1] = aptx;
+                        //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
+                        //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
+                        if (found = aptx.PacketParse(ref rxBuffer))
+                        {
+                            if (Aptx.APTXIDs.Contains((byte)aptx.Id))
+                                Aptxs[aptx.Id - 1] = aptx;
+                        }
                         break;
                     case APTX1:
-                        string data = Encoding.UTF8.GetString(RxBuffer);
-                        if (Aptxs[0].SNum == UERROR)
                         {
-                            if (data.Contains("SNUM"))
+                            string data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+                            if (!Ports.ContainsKey(device))
                             {
-                                uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
-                                Aptxs[0].SNum = snum[0];
+                                found = data.Contains("1F-85-01");
+                                if (!found)
+                                    found = data.Contains("0x1f-0x85-0x01");
+                                if (found)
+                                    rxBuffer = new byte[1];
                             }
-                        }
-                        if ((Aptxs[0].aptxId[0] == UERROR) ||
-                            (Aptxs[0].aptxId[1] == UERROR) ||
-                            (Aptxs[0].aptxId[2] == UERROR))
-                        {
-                            if (data.Contains("readid Device_id"))
+                            else
                             {
-                                uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-                                Aptxs[0].aptxId[0] = aptid[0];
-                                Aptxs[0].aptxId[1] = aptid[1];
-                                Aptxs[0].aptxId[2] = aptid[2];
-                                Aptxs[0].AptxId = Aptxs[0].AptxId;
+                                if (Aptxs[0].SNum == UERROR)
+                                {
+                                    if (data.Contains("SNUM"))
+                                    {
+                                        uint[] snum = DataParse(data, "SNUM", NumberStyles.Number);
+                                        Aptxs[0].SNum = snum[0];
+                                        rxBuffer = new byte[1];
+                                    }
+                                }
+                                if ((Aptxs[0].aptxId[0] == UERROR) ||
+                                    (Aptxs[0].aptxId[1] == UERROR) ||
+                                    (Aptxs[0].aptxId[2] == UERROR))
+                                {
+                                    if (data.Contains("readid Device_id"))
+                                    {
+                                        uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
+                                        Aptxs[0].aptxId[0] = aptid[0];
+                                        Aptxs[0].aptxId[1] = aptid[1];
+                                        Aptxs[0].aptxId[2] = aptid[2];
+                                        Aptxs[0].AptxId = Aptxs[0].AptxId;
+                                        rxBuffer = new byte[1];
+                                    }
+                                }
+                                if ((Aptxs[0].CurrentPulses == UERROR) || (Aptxs[0].Maxi == UERROR))
+                                {
+                                    if (data.Contains("MAXI"))
+                                    {
+                                        uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
+                                        Aptxs[0].Maxi = maxi[0];
+                                        rxBuffer = new byte[1];
+                                    }
+                                    if (data.Contains("Found:") || data.Contains("pulses written"))
+                                    {
+                                        uint[] current = DataParse(data, "Found:", NumberStyles.Number);
+                                        if (current[0] == 0)
+                                            current = DataParse(data, "pulses written", NumberStyles.Number);
+                                        Aptxs[0].CurrentPulses = current[0];
+                                        rxBuffer = new byte[1];
+                                    }
+                                    if (Aptxs[0].Maxi != UERROR)
+                                        Aptxs[0].Remaining = Aptxs[0].Maxi - Aptxs[0].CurrentPulses;
+                                }
                             }
-                        }
-                        if ((Aptxs[0].CurrentPulses == UERROR) || (Aptxs[0].Maxi == UERROR))
-                        {
-                            if (data.Contains("MAXI"))
-                            {
-                                uint[] maxi = DataParse(data, "MAXI", NumberStyles.Number);
-                                Aptxs[0].Maxi = maxi[0];
-                            }
-                            if (data.Contains("Found:"))
-                            {
-                                uint[] current = DataParse(data, "Found:", NumberStyles.Number);
-                                Aptxs[0].CurrentPulses = current[0];
-                            }
-                            //if ((Aptxs[0].CurrentPulses != UERROR) && (Aptxs[0].Maxi != UERROR))
-                            //    Aptxs[0].Remaining = Aptxs[0].Maxi - Aptxs[0].CurrentPulses;
                         }
                         break;
-                    default:
-                        return false;
                 }
-                return true;
             }
-            return false;
+            return new Reply() { Found = found, RxBuffer = rxBuffer };
         }
 
         private async Task<int> PortRequest(string device, string port, uint state)
         {
             int ret = ERROR;
-            switch (device)
+            try
             {
-                case ECOMILK:
-                    ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-                    break;
-                case RFID:
-                    ret = await UsbSerial.Write(port, new RfId().PacketBuild());
-                    break;
-                case REMOTE:
-                    ret = await UsbSerial.Write(port, Aptxs[state].PacketBuild());
-                    break;
-                case APTX1:
-                    if (Aptxs[0].Id == UERROR)
+                switch (device)
+                {
+                    case ECOMILK:
                         ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-                    if (Aptxs[0].SNum == UERROR)
-                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("testread,3#"));
-                    else if (Aptxs[0].CurrentPulses == UERROR)
-                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("find,3#"));
-                    else if ((Aptxs[0].aptxId[0] == UERROR) ||
-                              (Aptxs[0].aptxId[1] == UERROR) ||
-                              (Aptxs[0].aptxId[2] == UERROR))
-                        ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("readid#"));
-                    break;
+                        break;
+                    case RFID:
+                        ret = await UsbSerial.Write(port, new RfId().PacketBuild());
+                        break;
+                    case REMOTE:
+                        ret = await UsbSerial.Write(port, Aptxs[state].PacketBuild());
+                        break;
+                    case APTX1:
+                        if (!Ports.ContainsKey(device))
+                        {
+                            ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
+                        }
+                        else
+                        {
+                            if (Aptxs[0].SNum == UERROR)
+                                ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("testread,3#"));
+                            else if (Aptxs[0].CurrentPulses == UERROR)
+                                ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("find,3#"));
+                            else if ((Aptxs[0].aptxId[0] == UERROR) ||
+                                      (Aptxs[0].aptxId[1] == UERROR) ||
+                                      (Aptxs[0].aptxId[2] == UERROR))
+                                ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("readid#"));
+                        }
+                        break;
+                }
             }
+            catch
+            { }
             return ret;
         }
 
@@ -1053,71 +1307,73 @@ namespace RemoteControl.Models
         //    }
         //}
 
-        public async Task<bool> PortConnectReply(string device, string port)
-        {
-            byte[] buffer = new byte[1024];
-            //data += await UsbSerial.Read(device, buffer);
-            int length = await UsbSerial.Read(port, buffer);
-            bool found = false;
-            if (length > 0)
-            {
-                RxBuffer = RxBuffer.Concat(buffer.Take(length)).ToArray();
+        //public async Task<Reply> PortConnectReply(string device, string port, byte[] rxBuffer)
+        //{
+        //    byte[] buffer = new byte[1024];
+        //    //data += await UsbSerial.Read(device, buffer);
+        //    int length = await UsbSerial.Read(port, buffer);
+        //    bool found = false;
+        //    if (length > 0)
+        //    {
+        //        //RxBufferRfid = RxBufferRfid.Concat(buffer.Take(length)).ToArray();
+        //        rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
 
-                if (!Ports.ContainsKey(device))
-                {
-                    switch (device)
-                    {
-                        case ECOMILK:
-                            {
-                                string data = Encoding.UTF8.GetString(RxBuffer);
-                                found = data.Contains(device);
-                                break;
-                            }
-                        case RFID:
-                            //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
-                            //RxBuffer[10] = RfId.PREEMBLE;
-                            //RxBuffer[10 + 19] = RfId.END_MARK;
-                            RfId rfId = new RfId();
-                            //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
-                            //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
-                            if (found = rfId.PacketParse(ref RxBuffer))
-                            {
-                                unsafe
-                                {
-                                    fixed (byte* pepc = rfId.EPC)
-                                    {
-                                        CowId = rfId.ArrayToUint(pepc);
-                                    }
-                                }
-                            }
-                            break;
-                        case REMOTE:
-                            //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
-                            //RxBuffer[10] = Aptx.STX;
-                            //RxBuffer[11] = Aptx.APTXIDs[0];
-                            //RxBuffer[10 + 32] = Aptx.ETX;
-                            Aptx aptx = new Aptx();
-                            //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
-                            //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
-                            if (found = aptx.PacketParse(ref RxBuffer))
-                            {
-                                if (Aptx.APTXIDs.Contains((byte)aptx.Id))
-                                    Aptxs[aptx.Id - 1] = aptx;
-                            }
-                            break;
-                        case APTX1:
-                            {
-                                string data = Encoding.UTF8.GetString(RxBuffer);
-                                found = data.Contains("1F-85-01");
-                            }
-                            break;
-                        default:
-                            return false;
-                    }
-                }
-            }
-            return found;
-        }
+        //        if (!Ports.ContainsKey(device))
+        //        {
+        //            switch (device)
+        //            {
+        //                case ECOMILK:
+        //                    {
+        //                        string data = Encoding.UTF8.GetString(rxBuffer);
+        //                        found = data.Contains(device);
+        //                        break;
+        //                    }
+        //                case RFID:
+        //                    //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+        //                    //RxBuffer[10] = RfId.PREEMBLE;
+        //                    //RxBuffer[10 + 19] = RfId.END_MARK;
+        //                    RfId rfId = new RfId();
+        //                    //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
+        //                    //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
+        //                    if (found = rfId.PacketParse(ref rxBuffer))
+        //                    {
+        //                        unsafe
+        //                        {
+        //                            fixed (byte* pepc = rfId.EPC)
+        //                            {
+        //                                CowId = rfId.ArrayToUint(pepc);
+        //                            }
+        //                        }
+        //                    }
+        //                    break;
+        //                case REMOTE:
+        //                    //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+        //                    //RxBuffer[10] = Aptx.STX;
+        //                    //RxBuffer[11] = Aptx.APTXIDs[0];
+        //                    //RxBuffer[10 + 32] = Aptx.ETX;
+        //                    Aptx aptx = new Aptx();
+        //                    //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
+        //                    //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
+        //                    if (found = aptx.PacketParse(ref rxBuffer))
+        //                    {
+        //                        if (Aptx.APTXIDs.Contains((byte)aptx.Id))
+        //                            Aptxs[aptx.Id - 1] = aptx;
+        //                    }
+        //                    break;
+        //                case APTX1:
+        //                    {
+        //                        string data = Encoding.UTF8.GetString(rxBuffer);
+        //                        //found = data.Contains("1F-85-01");
+        //                        found = data.Contains("0x1f-0x85-0x01");
+        //                    }
+        //                    break;
+        //                default:
+        //                    return new Reply() { Found = found, RxBuffer = rxBuffer };
+        //            }
+        //        }
+        //    }
+        //    return new Reply() { Found = found, RxBuffer = rxBuffer };
+        //}
 
         private uint[] DataParse(string data, string pattern, NumberStyles numberStyles)
         {
