@@ -1045,7 +1045,7 @@ namespace RemoteControl.Models
 
         private async Task Rx(object odevice)
         {
-            byte[] rxBuffer = new byte[1];
+            Dictionary<string, byte[]> rxBuffers = new Dictionary<string, byte[]>();
             if (odevice is string)
             {
                 string device = odevice as string;
@@ -1056,17 +1056,14 @@ namespace RemoteControl.Models
                     {
                         if (Ports.TryGetValue(device, out string port))
                         {
-                            Reply reply = await PortReply(device, port, rxBuffer);
-                            rxBuffer = reply.RxBuffer;
+                            await PortReply(device, port, rxBuffers);
                         }
                         else
                         {
                             string[] ports = UsbSerial.GetPorts().ToArray();
                             foreach (string prt in ports)
                             {
-                                Reply reply = await PortReply(device, prt, rxBuffer);
-                                rxBuffer = reply.RxBuffer;
-                                if (reply.Found)
+                                if (await PortReply(device, prt, rxBuffers))
                                 {
                                     SemaphorePorts.WaitOne();
                                     Ports.Add(device, prt);
@@ -1076,7 +1073,8 @@ namespace RemoteControl.Models
                         }
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
             }
         }
@@ -1084,6 +1082,7 @@ namespace RemoteControl.Models
         private async Task Tx()
         {
             string data = string.Empty;
+            string device = string.Empty;
             while (Connected)
             {
                 try
@@ -1091,8 +1090,9 @@ namespace RemoteControl.Models
                     Stopwatch stopWatch = new Stopwatch();
                     stopWatch.Start();
                     uint state = STATEs.First();
-                    foreach (string device in Devices)
+                    foreach (string dev in Devices)
                     {
+                        device = dev;
                         Thread.Sleep(REQUEST_TIMEOUT);
                         if (Ports.TryGetValue(device, out string port))
                         {
@@ -1108,7 +1108,7 @@ namespace RemoteControl.Models
                         }
                         else
                         {
-                            UsbSerial.Connect();
+                            //UsbSerial.Connect();
                             string[] ports = UsbSerial.GetPorts().ToArray();
                             foreach (string prt in ports)
                             {
@@ -1118,32 +1118,28 @@ namespace RemoteControl.Models
                     }
                 }
                 catch
-                { }
+                {
+                    if (Ports.Keys.Contains(device))
+                    {
+                        SemaphorePorts.WaitOne();
+                        Ports.Remove(device);
+                        SemaphorePorts.Release();
+                    }
+                    //UsbSerial.Disconnect();
+                    //UsbSerial.Connect();
+                }
             }
         }
 
-        private async Task<Reply> PortReply(string device, string port, byte[] rxBuffer)
+        private async Task<bool> PortReply(string device, string port, Dictionary<string, byte[]> rxBuffers)
         {
+            if (!rxBuffers.TryGetValue(port, out byte[] rxBuffer))
+                rxBuffers.Add(port, (rxBuffer = new byte[1]));
             byte[] buffer = new byte[1024];
             //data += await UsbSerial.Read(port, buffer);
             int length = 0;
             bool found = false;
-            try
-            {
-                length = await UsbSerial.Read(port, buffer);
-            }
-            catch
-            {
-                if (Ports.Keys.Contains(device))
-                {
-                    SemaphorePorts.WaitOne();
-                    Ports.Remove(device);
-                    SemaphorePorts.Release();
-                }
-                //UsbSerial.Disconnect();
-                //UsbSerial.Connect();
-            }
-            if (length > 0)
+            if ((length = await UsbSerial.Read(port, buffer)) > 0)
             {
                 rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
                 switch (device)
@@ -1239,7 +1235,7 @@ namespace RemoteControl.Models
                                         Aptxs[0].CurrentPulses = current[0];
                                         rxBuffer = new byte[1];
                                     }
-                                    if (Aptxs[0].Maxi != UERROR)
+                                    if ((Aptxs[0].Maxi != UERROR) && (Aptxs[0].CurrentPulses != UERROR))
                                         Aptxs[0].Remaining = Aptxs[0].Maxi - Aptxs[0].CurrentPulses;
                                 }
                             }
@@ -1247,46 +1243,43 @@ namespace RemoteControl.Models
                         break;
                 }
             }
-            return new Reply() { Found = found, RxBuffer = rxBuffer };
+            rxBuffers.Remove(port);
+            rxBuffers.Add(port, rxBuffer);
+            return found;
         }
 
         private async Task<int> PortRequest(string device, string port, uint state)
         {
             int ret = ERROR;
-            try
+            switch (device)
             {
-                switch (device)
-                {
-                    case ECOMILK:
+                case ECOMILK:
+                    ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("id#"));
+                    break;
+                case RFID:
+                    ret = await UsbSerial.Write(port, new RfId().PacketBuild());
+                    break;
+                case REMOTE:
+                    ret = await UsbSerial.Write(port, Aptxs[state].PacketBuild());
+                    break;
+                case APTX1:
+                    if (!Ports.ContainsKey(device))
+                    {
                         ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-                        break;
-                    case RFID:
-                        ret = await UsbSerial.Write(port, new RfId().PacketBuild());
-                        break;
-                    case REMOTE:
-                        ret = await UsbSerial.Write(port, Aptxs[state].PacketBuild());
-                        break;
-                    case APTX1:
-                        if (!Ports.ContainsKey(device))
-                        {
-                            ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("getid,3#"));
-                        }
-                        else
-                        {
-                            if (Aptxs[0].SNum == UERROR)
-                                ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("testread,3#"));
-                            else if (Aptxs[0].CurrentPulses == UERROR)
-                                ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("find,3#"));
-                            else if ((Aptxs[0].aptxId[0] == UERROR) ||
-                                      (Aptxs[0].aptxId[1] == UERROR) ||
-                                      (Aptxs[0].aptxId[2] == UERROR))
-                                ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("readid#"));
-                        }
-                        break;
-                }
+                    }
+                    else
+                    {
+                        if (Aptxs[0].SNum == UERROR)
+                            ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("testread,3#"));
+                        else if (Aptxs[0].CurrentPulses == UERROR)
+                            ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("find,3#"));
+                        else if ((Aptxs[0].aptxId[0] == UERROR) ||
+                                  (Aptxs[0].aptxId[1] == UERROR) ||
+                                  (Aptxs[0].aptxId[2] == UERROR))
+                            ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("readid#"));
+                    }
+                    break;
             }
-            catch
-            { }
             return ret;
         }
 
