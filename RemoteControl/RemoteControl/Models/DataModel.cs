@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -71,20 +72,23 @@ namespace RemoteControl.Models
 
         public bool PacketGet(ref byte[] buffer, int size)
         {
+            //if (buffer.Length >= size)
+            //{
+            //byte b;
+            //if ((b = buffer.FirstOrDefault(bf => bf == Sop)) != null)
+            //{
+            //    int i = buffer.ToList().IndexOf(b);
+            //    buffer = buffer.Skip(i).ToArray();
+            buffer = buffer.SkipWhile(b => b != Sop).ToArray();
             if (buffer.Length >= size)
             {
-                byte b;
-                if ((b = buffer.FirstOrDefault(bf => bf == Sop)) != null)
-                {
-                    int i = buffer.ToList().IndexOf(b);
-                    buffer = buffer.Skip(i).ToArray();
-                    if (buffer.Length >= size)
-                    {
-                        if (buffer[size - 1 - 2] == Eop)
-                            return true;
-                    }
-                }
+                if (buffer[size - 1 - 2] == Eop)
+                    return true;
+                else
+                    buffer = buffer.Skip(1).ToArray();
             }
+            //}
+            //}
             return false;
         }
     }
@@ -154,38 +158,41 @@ namespace RemoteControl.Models
         {
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            if (PacketGet(ref buffer, sizeof(ReadTypeCUIIResponse)))
+            while (buffer.Length > 0)
             {
-                fixed (byte* pbuffer = buffer)
+                if (PacketGet(ref buffer, sizeof(ReadTypeCUIIResponse)))
                 {
-                    ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
-                    if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
+                    fixed (byte* pbuffer = buffer)
                     {
-                        if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
+                        ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
+                        if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
                         {
-                            if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
+                            if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
                             {
-                                EPC[0] = readTypeCUIIResponse->EPCMSB;
-                                EPC[1] = readTypeCUIIResponse->EPC1;
-                                EPC[2] = readTypeCUIIResponse->EPC2;
-                                EPC[3] = readTypeCUIIResponse->EPC3;
-                                EPC[4] = readTypeCUIIResponse->EPC4;
-                                EPC[5] = readTypeCUIIResponse->EPC5;
-                                EPC[6] = readTypeCUIIResponse->EPC6;
-                                EPC[7] = readTypeCUIIResponse->EPC7;
-                                EPC[8] = readTypeCUIIResponse->EPC8;
-                                EPC[9] = readTypeCUIIResponse->EPC9;
-                                EPC[10] = readTypeCUIIResponse->EPC10;
-                                EPC[11] = readTypeCUIIResponse->EPCLSB;
-                                buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
-                                return true;
+                                if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
+                                {
+                                    EPC[0] = readTypeCUIIResponse->EPCMSB;
+                                    EPC[1] = readTypeCUIIResponse->EPC1;
+                                    EPC[2] = readTypeCUIIResponse->EPC2;
+                                    EPC[3] = readTypeCUIIResponse->EPC3;
+                                    EPC[4] = readTypeCUIIResponse->EPC4;
+                                    EPC[5] = readTypeCUIIResponse->EPC5;
+                                    EPC[6] = readTypeCUIIResponse->EPC6;
+                                    EPC[7] = readTypeCUIIResponse->EPC7;
+                                    EPC[8] = readTypeCUIIResponse->EPC8;
+                                    EPC[9] = readTypeCUIIResponse->EPC9;
+                                    EPC[10] = readTypeCUIIResponse->EPC10;
+                                    EPC[11] = readTypeCUIIResponse->EPCLSB;
+                                    buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
+                                    return true;
+                                }
                             }
                         }
                     }
                 }
+                //buffer = buffer.Skip(1).ToArray();
             }
             //}
-            buffer = buffer.Skip(1).ToArray();
             return false;
         }
         
@@ -530,7 +537,7 @@ namespace RemoteControl.Models
         {
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            if (PacketGet(ref buffer, sizeof(PacketStatus)))
+            while (PacketGet(ref buffer, sizeof(PacketStatus)))
             {
                 fixed (byte* pbuffer = buffer)
                 {
@@ -596,11 +603,11 @@ namespace RemoteControl.Models
 
     public class DataModel : INotifyPropertyChanged
     {
-        public class Reply
-        {
-            public bool Found = false;
-            public byte[] RxBuffer;
-        }
+        //public class Reply
+        //{
+        //    public bool Found = false;
+        //    public byte[] RxBuffer;
+        //}
 
         public bool PressureOK { get => Aptxs[0].Pressure == 1; }
         public bool PressureLow { get => Aptxs[0].Pressure != 1; }
@@ -759,6 +766,23 @@ namespace RemoteControl.Models
             }
         }
 
+        public Command AddCow { get; }
+        public Command TappedFL { get; }
+        public Command TappedRL { get; }
+        public Command TappedFR { get; }
+        public Command TappedRR { get; }
+
+        private string[] usbPorts;
+        public string UsbPorts
+        {
+            get => usbPorts.Aggregate("", (r, v) => r += v + " "); 
+            set
+            {
+                usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
+            }
+        }
+
         private const uint UERROR = 0xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
@@ -775,6 +799,7 @@ namespace RemoteControl.Models
         private const int CONNECT_TIMEOUT = 3000;
         private const int STATE_TIMEOUT = 3000; // in msec
         private const int REQUEST_TIMEOUT = 1000; // in msec
+        private const int REQUEST_RETRIES = 3;
 
         private const int RXBUFFER_SIZE = 1024;
 
@@ -788,18 +813,15 @@ namespace RemoteControl.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Command AddCow { get; }
-        public Command TappedFL { get; }
-        public Command TappedRL { get; }
-        public Command TappedFR { get; }
-        public Command TappedRR { get; }
-
         private IUsbSerial UsbSerial;
         //public string APTXPort = string.Empty;
         //public string EcomilkPort = string.Empty;
-        private Dictionary<string, string> Ports = new Dictionary<string, string>();
-        private Semaphore SemaphorePorts = new Semaphore(1, 1);
-        private bool Connected = false;
+        private ConcurrentDictionary<string, string> Ports = new ConcurrentDictionary<string, string>();
+        //private Semaphore SemaphorePorts = new Semaphore(1, 1);
+        ManualResetEvent WaitHandleRfid = new ManualResetEvent(false);
+        ManualResetEvent WaitHandleAptx1 = new ManualResetEvent(false);
+        //System.Collections.Concurrent.ConcurrentDictionary<> conc;
+        //private bool Connected = false;
         private byte PauseResume = Aptx.STOP;
         private byte[] RxBufferRfid = new byte[1];// RXBUFFER_SIZE];
         private byte[] RxBufferAptx1 = new byte[1];// RXBUFFER_SIZE];
@@ -808,175 +830,6 @@ namespace RemoteControl.Models
 
         public DataModel(IUsbSerial usbSerial)
         {
-
-            //new Thread(() =>
-            //{
-            //    while (true)
-            //    {
-            //        Thread.Sleep(1000);
-
-            //        UInt32 ftdiDeviceCount = 0;
-            //        FTDI.FT_STATUS ftStatus = FTDI.FT_STATUS.FT_OK;
-
-            //        // Create new instance of the FTDI device class
-            //        FTDI myFtdiDevice = new FTDI();
-
-            //        // Determine the number of FTDI devices connected to the machine
-            //        ftStatus = myFtdiDevice.GetNumberOfDevices(ref ftdiDeviceCount);
-            //        // Check status
-            //        if (ftStatus == FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            Console.WriteLine("Number of FTDI devices: " + ftdiDeviceCount.ToString());
-            //            Console.WriteLine("");
-            //        }
-            //        else
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to get number of devices (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // If no devices available, return
-            //        if (ftdiDeviceCount == 0)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to get number of devices (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // Allocate storage for device info list
-            //        FTDI.FT_DEVICE_INFO_NODE[] ftdiDeviceList = new FTDI.FT_DEVICE_INFO_NODE[ftdiDeviceCount];
-
-            //        // Populate our device list
-            //        ftStatus = myFtdiDevice.GetDeviceList(ftdiDeviceList);
-
-            //        if (ftStatus == FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            for (UInt32 i = 0; i < ftdiDeviceCount; i++)
-            //            {
-            //                Console.WriteLine("Device Index: " + i.ToString());
-            //                Console.WriteLine("Flags: " + String.Format("{0:x}", ftdiDeviceList[i].Flags));
-            //                Console.WriteLine("Type: " + ftdiDeviceList[i].Type.ToString());
-            //                Console.WriteLine("ID: " + String.Format("{0:x}", ftdiDeviceList[i].ID));
-            //                Console.WriteLine("Location ID: " + String.Format("{0:x}", ftdiDeviceList[i].LocId));
-            //                Console.WriteLine("Serial Number: " + ftdiDeviceList[i].SerialNumber.ToString());
-            //                Console.WriteLine("Description: " + ftdiDeviceList[i].Description.ToString());
-            //                Console.WriteLine("");
-            //            }
-            //        }
-
-
-            //        // Open first device in our list by serial number
-            //        ftStatus = myFtdiDevice.OpenBySerialNumber(ftdiDeviceList[0].SerialNumber);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to open device (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // Set up device data parameters
-            //        // Set Baud rate to 9600
-            //        ftStatus = myFtdiDevice.SetBaudRate(115200);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to set Baud rate (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // Set data characteristics - Data bits, Stop bits, Parity
-            //        ftStatus = myFtdiDevice.SetDataCharacteristics(FTDI.FT_DATA_BITS.FT_BITS_8, FTDI.FT_STOP_BITS.FT_STOP_BITS_1, FTDI.FT_PARITY.FT_PARITY_NONE);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to set data characteristics (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // Set flow control - set RTS/CTS flow control
-            //        //ftStatus = myFtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_RTS_CTS, 0x11, 0x13);
-            //        ftStatus = myFtdiDevice.SetFlowControl(FTDI.FT_FLOW_CONTROL.FT_FLOW_NONE, 0, 0);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to set flow control (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // Set read timeout to 5 seconds, write timeout to infinite
-            //        ftStatus = myFtdiDevice.SetTimeouts(5000, 0);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to set timeouts (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-            //        // Perform loop back - make sure loop back connector is fitted to the device
-            //        // Write string data to the device
-            //        string dataToWrite = "getid,3#";
-            //        UInt32 numBytesWritten = 0;
-            //        // Note that the Write method is overloaded, so can write string or byte array data
-            //        ftStatus = myFtdiDevice.Write(dataToWrite, dataToWrite.Length, ref numBytesWritten);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to write to device (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-
-
-            //        // Check the amount of data available to read
-            //        // In this case we know how much data we are expecting, 
-            //        // so wait until we have all of the bytes we have sent.
-            //        UInt32 numBytesAvailable = 0;
-            //        //do
-            //        //{
-            //        //    ftStatus = myFtdiDevice.GetRxBytesAvailable(ref numBytesAvailable);
-            //        //    if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        //    {
-            //        //        // Wait for a key press
-            //        //        Console.WriteLine("Failed to get number of bytes available to read (error " + ftStatus.ToString() + ")");
-            //        //        //Console.ReadKey();
-            //        //        //return;
-            //        //    }
-            //        //    Thread.Sleep(10);
-            //        //} while (numBytesAvailable < dataToWrite.Length);
-
-            //        // Now that we have the amount of data we want available, read it
-            //        string readData;
-            //        UInt32 numBytesRead = 0;
-            //        // Note that the Read method is overloaded, so can read string or byte array data
-            //        ftStatus = myFtdiDevice.Read(out readData, numBytesAvailable, ref numBytesRead);
-            //        if (ftStatus != FTDI.FT_STATUS.FT_OK)
-            //        {
-            //            // Wait for a key press
-            //            Console.WriteLine("Failed to read data (error " + ftStatus.ToString() + ")");
-            //            //Console.ReadKey();
-            //            //return;
-            //        }
-            //        Console.WriteLine(readData);
-
-            //        // Close our device
-            //        ftStatus = myFtdiDevice.Close();
-
-            //        // Wait for a key press
-            //        Console.WriteLine("Press any key to continue.");
-            //        //Console.ReadKey();
-            //        //return;
-            //    }
-            ////}).Start();
-
-
             Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
             Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
             STATEs = new uint[Aptx.APTXIDs.Length].Select((s, i) => s = (uint)i).ToArray();
@@ -1031,7 +884,7 @@ namespace RemoteControl.Models
             //    }),
             //    new EventHandler((sender, args) =>
             //    {
-            Connected = true;
+            //Connected = true;
 
             new Thread((device) => { Rx(device); })
             { Name = "RFID" }.Start(RFID);
@@ -1050,24 +903,34 @@ namespace RemoteControl.Models
             {
                 string device = odevice as string;
                 string data = string.Empty;
-                while (Connected)
+                while (true)
                 {
                     try
                     {
+                        switch(device)
+                        {
+                            case RFID:
+                                WaitHandleRfid.WaitOne();
+                                break;
+                            case APTX1:
+                                WaitHandleAptx1.WaitOne();
+                                break;
+                        }
                         if (Ports.TryGetValue(device, out string port))
                         {
                             await PortReply(device, port, rxBuffers);
                         }
                         else
                         {
-                            string[] ports = UsbSerial.GetPorts().ToArray();
+                            string [] ports = UsbSerial.GetPorts().ToArray();
+                            UsbPorts = ports.Aggregate("", (r, v) => r += v + " ");
                             foreach (string prt in ports)
                             {
                                 if (await PortReply(device, prt, rxBuffers))
                                 {
-                                    SemaphorePorts.WaitOne();
-                                    Ports.Add(device, prt);
-                                    SemaphorePorts.Release();
+                                    //SemaphorePorts.WaitOne();
+                                    Ports.TryAdd(device, prt);
+                                    //SemaphorePorts.Release();
                                 }
                             }
                         }
@@ -1083,7 +946,7 @@ namespace RemoteControl.Models
         {
             string data = string.Empty;
             string device = string.Empty;
-            while (Connected)
+            while (true)
             {
                 try
                 {
@@ -1093,38 +956,53 @@ namespace RemoteControl.Models
                     foreach (string dev in Devices)
                     {
                         device = dev;
-                        Thread.Sleep(REQUEST_TIMEOUT);
-                        if (Ports.TryGetValue(device, out string port))
+                        switch (device)
                         {
-                            if (stopWatch.ElapsedMilliseconds % STATE_TIMEOUT == 0)
-                                state = state == STATEs.Last() ? STATEs.First() : state++;
-                            if (await PortRequest(device, port, state) < 0)
-                            {
-                                //SemaphorePorts.WaitOne();
-                                //Ports.Remove(device);
-                                //SemaphorePorts.Release();
-                                //UsbSerial.Disconnect();
-                            }
+                            case RFID:
+                                WaitHandleAptx1.Reset();
+                                WaitHandleRfid.Set();
+                                break;
+                            case APTX1:
+                                WaitHandleRfid.Reset();
+                                WaitHandleAptx1.Set();
+                                break;
                         }
-                        else
+                        for (int i = 0; i < REQUEST_RETRIES; i++)
                         {
-                            //UsbSerial.Connect();
-                            string[] ports = UsbSerial.GetPorts().ToArray();
-                            foreach (string prt in ports)
+                            if (Ports.TryGetValue(device, out string port))
                             {
-                                await PortRequest(device, prt, 0);
+                                if (stopWatch.ElapsedMilliseconds % STATE_TIMEOUT == 0)
+                                    state = state == STATEs.Last() ? STATEs.First() : state++;
+                                if (await PortRequest(device, port, state) < 0)
+                                {
+                                    //SemaphorePorts.WaitOne();
+                                    //Ports.Remove(device);
+                                    //SemaphorePorts.Release();
+                                    //UsbSerial.Disconnect();
+                                }
                             }
+                            else
+                            {
+                                //UsbSerial.Connect();
+                                string[] ports = UsbSerial.GetPorts().ToArray();
+                                UsbPorts = ports.Aggregate("", (r, v) => r += v + " ");
+                                foreach (string prt in ports)
+                                {
+                                    await PortRequest(device, prt, 0);
+                                }
+                            }
+                            Thread.Sleep(REQUEST_TIMEOUT);
                         }
                     }
                 }
                 catch
                 {
-                    if (Ports.Keys.Contains(device))
-                    {
-                        SemaphorePorts.WaitOne();
-                        Ports.Remove(device);
-                        SemaphorePorts.Release();
-                    }
+                    //if (Ports.Keys.Contains(device))
+                    //{
+                    //SemaphorePorts.WaitOne();
+                    Ports.TryRemove(device, out string value);
+                    //SemaphorePorts.Release();
+                    //}
                     //UsbSerial.Disconnect();
                     //UsbSerial.Connect();
                 }

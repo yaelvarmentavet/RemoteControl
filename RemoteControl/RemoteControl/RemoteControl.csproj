@@ -158,6 +158,7 @@
   <ItemGroup>
     <PackageReference Include="Autofac" Version="6.3.0" />
     <PackageReference Include="Autofac.Extras.CommonServiceLocator" Version="6.0.1" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.1" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2337" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.1" />

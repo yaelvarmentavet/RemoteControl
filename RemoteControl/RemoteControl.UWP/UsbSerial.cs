@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-//using System.Management;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
-using Windows.Devices.Usb;
 using Windows.Security.Cryptography;
 using Windows.Storage.Streams;
 using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace RemoteControl.UWP
 {
-//class UsbEventArgs : EventArgs
-//{
-//    public string Id;
-//}
-public class UsbSerial : IUsbSerial
+    //class UsbEventArgs : EventArgs
+    //{
+    //    public string Id;
+    //}
+    public class UsbSerial : IUsbSerial
     {
         private const int ERROR = -1;
 
@@ -27,38 +24,18 @@ public class UsbSerial : IUsbSerial
         private EventHandler EventRemoved;
         private bool Connected = false;
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
+        private DeviceWatcher Watcher;
 
         public UsbSerial()
         {
-            DeviceWatcher watch = DeviceInformation.CreateWatcher(DeviceClass.All);
-            watch.Added += DeviceAdded;
-            watch.Removed += DeviceRemoved;
-            watch.EnumerationCompleted += DeviceEnumerationCompleted;
-            watch.Updated += DeviceUpdated;
-            watch.Stopped += DeviceStopped;
+            Watcher = DeviceInformation.CreateWatcher(DeviceClass.All);
+            Watcher.Added += DeviceAdded;
+            Watcher.Removed += DeviceRemoved;
+            Watcher.EnumerationCompleted += DeviceEnumerationCompleted;
+            Watcher.Updated += DeviceUpdated;
+            Watcher.Stopped += DeviceStopped;
             //DeviceWatcherTrigger deviceWatcherTrigger = deviceWatcher.GetBackgroundTrigger(new List<DeviceWatcherEventKind>() { DeviceWatcherEventKind.Add, DeviceWatcherEventKind.Remove });
-            watch.Start();
-
-
-            //Program p = new Program();
-            //ManagementScope scope = new ManagementScope("root\\CIMV2");
-
-            //scope.Options.EnablePrivileges = true;
-            //try
-            //{
-            //    WqlEventQuery query = new WqlEventQuery();
-            //    query.EventClassName = "__InstanceOperationEvent";
-            //    query.WithinInterval = new TimeSpan(0, 0, 1);
-            //    query.Condition = @"TargetInstance ISA 'Win32_USBControllerdevice'";
-
-            //    //ManagementEventWatcher watcher = new ManagementEventWatcher(scope, query);
-            //    ManagementEventWatcher watcher = new ManagementEventWatcher(query);
-            //    watcher.EventArrived += new EventArrivedEventHandler(WaitForUSBChangeEvent);
-            //    watcher.Start();
-            //}
-            //catch(Exception ex)
-            //{
-            //}
+            Watcher.Start();
         }
 
         private void DeviceStopped(DeviceWatcher sender, object args)
@@ -67,13 +44,13 @@ public class UsbSerial : IUsbSerial
 
         private void DeviceUpdated(DeviceWatcher sender, DeviceInformationUpdate args)
         {
-            Task.Run(async () =>
+            new Thread(async () =>
             {
                 SemaphoreConnect.WaitOne();
                 //await Connect();
                 await Connect(args.Id);
                 SemaphoreConnect.Release();
-            });
+            }).Start();
         }
 
         //private void WaitForUSBChangeEvent(object sender, EventArrivedEventArgs e)
@@ -83,12 +60,12 @@ public class UsbSerial : IUsbSerial
 
         private void DeviceEnumerationCompleted(DeviceWatcher sender, object args)
         {
-            Task.Run(async () =>
+            new Thread(async () =>
             {
                 SemaphoreConnect.WaitOne();
                 await Connect();
                 SemaphoreConnect.Release();
-            });
+            }).Start();
         }
 
         private void DeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
@@ -103,23 +80,25 @@ public class UsbSerial : IUsbSerial
 
         public async Task<bool> Connect()
         {
-            if (!Connected)
-            {
-                DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
+            //if (!Connected)
+            //{
+            DeviceInformationCollection serialDeviceInfos = await DeviceInformation.FindAllAsync(SerialDevice.GetDeviceSelector());
 
-                foreach (DeviceInformation serialDeviceInfo in serialDeviceInfos)
-                {
-                    await Connect(serialDeviceInfo.Id);
-                    Connected = true;
-                }
+            foreach (DeviceInformation serialDeviceInfo in serialDeviceInfos)
+            {
+                await Connect(serialDeviceInfo.Id);
+                //Connected = true;
             }
-            return Connected;
+            //}
+            //return Connected;
+            return true;
         }
 
         private async Task Connect(string id)
         {
             try
             {
+                //SemaphoreConnect.WaitOne();
                 SerialDevice serialDevice = await SerialDevice.FromIdAsync(id);
 
                 if (serialDevice != null)
@@ -137,6 +116,10 @@ public class UsbSerial : IUsbSerial
             {
                 if (SerialPorts.ContainsKey(id))
                     SerialPorts.Remove(id);
+            }
+            finally 
+            { 
+                //SemaphoreConnect.Release();
             }
         }
 

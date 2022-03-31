@@ -27,6 +27,7 @@
                 </Image>-->
                 <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelAlignedEnd}" Text="Pulses:"/>
                 <Label x:Name="LblRem" Grid.Column="2" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding Remaining}"/>
+                <Editor x:Name="EdPort" Grid.Column="3" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding UsbPorts}"/>
                 <ImageButton Grid.Column="4" Scale="2" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.settings.png}" Command="{Binding NextPageSettings}"/>
                 <!--<Image Grid.Column="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.settings.png}"

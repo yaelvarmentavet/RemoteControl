@@ -17,6 +17,7 @@ namespace RemoteControl.Views
             InitializeComponent();
 
             LblRem.BindingContext = App.DataModel.Aptxs[0];
+            EdPort.BindingContext = App.DataModel;
             //LblRem.SetBinding(Label.TextProperty, "Remaining");
         }
     }
