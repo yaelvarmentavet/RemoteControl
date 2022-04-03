@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RemoteControl.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,10 +12,6 @@ using Buffer = Windows.Storage.Streams.Buffer;
 
 namespace RemoteControl.UWP
 {
-    //class UsbEventArgs : EventArgs
-    //{
-    //    public string Id;
-    //}
     public class UsbSerial : IUsbSerial
     {
         private const int ERROR = -1;
@@ -22,7 +19,7 @@ namespace RemoteControl.UWP
         private Dictionary<string, SerialDevice> SerialPorts = new Dictionary<string, SerialDevice>();
         private EventHandler EventAdded;
         private EventHandler EventRemoved;
-        private bool Connected = false;
+        //private bool Connected = false;
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
         private DeviceWatcher Watcher;
 
@@ -53,11 +50,6 @@ namespace RemoteControl.UWP
             }).Start();
         }
 
-        //private void WaitForUSBChangeEvent(object sender, EventArrivedEventArgs e)
-        //{
-        //}
-
-
         private void DeviceEnumerationCompleted(DeviceWatcher sender, object args)
         {
             new Thread(async () =>
@@ -70,15 +62,13 @@ namespace RemoteControl.UWP
 
         private void DeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
         {
-            //EventRemoved.Invoke(this, new UsbEventArgs() { Id = args.Id});
         }
 
         private void DeviceAdded(DeviceWatcher sender, DeviceInformation args)
         {
-            //EventAdded.Invoke(this, new UsbEventArgs() { Id = args.Id});
         }
 
-        public async Task<bool> Connect()
+        private async Task<bool> Connect()
         {
             //if (!Connected)
             //{
@@ -115,20 +105,23 @@ namespace RemoteControl.UWP
             catch
             {
                 if (SerialPorts.ContainsKey(id))
+                {
+                    EventRemoved?.Invoke(this, new PortEventArgs() { Port = SerialPorts.TryGetValue(id, out SerialDevice device) ? device.PortName : string.Empty });
                     SerialPorts.Remove(id);
+                }
             }
-            finally 
-            { 
+            finally
+            {
                 //SemaphoreConnect.Release();
             }
         }
 
-        public async Task Disconnect()
-        {
-            //SemaphoreConnect.WaitOne();
-            Connected = false;
-            //SemaphoreConnect.Release();
-        }
+        //public async Task Disconnect()
+        //{
+        //    //SemaphoreConnect.WaitOne();
+        //    //Connected = false;
+        //    //SemaphoreConnect.Release();
+        //}
 
         public IEnumerable<string> GetPorts()
         {

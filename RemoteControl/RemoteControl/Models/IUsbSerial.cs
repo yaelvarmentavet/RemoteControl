@@ -6,8 +6,8 @@ namespace RemoteControl
 {
     public interface IUsbSerial
     {
-        Task<bool> Connect();
-        Task Disconnect();
+        //Task<bool> Connect();
+        //Task Disconnect();
         IEnumerable<string> GetPorts();
         Task<int> Read(string portName, byte[] buffer);
         Task<int> Write(string portName, byte[] buffer);

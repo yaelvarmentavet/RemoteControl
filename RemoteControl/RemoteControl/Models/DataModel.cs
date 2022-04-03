@@ -84,8 +84,6 @@ namespace RemoteControl.Models
             {
                 if (buffer[size - 1 - 2] == Eop)
                     return true;
-                else
-                    buffer = buffer.Skip(1).ToArray();
             }
             //}
             //}
@@ -158,40 +156,37 @@ namespace RemoteControl.Models
         {
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            while (buffer.Length > 0)
+            if (PacketGet(ref buffer, sizeof(ReadTypeCUIIResponse)))
             {
-                if (PacketGet(ref buffer, sizeof(ReadTypeCUIIResponse)))
+                fixed (byte* pbuffer = buffer)
                 {
-                    fixed (byte* pbuffer = buffer)
+                    ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
+                    if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
                     {
-                        ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
-                        if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
+                        if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
                         {
-                            if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
+                            if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
                             {
-                                if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
-                                {
-                                    EPC[0] = readTypeCUIIResponse->EPCMSB;
-                                    EPC[1] = readTypeCUIIResponse->EPC1;
-                                    EPC[2] = readTypeCUIIResponse->EPC2;
-                                    EPC[3] = readTypeCUIIResponse->EPC3;
-                                    EPC[4] = readTypeCUIIResponse->EPC4;
-                                    EPC[5] = readTypeCUIIResponse->EPC5;
-                                    EPC[6] = readTypeCUIIResponse->EPC6;
-                                    EPC[7] = readTypeCUIIResponse->EPC7;
-                                    EPC[8] = readTypeCUIIResponse->EPC8;
-                                    EPC[9] = readTypeCUIIResponse->EPC9;
-                                    EPC[10] = readTypeCUIIResponse->EPC10;
-                                    EPC[11] = readTypeCUIIResponse->EPCLSB;
-                                    buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
-                                    return true;
-                                }
+                                EPC[0] = readTypeCUIIResponse->EPCMSB;
+                                EPC[1] = readTypeCUIIResponse->EPC1;
+                                EPC[2] = readTypeCUIIResponse->EPC2;
+                                EPC[3] = readTypeCUIIResponse->EPC3;
+                                EPC[4] = readTypeCUIIResponse->EPC4;
+                                EPC[5] = readTypeCUIIResponse->EPC5;
+                                EPC[6] = readTypeCUIIResponse->EPC6;
+                                EPC[7] = readTypeCUIIResponse->EPC7;
+                                EPC[8] = readTypeCUIIResponse->EPC8;
+                                EPC[9] = readTypeCUIIResponse->EPC9;
+                                EPC[10] = readTypeCUIIResponse->EPC10;
+                                EPC[11] = readTypeCUIIResponse->EPCLSB;
+                                buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
+                                return true;
                             }
                         }
                     }
                 }
-                //buffer = buffer.Skip(1).ToArray();
             }
+            buffer = buffer.Skip(1).ToArray();
             //}
             return false;
         }
@@ -537,7 +532,7 @@ namespace RemoteControl.Models
         {
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            while (PacketGet(ref buffer, sizeof(PacketStatus)))
+            if (PacketGet(ref buffer, sizeof(PacketStatus)))
             {
                 fixed (byte* pbuffer = buffer)
                 {
@@ -563,6 +558,7 @@ namespace RemoteControl.Models
                     }
                 }
             }
+            buffer = buffer.Skip(1).ToArray();
             //}
             return false;
         }
@@ -599,6 +595,11 @@ namespace RemoteControl.Models
         {
             return PacketBuild(RESERVED, RESERVED, STATUS);
         }
+    }
+
+    public class PortEventArgs : EventArgs
+    {
+        public string Port;
     }
 
     public class DataModel : INotifyPropertyChanged
@@ -814,10 +815,11 @@ namespace RemoteControl.Models
         public event PropertyChangedEventHandler PropertyChanged;
 
         private IUsbSerial UsbSerial;
-        //public string APTXPort = string.Empty;
-        //public string EcomilkPort = string.Empty;
-        private ConcurrentDictionary<string, string> Ports = new ConcurrentDictionary<string, string>();
-        //private Semaphore SemaphorePorts = new Semaphore(1, 1);
+        
+        //private ConcurrentDictionary<string, string> Ports = new ConcurrentDictionary<string, string>();
+        private Dictionary<string, string> Ports = new Dictionary<string, string>();
+        private Semaphore SemaphorePorts = new Semaphore(1, 1);
+        
         ManualResetEvent WaitHandleRfid = new ManualResetEvent(false);
         ManualResetEvent WaitHandleAptx1 = new ManualResetEvent(false);
         //System.Collections.Concurrent.ConcurrentDictionary<> conc;
@@ -835,6 +837,20 @@ namespace RemoteControl.Models
             STATEs = new uint[Aptx.APTXIDs.Length].Select((s, i) => s = (uint)i).ToArray();
 
             UsbSerial = usbSerial;
+            UsbSerial.Event((obj, args) => 
+            {
+                SemaphorePorts.WaitOne();
+                if (args is PortEventArgs)
+                {
+                    if (Ports.ContainsValue((args as PortEventArgs).Port))
+                    {
+                        //string key = Ports.Select((kv) => kv.Value == (args as PortEventArgs).Port ? kv : new KeyValuePair<string, string>()).First().Key;
+                        string key = Ports.First((kv) => kv.Value == (args as PortEventArgs).Port).Key;
+                        Ports.Remove(key);
+                    }
+                }
+                SemaphorePorts.Release();
+            }, null);
 
             AddCow = new Command(() =>
             {
@@ -922,15 +938,16 @@ namespace RemoteControl.Models
                         }
                         else
                         {
-                            string [] ports = UsbSerial.GetPorts().ToArray();
-                            UsbPorts = ports.Aggregate("", (r, v) => r += v + " ");
+                            string[] ports = UsbSerial.GetPorts().ToArray();
+                            usbPorts = ports;
+                            UsbPorts = UsbPorts;
                             foreach (string prt in ports)
                             {
                                 if (await PortReply(device, prt, rxBuffers))
                                 {
-                                    //SemaphorePorts.WaitOne();
-                                    Ports.TryAdd(device, prt);
-                                    //SemaphorePorts.Release();
+                                    SemaphorePorts.WaitOne();
+                                    Ports.Add(device, prt);
+                                    SemaphorePorts.Release();
                                 }
                             }
                         }
@@ -985,7 +1002,8 @@ namespace RemoteControl.Models
                             {
                                 //UsbSerial.Connect();
                                 string[] ports = UsbSerial.GetPorts().ToArray();
-                                UsbPorts = ports.Aggregate("", (r, v) => r += v + " ");
+                                usbPorts = ports;
+                                UsbPorts = UsbPorts;
                                 foreach (string prt in ports)
                                 {
                                     await PortRequest(device, prt, 0);
@@ -1000,7 +1018,7 @@ namespace RemoteControl.Models
                     //if (Ports.Keys.Contains(device))
                     //{
                     //SemaphorePorts.WaitOne();
-                    Ports.TryRemove(device, out string value);
+                    //Ports.TryRemove(device, out string val);
                     //SemaphorePorts.Release();
                     //}
                     //UsbSerial.Disconnect();
@@ -1132,7 +1150,7 @@ namespace RemoteControl.Models
             switch (device)
             {
                 case ECOMILK:
-                    ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("id#"));
+                    ret = await UsbSerial.Write(port, Encoding.UTF8.GetBytes("ecomilkid#\r"));
                     break;
                 case RFID:
                     ret = await UsbSerial.Write(port, new RfId().PacketBuild());
@@ -1316,22 +1334,22 @@ namespace RemoteControl.Models
 
         public async Task RCWStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 1\r"));
         }
 
         public async Task RCWStop()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 0"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 0\r"));
         }
 
         public async Task RCCWStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 1\r"));
         }
 
         public async Task RCCWStop()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 0"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 0\r"));
         }
 
 
@@ -1339,22 +1357,22 @@ namespace RemoteControl.Models
 
         public async Task AFStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 1\r"));
         }
 
         public async Task AFStop()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 0"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 0\r"));
         }
 
         public async Task ABStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 1\r"));
         }
 
         public async Task ABStop()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 0"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 0\r"));
         }
 
 
@@ -1362,32 +1380,32 @@ namespace RemoteControl.Models
 
         public async Task MZUStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 1\r"));
         }
 
         public async Task MZUStop()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 0"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 0\r"));
         }
 
         public async Task MZDStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 1\r"));
         }
 
         public async Task MZDStop()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 0"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 0\r"));
         }
 
         public async Task TCWStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
         }
 
         public async Task XFStart()
         {
-            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1"));
+            await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1\r"));
         }
     }
 }

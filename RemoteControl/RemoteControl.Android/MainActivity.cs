@@ -17,9 +17,15 @@ namespace RemoteControl.Droid
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static UsbManager Manager;
+        public static BroadcastReceiverSystem UsbReciever = new BroadcastReceiverSystem();
         //public static PendingIntent mPermissionIntent = null;
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            PendingIntent mAttachedIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(UsbManager.ActionUsbDeviceAttached), 0);
+            IntentFilter filter = new IntentFilter(UsbManager.ActionUsbDeviceAttached);
+            //IntentFilter filterDe = new IntentFilter(UsbManager.ActionUsbDeviceDetached);
+            RegisterReceiver(UsbReciever, filter);
+
             //Xamarin.Forms.DependencyService.Register<UsbDevice>();
 
             base.OnCreate(savedInstanceState);

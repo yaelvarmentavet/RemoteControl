@@ -14,7 +14,6 @@ namespace RemoteControl.Droid
 {
     class HashMapp : Java.Util.HashMap
     {
-
         IntPtr class_ref;
 
         public HashMapp(IntPtr handle, JniHandleOwnership transfer)
@@ -56,18 +55,24 @@ namespace RemoteControl.Droid
         public UsbSerial()
         {
             //PendingIntent mAttachedIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(UsbManager.ActionUsbDeviceAttached), 0);
-            BroadcastReceiverSystem usbReciever = new BroadcastReceiverSystem();
-            IntentFilter filter = new IntentFilter(UsbManager.ActionUsbDeviceAttached);
+            //BroadcastReceiverSystem usbReciever = new BroadcastReceiverSystem();
+            //IntentFilter filter = new IntentFilter(UsbManager.ActionUsbDeviceAttached);
+            //IntentFilter filterDe = new IntentFilter(UsbManager.ActionUsbDeviceDetached);
             //RegisterReceiver(usbReciever, filter);
-            usbReciever.usbAttached += usbAttached;
+            MainActivity.UsbReciever.usbAttached += UsbAttached;
         }
 
-        private void usbAttached(object sender, EventArgs e)
+        private void UsbAttached(object sender, EventArgs e)
         {
-            //EventAdded.Invoke(this, EventArgs.Empty);
+            new Thread(async () =>
+            {
+                SemaphoreConnect.WaitOne();
+                await Connect();
+                SemaphoreConnect.Release();
+            }).Start();
         }
 
-        public async Task<bool> Connect()
+        private async Task<bool> Connect()
         {
             //new Thread(async () =>
             //    {
@@ -76,55 +81,55 @@ namespace RemoteControl.Droid
             //UsbManager manager = GetSystemService(Context.UsbService) as UsbManager;
 
             //Java.Util.HashMap devices = (Java.Util.HashMap)(manager?.DeviceList);
-            SemaphoreConnect.WaitOne();
-            if (!Connected)
+            //SemaphoreConnect.WaitOne();
+            //if (!Connected)
+            //{
+            var devices = MainActivity.Manager?.DeviceList;
+            if (devices != null)
             {
-                var devices = MainActivity.Manager?.DeviceList;
-                if (devices != null)
+                foreach (UsbDevice device in (devices as IDictionary<string, UsbDevice>).Values)
                 {
-                    foreach (UsbDevice device in (devices as IDictionary<string, UsbDevice>).Values)
+                    PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
+
+                    bool hasPermision = false;
+                    MainActivity.Manager.RequestPermission(device, mPermissionIntent);
+                    hasPermision = MainActivity.Manager.HasPermission(device);
+
+                    if (hasPermision)
                     {
-                        PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
-
-                        bool hasPermision = false;
-                        MainActivity.Manager.RequestPermission(device, mPermissionIntent);
-                        hasPermision = MainActivity.Manager.HasPermission(device);
-
-                        if (hasPermision)
+                        UsbInterface intf = device.GetInterface(0);
+                        UsbEndpoint endpointRx = intf.GetEndpoint(0);
+                        UsbEndpoint endpointTx = intf.GetEndpoint(1);
+                        UsbDeviceConnection connection = MainActivity.Manager.OpenDevice(device);
+                        if (connection != null)
                         {
-                            UsbInterface intf = device.GetInterface(0);
-                            UsbEndpoint endpointRx = intf.GetEndpoint(0);
-                            UsbEndpoint endpointTx = intf.GetEndpoint(1);
-                            UsbDeviceConnection connection = MainActivity.Manager.OpenDevice(device);
-                            if (connection != null)
-                            {
-                                connection.ClaimInterface(intf, true);
-                                int resp = -1;
+                            connection.ClaimInterface(intf, true);
+                            int resp = -1;
 
-                                resp = connection.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
-                                resp = connection.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
-                                resp = connection.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
-                                resp = connection.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
-                                resp = connection.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
-                                resp = connection.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
-                            }
-
-                            SerialPorts.Add(device.DeviceName, new SerialDevice() { UsbDevice = device, Connection = connection, EndpointRx = endpointRx, EndpointTx = endpointTx });
-                            Connected = true;
+                            resp = connection.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
+                            resp = connection.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
+                            resp = connection.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
+                            resp = connection.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
+                            resp = connection.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
+                            resp = connection.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
                         }
+
+                        SerialPorts.Add(device.DeviceName, new SerialDevice() { UsbDevice = device, Connection = connection, EndpointRx = endpointRx, EndpointTx = endpointTx });
+                        Connected = true;
                     }
                 }
-                SemaphoreConnect.Release();
             }
+            //SemaphoreConnect.Release();
+            //}
             return Connected;
         }
 
-        public async Task Disconnect()
-        {
-            SemaphoreConnect.WaitOne();
-            Connected = false;
-            SemaphoreConnect.Release();
-        }
+        //public async Task Disconnect()
+        //{
+        //    SemaphoreConnect.WaitOne();
+        //    Connected = false;
+        //    SemaphoreConnect.Release();
+        //}
 
         public IEnumerable<string> GetPorts()
         {
