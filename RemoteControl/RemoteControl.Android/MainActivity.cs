@@ -9,22 +9,27 @@ using Autofac;
 using RemoteControl.Models;
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
+using System;
 
 //[assembly: Xamarin.Forms.Dependency(typeof(DeviceInfo))]
 namespace RemoteControl.Droid
 {
-    [Activity(Label = "Armenta - Remote Control Application", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize)]
+    [Activity(Label = "Armenta - Remote Control Application", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static UsbManager Manager;
         public static BroadcastReceiverSystem UsbReciever = new BroadcastReceiverSystem();
+        public static EventHandler UsbEvent;
+        
         //public static PendingIntent mPermissionIntent = null;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            PendingIntent mAttachedIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(UsbManager.ActionUsbDeviceAttached), 0);
-            IntentFilter filter = new IntentFilter(UsbManager.ActionUsbDeviceAttached);
-            //IntentFilter filterDe = new IntentFilter(UsbManager.ActionUsbDeviceDetached);
-            RegisterReceiver(UsbReciever, filter);
+            //PendingIntent mAttachedIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(UsbManager.ActionUsbDeviceAttached), 0);
+            IntentFilter filterA = new IntentFilter(UsbManager.ActionUsbDeviceAttached);
+            IntentFilter filterD = new IntentFilter(UsbManager.ActionUsbDeviceDetached);
+            RegisterReceiver(UsbReciever, filterA);
+            RegisterReceiver(UsbReciever, filterD);
 
             //Xamarin.Forms.DependencyService.Register<UsbDevice>();
 
@@ -44,8 +49,9 @@ namespace RemoteControl.Droid
             Bootstrap.Initialize();
             
             LoadApplication(new App());
-           
+            
             Manager = GetSystemService(Context.UsbService) as UsbManager;
+            UsbEvent.Invoke(this, EventArgs.Empty);
             //PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(this, 0, new Intent("android.permission.USB_PERMISSION"), 0);
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

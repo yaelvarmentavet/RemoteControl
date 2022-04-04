@@ -2,6 +2,8 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:views="clr-namespace:RemoteControl.Views"
              x:Class="RemoteControl.Views.UWPView">
               <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
    <ContentView.Content>
@@ -19,24 +21,33 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <StackLayout Grid.Column="2" Grid.ColumnSpan="1">
+                    <views:PortsView/>
+                </StackLayout>
                 <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding CowId}"/>
                 <!--<Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding SNum}">
                     <Editor.BindingContext>
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor>-->
-                <ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
-                       Source="{resources:ImageResource RemoteControl.Icons.id.png}" Command="{Binding NextPageCowId}"/>
-                    <!--<Image.GestureRecognizers>
+                <!--<ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
+                       Source="{resources:ImageResource RemoteControl.Icons.id.png}" Command="{Binding NextPageCowId}"/>-->
+                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}"
+                    Source="{resources:ImageResource RemoteControl.Icons.id.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
-                <ImageButton Grid.Row="3" Grid.Column="2" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.next.png}" Command="{Binding NextPageStatus}"/>
-                    <!--<Image.GestureRecognizers>
+                </Image>
+                <!--<ImageButton Grid.Row="3" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.next.png}" Command="{Binding NextPageStatus}"/>-->
+                <Image Grid.Row="3" Grid.Column="2" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.next.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageStatus}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
+                </Image>
             </Grid>
         </StackLayout>
     </ContentView.Content>

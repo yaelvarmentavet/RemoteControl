@@ -8,6 +8,7 @@ using Android.Runtime;
 using Android.App;
 using Android.Content;
 using System.Threading.Tasks;
+using RemoteControl.Models;
 
 //[assembly: Xamarin.Forms.Dependency(typeof(DeviceInfo))]
 namespace RemoteControl.Droid
@@ -35,10 +36,14 @@ namespace RemoteControl.Droid
     public class BroadcastReceiverSystem : BroadcastReceiver
     {
         public BroadcastReceiverSystem() { }
-        public event EventHandler usbAttached;
+        public event EventHandler UsbAttached;
+        public event EventHandler UsbDetached;
         public override void OnReceive(Context c, Intent i)
         {
-            usbAttached(this, EventArgs.Empty);
+            if (i.Action == UsbManager.ActionUsbDeviceAttached)
+                UsbAttached(this, EventArgs.Empty);
+            if (i.Action == UsbManager.ActionUsbDeviceDetached)
+                UsbDetached(this, EventArgs.Empty);
         }
     }
 
@@ -49,7 +54,7 @@ namespace RemoteControl.Droid
         private Dictionary<string, SerialDevice> SerialPorts = new Dictionary<string, SerialDevice>();
         private EventHandler EventAdded;
         private EventHandler EventRemoved;
-        private bool Connected = false;
+        //private bool Connected = false;
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
 
         public UsbSerial()
@@ -59,8 +64,21 @@ namespace RemoteControl.Droid
             //IntentFilter filter = new IntentFilter(UsbManager.ActionUsbDeviceAttached);
             //IntentFilter filterDe = new IntentFilter(UsbManager.ActionUsbDeviceDetached);
             //RegisterReceiver(usbReciever, filter);
-            MainActivity.UsbReciever.usbAttached += UsbAttached;
+            MainActivity.UsbReciever.UsbAttached += UsbAttached;
+            MainActivity.UsbReciever.UsbDetached += UsbDetached;
+            MainActivity.UsbEvent += UsbAttached;
+            //(Application.Context as MainActivity);
         }
+
+        private void UsbDetached(object sender, EventArgs e)
+        {
+            //if (SerialPorts.ContainsKey(id))
+            //{
+            EventRemoved?.Invoke(this, new PortEventArgs() { Port = SerialPorts.Any() ? SerialPorts.First().Key : string.Empty });
+            SerialPorts.Remove(SerialPorts.Any() ? SerialPorts.First().Key : string.Empty);
+            //}
+        }
+
 
         private void UsbAttached(object sender, EventArgs e)
         {
@@ -89,39 +107,48 @@ namespace RemoteControl.Droid
             {
                 foreach (UsbDevice device in (devices as IDictionary<string, UsbDevice>).Values)
                 {
-                    PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
-
-                    bool hasPermision = false;
-                    MainActivity.Manager.RequestPermission(device, mPermissionIntent);
-                    hasPermision = MainActivity.Manager.HasPermission(device);
-
-                    if (hasPermision)
+                    while(true)
                     {
-                        UsbInterface intf = device.GetInterface(0);
-                        UsbEndpoint endpointRx = intf.GetEndpoint(0);
-                        UsbEndpoint endpointTx = intf.GetEndpoint(1);
-                        UsbDeviceConnection connection = MainActivity.Manager.OpenDevice(device);
-                        if (connection != null)
+                        PendingIntent mPermissionIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent("android.permission.USB_PERMISSION"), 0);
+
+                        bool hasPermision = false;
+                        MainActivity.Manager.RequestPermission(device, mPermissionIntent);
+                        Thread.Sleep(1000);
+                        hasPermision = MainActivity.Manager.HasPermission(device);
+
+                        if (hasPermision)
                         {
-                            connection.ClaimInterface(intf, true);
-                            int resp = -1;
+                            UsbInterface intf = device.GetInterface(0);
+                            UsbEndpoint endpointRx = intf.GetEndpoint(0);
+                            UsbEndpoint endpointTx = intf.GetEndpoint(1);
+                            UsbDeviceConnection connection = MainActivity.Manager.OpenDevice(device);
+                            if (connection != null)
+                            {
+                                connection.ClaimInterface(intf, true);
+                                int resp = -1;
 
-                            resp = connection.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
-                            resp = connection.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
-                            resp = connection.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
-                            resp = connection.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
-                            resp = connection.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
-                            resp = connection.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
+                                resp = connection.ControlTransfer((UsbAddressing)64, 0, 0, 0, null, 0, 0);// reset  mConnection.controlTransfer(0×40, 0, 1, 0, null, 0, 0);//clear Rx
+                                resp = connection.ControlTransfer((UsbAddressing)64, 0, 1, 0, null, 0, 0);// clear Rx
+                                resp = connection.ControlTransfer((UsbAddressing)64, 0, 2, 0, null, 0, 0);// clear Tx
+                                resp = connection.ControlTransfer((UsbAddressing)64, 3, 26, 0, null, 0, 0);// baudrate  57600 115200-0x001A-26, 9600-0x4138-16696, 19200-0x809C-32924, 230040-0x000D-13
+                                resp = connection.ControlTransfer((UsbAddressing)64, 2, 0, 0, null, 0, 0);// flow  control none                                                            
+                                resp = connection.ControlTransfer((UsbAddressing)64, 4, 8, 0, null, 0, 0);// data bit  8, parity  none,  stop bit 1, tx off
+
+                                if (resp >= 0)
+                                {
+                                    SerialPorts.Add(device.DeviceName, new SerialDevice() { UsbDevice = device, Connection = connection, EndpointRx = endpointRx, EndpointTx = endpointTx });
+                                    break;
+                                    //Connected = true;
+                                }
+                            }
                         }
-
-                        SerialPorts.Add(device.DeviceName, new SerialDevice() { UsbDevice = device, Connection = connection, EndpointRx = endpointRx, EndpointTx = endpointTx });
-                        Connected = true;
                     }
                 }
             }
             //SemaphoreConnect.Release();
             //}
-            return Connected;
+            //return Connected;
+            return true;
         }
 
         //public async Task Disconnect()
@@ -141,10 +168,14 @@ namespace RemoteControl.Droid
         {
             if (SerialPorts.TryGetValue(portName, out SerialDevice port))
             {
-                int responce = port.Connection.BulkTransfer(port.EndpointRx, buffer, buffer.Length, 10);
-                //buffer = buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).ToArray();
-                //string data = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-                return buffer.Where(b => ((b != 0x00) && (b != 0x01) && (b != 0x60))).Count();
+                byte[] buf = new byte[1024];
+                int count = port.Connection.BulkTransfer(port.EndpointRx, buf, buf.Length, 100);
+                if (count > 0)
+                {
+                    buf = buf.Where(b => (b != 0x00) && (b != 0x01) && (b != 0x60)).ToArray();
+                    buf.CopyTo(buffer, 0);
+                    return buf.Length;
+                }
             }
             return ERROR;
             //int size = 1024;

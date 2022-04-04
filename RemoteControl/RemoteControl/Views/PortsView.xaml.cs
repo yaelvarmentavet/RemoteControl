@@ -10,16 +10,13 @@ using Xamarin.Forms.Xaml;
 namespace RemoteControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class TopView : ContentView
+    public partial class PortsView : ContentView
     {
-        public TopView()
+        public PortsView()
         {
             InitializeComponent();
 
-            LblRem.BindingContext = App.DataModel.Aptxs[0];
-            //LblPort.BindingContext = App.DataModel;
-
-            //LblRem.SetBinding(Label.TextProperty, "Remaining");
+            LblPort.BindingContext = App.DataModel;
         }
     }
 }

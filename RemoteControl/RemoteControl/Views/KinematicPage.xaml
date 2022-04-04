@@ -118,25 +118,34 @@
                         <TapGestureRecognizer Command="{Binding MZDStop}"/>
                     </Image.GestureRecognizers>
                 </Image>-->
-                <ImageButton Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.empty.png}" Command="{Binding TCWStart}"/>
-                    <!--<Image.GestureRecognizers>
+                <!--<ImageButton Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.empty.png}" Command="{Binding TCWStart}"/>-->
+                <Image Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.empty.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding TCWStart}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
+                </Image>
                 <!--<Image x:Name="ImgMan" Grid.Row="4" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.manual.png}"/>-->
-                <ImageButton Grid.Row="6" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.break.png}" Command="{Binding XFStart}"/>
-                    <!--<Image.GestureRecognizers>
+                <!--<ImageButton Grid.Row="6" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.break.png}" Command="{Binding XFStart}"/>-->
+                <Image Grid.Row="6" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.break.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding XFStart}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
-                <ImageButton Grid.Row="8" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.start.png}" Command="{Binding StartProcessPage}"/>
-                    <!--<Image.GestureRecognizers>
+                </Image>
+                <!--<ImageButton Grid.Row="8" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.start.png}" Command="{Binding StartProcessPage}"/>-->
+                <Image Grid.Row="8" Grid.Column="12" Grid.RowSpan="1" Grid.ColumnSpan="1" Scale="4" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.start.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding StartProcessPage}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
+                </Image>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

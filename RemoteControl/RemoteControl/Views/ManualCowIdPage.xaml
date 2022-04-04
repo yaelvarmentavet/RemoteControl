@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
              xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="RemoteControl.Views.ManualCowIdPage">
              <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
     <ContentPage.BindingContext>
@@ -29,12 +30,15 @@
                         <binding:DataModel/>
                     </Editor.BindingContext>
                 </Editor-->
-                <ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.approve.png}" Command="{Binding NextPage}"/>
-                    <!--<Image.GestureRecognizers>
+                <!--<ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.approve.png}" Command="{Binding NextPage}"/>-->
+                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.approve.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPage}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
+                </Image>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

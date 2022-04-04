@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
              xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="RemoteControl.Views.StartProcessPage">
     <ContentPage.BindingContext>
         <viewModels:StartProcessViewModel/>
@@ -16,18 +17,24 @@
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
                 <ProgressBar x:Name="PrgPulses" Grid.Row="1" Grid.Column="1" Progress="{Binding Progress}"/>
-                <ImageButton Grid.Row="1" Grid.Column="2" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.stop.png}" Command="{Binding StopProcess}"/>
-                    <!--<Image.GestureRecognizers>
+                <!--<ImageButton Grid.Row="1" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.stop.png}" Command="{Binding StopProcess}"/>-->
+                <Image Grid.Row="1" Grid.Column="2" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.stop.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding StopProcess}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
-                <ImageButton Grid.Row="2" Grid.Column="2" Style="{StaticResource ImageButton}" 
-                             Source="{resources:ImageResource RemoteControl.Icons.pause.png}" Command="{Binding PauseResumeProcess}"/>
-                    <!--<Image.GestureRecognizers>
+                </Image>
+                <!--<ImageButton Grid.Row="2" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                             Source="{resources:ImageResource RemoteControl.Icons.pause.png}" Command="{Binding PauseResumeProcess}"/>-->
+                <Image Grid.Row="2" Grid.Column="2" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.pause.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding PauseResumeProcess}"/>
                     </Image.GestureRecognizers>
-                </Image>-->
+                </Image>
                 <!--<Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Choose quarter" Style="{StaticResource Label24}"/>
                 <Image Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.rl.png}"/>
                 <Image Grid.Row="3" Grid.Column="3" Grid.RowSpan="3" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.fl.png}"/>

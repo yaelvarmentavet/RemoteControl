@@ -318,7 +318,7 @@ namespace RemoteControl.Models
             set
             {
                 remaining = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
             }
         }
 
@@ -677,22 +677,22 @@ namespace RemoteControl.Models
 
         public Color CmtFLColor
         {
-            get => cmtFL == "1" || cmtFL == "2" || cmtFL == "3" ? Color.Green : Color.Red;
+            get => cmtFL == "N" || cmtFL == "T" ? Color.Green : Color.Red;
         }
 
         public Color CmtRLColor
         {
-            get => cmtRL == "1" || cmtRL == "2" || cmtRL == "3" ? Color.Green : Color.Red;
+            get => cmtRL == "N" || cmtRL == "T" ? Color.Green : Color.Red;
         }
 
         public Color CmtFRColor
         {
-            get => cmtFR == "1" || cmtFR == "2" || cmtFR == "3" ? Color.Green : Color.Red;
+            get => cmtFR == "N" || cmtFR == "T" ? Color.Green : Color.Red;
         }
 
         public Color CmtRRColor
         {
-            get => cmtRR == "1" || cmtRR == "2" || cmtRR == "3" ? Color.Green : Color.Red;
+            get => cmtRR == "N" || cmtRR == "T" ? Color.Green : Color.Red;
         }
 
         private uint cowid = UERROR;
@@ -832,7 +832,10 @@ namespace RemoteControl.Models
 
         public DataModel(IUsbSerial usbSerial)
         {
-            Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
+            if (Device.RuntimePlatform == Device.Android)
+                Devices = new string[] { REMOTE, APTX1 };
+            if (Device.RuntimePlatform == Device.UWP)
+                Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
             Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
             STATEs = new uint[Aptx.APTXIDs.Length].Select((s, i) => s = (uint)i).ToArray();
 
@@ -847,6 +850,13 @@ namespace RemoteControl.Models
                         //string key = Ports.Select((kv) => kv.Value == (args as PortEventArgs).Port ? kv : new KeyValuePair<string, string>()).First().Key;
                         string key = Ports.First((kv) => kv.Value == (args as PortEventArgs).Port).Key;
                         Ports.Remove(key);
+                        CowId = UERROR;
+                        Aptxs[0].SNum = UERROR;
+                        Aptxs[0].CurrentPulses = UERROR;
+                        Aptxs[0].Remaining = UERROR;
+                        Aptxs[0].aptxId[0] = UERROR;
+                        Aptxs[0].aptxId[1] = UERROR;
+                        Aptxs[0].aptxId[2] = UERROR;
                     }
                 }
                 SemaphorePorts.Release();
@@ -854,9 +864,8 @@ namespace RemoteControl.Models
 
             AddCow = new Command(() =>
             {
-                Cows.Add(CowId, TagId);
-                CowId = UERROR;
-                TagId = string.Empty;
+                if (!Cows.ContainsKey(CowId))
+                    Cows.Add(CowId, TagId);
             });
 
             //TappedFL = new Command<Label>((lbl) =>
@@ -902,8 +911,9 @@ namespace RemoteControl.Models
             //    {
             //Connected = true;
 
-            new Thread((device) => { Rx(device); })
-            { Name = "RFID" }.Start(RFID);
+            if (Device.RuntimePlatform == Device.UWP)
+                new Thread((device) => { Rx(device); })
+                { Name = "RFID" }.Start(RFID);
 
             new Thread((device) => { Rx(device); })
             { Name = "APTX1" }.Start(APTX1);

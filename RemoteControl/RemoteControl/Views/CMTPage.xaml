@@ -55,7 +55,7 @@
                         <Label Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Grid.ColumnSpan="3" Text="UPDATE CMT RESULTS – Cow ID" 
                                Style="{StaticResource Label24}"/>
                         <Label x:Name="LblCowId" Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Grid.ColumnSpan="2" 
-                               Style="{StaticResource LabelAlignedStart}" Text="{Binding CowId}"/>
+                               Style="{StaticResource LabelAlignedStart}" Text="{Binding CowId}" LineBreakMode="CharacterWrap"/>
                         <Frame Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource FrameLightGreen}"/>
                         <Label Grid.Row="2" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="CMT INFO:" Style="{StaticResource LabelLightGreen}"/>
                         <Label Grid.Row="2" Grid.Column="1" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="(N) &lt; 200K" Style="{StaticResource LabelLightGreen}"/>
@@ -121,8 +121,26 @@
                                 </x:Array>
                             </ListView.ItemsSource>
                         </ListView>
-                        <ImageButton Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource ImageButton}"  Source="{resources:ImageResource RemoteControl.Icons.approve1.png}" Command="{Binding Approve}"/>
-                        <ImageButton Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2"  Source="{resources:ImageResource RemoteControl.Icons.cancel.png}" Command="{Binding Cancel}"/>
+                        <!--<ImageButton Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource ImageButton}" 
+                            Source="{resources:ImageResource RemoteControl.Icons.approve1.png}" Command="{Binding Approve}"/>-->
+                        <Image Grid.Row="10" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" 
+                            Source="{resources:ImageResource RemoteControl.Icons.approve1.png}"
+                            xct:TouchEffect.PressedOpacity="0.5">
+                            <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}">-->
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Approve}"/>
+                            </Image.GestureRecognizers>
+                        </Image>
+                        <!--<ImageButton Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2" 
+                            Source="{resources:ImageResource RemoteControl.Icons.cancel.png}" Command="{Binding Cancel}"/>-->
+                        <Image Grid.Row="10" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2" 
+                            Source="{resources:ImageResource RemoteControl.Icons.cancel.png}"
+                            xct:TouchEffect.PressedOpacity="0.5">
+                            <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}">-->
+                            <Image.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Approve}"/>
+                            </Image.GestureRecognizers>
+                            </Image>
                     </Grid>
                 </Frame>
                 <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
