@@ -53,12 +53,12 @@
 
   <Capabilities>
     <Capability Name="internetClient" />
-    <iot:Capability Name="systemManagement"/>
     <DeviceCapability Name="serialcommunication">
       <Device Id="any">
         <Function Type="name:serialPort" />
       </Device>
     </DeviceCapability>
     <DeviceCapability Name="webcam"/>
+    <DeviceCapability Name="microphone"/>
   </Capabilities>
 </Package>

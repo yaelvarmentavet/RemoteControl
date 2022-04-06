@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Media.Capture;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -602,6 +603,11 @@ namespace RemoteControl.Models
         public string Port;
     }
 
+    public class FrameEventArgs : EventArgs
+    {
+        public ImageSource Source;
+    }
+
     public class DataModel : INotifyPropertyChanged
     {
         //public class Reply
@@ -816,6 +822,8 @@ namespace RemoteControl.Models
 
         private IUsbSerial UsbSerial;
         
+        public IUsbCamera UsbCamera;
+
         //private ConcurrentDictionary<string, string> Ports = new ConcurrentDictionary<string, string>();
         private Dictionary<string, string> Ports = new Dictionary<string, string>();
         private Semaphore SemaphorePorts = new Semaphore(1, 1);
@@ -830,7 +838,7 @@ namespace RemoteControl.Models
         private byte[] RxBufferEcomilk = new byte[1];// RXBUFFER_SIZE];
         private byte[] RxBufferRemote = new byte[1];// RXBUFFER_SIZE];
 
-        public DataModel(IUsbSerial usbSerial)
+        public DataModel(IUsbSerial usbSerial, IUsbCamera usbCamera)
         {
             if (Device.RuntimePlatform == Device.Android)
                 Devices = new string[] { REMOTE, APTX1 };
@@ -861,6 +869,8 @@ namespace RemoteControl.Models
                 }
                 SemaphorePorts.Release();
             }, null);
+
+            UsbCamera = usbCamera;
 
             AddCow = new Command(() =>
             {

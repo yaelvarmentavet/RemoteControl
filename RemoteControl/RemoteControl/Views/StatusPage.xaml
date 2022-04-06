@@ -4,6 +4,7 @@
              xmlns:resources="clr-namespace:RemoteControl.Resources"
              xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:views="clr-namespace:RemoteControl.Views"
              x:Class="RemoteControl.Views.StatusPage">
     <ContentPage.BindingContext>
         <viewModels:StatusViewModel/>
@@ -25,6 +26,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <StackLayout Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1">
+                    <views:PortsView/>
+                </StackLayout>
                 <Label x:Name="LblAptx1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
                 <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
                 <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
