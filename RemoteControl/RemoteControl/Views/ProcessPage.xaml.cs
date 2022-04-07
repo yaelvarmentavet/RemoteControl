@@ -24,7 +24,7 @@ namespace RemoteControl.Views
             LblCmtFR.BindingContext = App.DataModel;
             LblCmtRR.BindingContext = App.DataModel;
 
-            EdPulses.BindingContext = App.DataModel.Aptxs[0];
+            EdPulses.BindingContext = App.DataModel.Aptx;
 
             //LblFL.SetBinding(BackgroundColorProperty, "FL");
 

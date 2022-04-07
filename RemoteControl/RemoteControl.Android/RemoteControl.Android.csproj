@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="UsbCamera.cs" />
     <Compile Include="UsbSerial.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

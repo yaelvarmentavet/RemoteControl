@@ -1,6 +1,7 @@
 ﻿using RemoteControl.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,8 +11,13 @@ using Windows.Media.Capture;
 using Windows.Media.Capture.Frames;
 using Windows.Media.MediaProperties;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Controls;
+using Windows.Storage.Streams;
+using Windows.Storage;
+using Xamarin.Forms;
+//using Xamarin.Forms;
 
 namespace RemoteControl.UWP
 {
@@ -20,13 +26,15 @@ namespace RemoteControl.UWP
         private DeviceWatcher Watcher;
         private Dictionary<string, MediaFrameSourceGroup> Cameras = new Dictionary<string, MediaFrameSourceGroup>();
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
-        private MediaCapture MediaCapture;
-        private MediaFrameReader MediaFrameReader;
-        private SoftwareBitmap BackBuffer;
-        private bool TaskRunning = false;
-        private SoftwareBitmapSource ImageSource;
+        private MediaCapture mediaCapture;
+        private MediaFrameReader mediaFrameReader;
+        private SoftwareBitmap backBuffer;
+        private bool taskRunning = false;
+        private SoftwareBitmapSource imageSource;
         private EventHandler EventSource;
-        private Image ImageElement;
+        private Windows.UI.Xaml.Controls.Image imageElement;
+        private Xamarin.Forms.Image Image;
+        private string OutputFile;
 
         public UsbCamera()
         {
@@ -101,7 +109,7 @@ namespace RemoteControl.UWP
                 return false;
             }
 
-            MediaCapture = new MediaCapture();
+            mediaCapture = new MediaCapture();
             var settings = new MediaCaptureInitializationSettings()
             {
                 SourceGroup = selectedGroup,
@@ -111,18 +119,18 @@ namespace RemoteControl.UWP
             };
             try
             {
-                await MediaCapture.InitializeAsync(settings);
+                await mediaCapture.InitializeAsync(settings);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("MediaCapture initialization failed: " + ex.Message);
             }
 
-            MediaFrameSource colorFrameSource = MediaCapture.FrameSources[colorSourceInfo.Id];
+            MediaFrameSource colorFrameSource = mediaCapture.FrameSources[colorSourceInfo.Id];
 
-            MediaFrameReader = await MediaCapture.CreateFrameReaderAsync(colorFrameSource, MediaEncodingSubtypes.Argb32);
-            MediaFrameReader.FrameArrived += ColorFrameReader_FrameArrived;
-            //await MediaFrameReader.StartAsync();
+            mediaFrameReader = await mediaCapture.CreateFrameReaderAsync(colorFrameSource, MediaEncodingSubtypes.Argb32);
+            mediaFrameReader.FrameArrived += ColorFrameReader_FrameArrived;
+            //await mediaFrameReader.StartAsync();
             return true;
         }
 
@@ -139,40 +147,116 @@ namespace RemoteControl.UWP
                 {
                     softwareBitmap = SoftwareBitmap.Convert(softwareBitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
                 }
+                //WriteableBitmap bitmap = new WriteableBitmap(softwareBitmap.PixelWidth, softwareBitmap.PixelHeight);
 
-                // Swap the processed frame to _backBuffer and dispose of the unused image.
-                softwareBitmap = Interlocked.Exchange(ref BackBuffer, softwareBitmap);
-                softwareBitmap?.Dispose();
+                //softwareBitmap.CopyToBuffer(bitmap.PixelBuffer);
 
-                // Changes to XAML ImageElement must happen on UI thread through Dispatcher
-                var task = ImageElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                async () =>
+                //using (Stream stream = bitmap.PixelBuffer.AsStream())
+                //{
+                //    await stream.WriteAsync(sourcePixels, 0, sourcePixels.Length);
+                //}
+
+
+                Task.Run(async () =>
                 {
-                    // Don't let two copies of this task run at the same time.
-                    if (TaskRunning)
+                    if (taskRunning)
                     {
                         return;
                     }
-                    TaskRunning = true;
-
-                    // Keep draining frames from the backbuffer until the backbuffer is empty.
-                    SoftwareBitmap latestBitmap;
-                    while ((latestBitmap = Interlocked.Exchange(ref BackBuffer, null)) != null)
+                    taskRunning = true;
                     {
-                        if (ImageElement.Source == null)
-                            ImageElement.Source = new SoftwareBitmapSource();
-                        SoftwareBitmapSource imageSource = (SoftwareBitmapSource)ImageElement.Source;
-                        await imageSource.SetBitmapAsync(latestBitmap);
-                        latestBitmap.Dispose();
-                    }
-
-                    TaskRunning = false;
+                            //StorageFile.CreateStreamedFileAsync
+                            await SaveSoftwareBitmapToFile(softwareBitmap);
+                        }
+                    taskRunning = false;
                 });
+                return;
+
+                // Swap the processed frame to _backBuffer and dispose of the unused image.
+                softwareBitmap = Interlocked.Exchange(ref backBuffer, softwareBitmap);
+                softwareBitmap?.Dispose();
+
+                // Changes to XAML ImageElement must happen on UI thread through Dispatcher
+                var task = imageElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    async () =>
+                    {
+                        // Don't let two copies of this task run at the same time.
+                        if (taskRunning)
+                        {
+                            return;
+                        }
+                        taskRunning = true;
+
+                        // Keep draining frames from the backbuffer until the backbuffer is empty.
+                        SoftwareBitmap latestBitmap;
+                        while ((latestBitmap = Interlocked.Exchange(ref backBuffer, null)) != null)
+                        {
+                            if (imageElement.Source == null)
+                                imageElement.Source = new SoftwareBitmapSource();
+                            SoftwareBitmapSource imageSource = (SoftwareBitmapSource)imageElement.Source;
+                            await imageSource.SetBitmapAsync(latestBitmap);
+                            latestBitmap.Dispose();
+                        }
+
+                        taskRunning = false;
+                    });
             }
 
             mediaFrameReference?.Dispose();
         }
 
+        //private async Task SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap, StorageFile outputFile)
+        private async Task SaveSoftwareBitmapToFile(SoftwareBitmap softwareBitmap)
+        {
+            //using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
+            using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+            {
+                // Create an encoder with the desired format
+                BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
+
+                // Set the software bitmap
+                encoder.SetSoftwareBitmap(softwareBitmap);
+
+                // Set additional encoding parameters, if needed
+                encoder.BitmapTransform.ScaledWidth = 320;
+                encoder.BitmapTransform.ScaledHeight = 240;
+                encoder.BitmapTransform.Rotation = Windows.Graphics.Imaging.BitmapRotation.Clockwise90Degrees;
+                encoder.BitmapTransform.InterpolationMode = BitmapInterpolationMode.Fant;
+                encoder.IsThumbnailGenerated = true;
+
+                try
+                {
+                    await encoder.FlushAsync();
+                }
+                catch (Exception err)
+                {
+                    const int WINCODEC_ERR_UNSUPPORTEDOPERATION = unchecked((int)0x88982F81);
+                    switch (err.HResult)
+                    {
+                        case WINCODEC_ERR_UNSUPPORTEDOPERATION:
+                            // If the encoder does not support writing a thumbnail, then try again
+                            // but disable thumbnail generation.
+                            encoder.IsThumbnailGenerated = false;
+                            break;
+                        default:
+                            throw;
+                    }
+                }
+
+                if (encoder.IsThumbnailGenerated == false)
+                {
+                    await encoder.FlushAsync();
+                }
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    //EventSource.Invoke(this, new StreamEventArgs() { Stream = stream.AsStream() });
+                    if(Image != null)
+                        Image.Source = Xamarin.Forms.ImageSource.FromStream(() => stream.AsStream());
+                });
+            }
+        }
+        
         private async Task Connect(string id)
         {
             try
@@ -198,9 +282,14 @@ namespace RemoteControl.UWP
             }
         }
 
-        public void Image(object image)
+        public void ImageSet(Xamarin.Forms.Image image)
         {
-            ImageElement = (Image)image;
+            Image = image;
+        }
+
+        public void File(string outputFile)
+        {
+            OutputFile = outputFile;
         }
 
         public void Event(EventHandler eventSource)

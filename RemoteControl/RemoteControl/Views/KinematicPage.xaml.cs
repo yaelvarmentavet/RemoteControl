@@ -13,7 +13,7 @@ namespace RemoteControl.Views
             InitializeComponent();
 
             //ImgCam1.BindingContext = App.DataModel;
-            //App.DataModel.UsbCamera.Image(ImgCam1);
+            //App.DataModel.UsbCamera.ImageSet(ImgCam1);
 
         }
 

@@ -16,7 +16,7 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
-            LblRem.BindingContext = App.DataModel.Aptxs[0];
+            LblRem.BindingContext = App.DataModel.Aptx;
             //LblPort.BindingContext = App.DataModel;
 
             //LblRem.SetBinding(Label.TextProperty, "Remaining");

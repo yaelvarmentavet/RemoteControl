@@ -42,9 +42,9 @@
                         <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="PROCEDURE" Command="{Binding NextPageTreatment}"/>
                         <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="COW ID Management" Command="{Binding NextPageCowId}"/>
                         <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="AM ID :"/>
-                        <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource Label16}" Text="987653"/>
+                        <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource Label16}" Text="{Binding SNum, Mode=TwoWay}" LineBreakMode="CharacterWrap"/>
                         <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="APT ID :"/>
-                        <Label x:Name="LblAptxId" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="234876"/>
+                        <Label x:Name="LblAptxId" Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="{Binding AptxId, Mode=TwoWay}" LineBreakMode="CharacterWrap"/>
                     </Grid>
                 </Frame>
                 <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
