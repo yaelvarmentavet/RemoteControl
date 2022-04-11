@@ -49,10 +49,10 @@ namespace RemoteControl.ViewModels
 
             Cancel = new Command(async () =>
             {
-                App.DataModel.CmtFL = null;
-                App.DataModel.CmtRL = null;
-                App.DataModel.CmtFR = null;
-                App.DataModel.CmtRR = null;
+                App.DataModel.CmtFL = string.Empty;
+                App.DataModel.CmtRL = string.Empty;
+                App.DataModel.CmtFR = string.Empty;
+                App.DataModel.CmtRR = string.Empty;
                 Application.Current.MainPage.Navigation.PopAsync();
             });
         }

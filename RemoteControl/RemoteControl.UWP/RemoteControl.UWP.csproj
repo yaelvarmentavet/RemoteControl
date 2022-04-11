@@ -98,7 +98,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UsbCamera.cs" />
     <Compile Include="UsbSerial.cs" />
   </ItemGroup>
   <ItemGroup>

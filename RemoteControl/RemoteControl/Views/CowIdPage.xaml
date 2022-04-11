@@ -45,9 +45,9 @@
                         <Label Grid.Row="1" Grid.Column="1" Style="{StaticResource Label16}" Text="Cow ID :"/>
                         <Editor x:Name="EdCowId" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource Editor16}"
                                 Text="{Binding CowId}"/>
-                        <Label Grid.Row="2" Grid.Column="1" Style="{StaticResource Label16}" Text="Tag ID:"/>
-                        <Editor x:Name="EdTagId" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource Editor16}" Placeholder="*should be auto fill from cow tag"
-                                Text="{Binding TagId}"/>
+                        <!--<Label Grid.Row="2" Grid.Column="1" Style="{StaticResource Label16}" Text="Tag ID:"/>-->
+                        <!--<Editor x:Name="EdTagId" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource Editor16}" Placeholder="*should be auto fill from cow tag"
+                                Text="{Binding TagId}"/>-->
                         <Button x:Name="BtnAddCow" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource ButtonCornerRadius10}" Text="Add COW" Command="{Binding AddCow}"/>
                     </Grid>
                 </Frame>

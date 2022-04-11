@@ -1,4 +1,5 @@
-﻿using RemoteControl.Views;
+﻿using RemoteControl.Models;
+using RemoteControl.Views;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading.Tasks;

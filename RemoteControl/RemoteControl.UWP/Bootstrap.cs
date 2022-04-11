@@ -12,7 +12,6 @@ namespace RemoteControl.UWP
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterType<DataModel>().AsSelf();
             builder.RegisterType<UsbSerial>().As<IUsbSerial>();
-            builder.RegisterType<UsbCamera>().As<IUsbCamera>();
 
             IContainer container = builder.Build();
 

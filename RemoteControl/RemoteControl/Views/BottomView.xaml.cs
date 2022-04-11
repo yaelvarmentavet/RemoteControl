@@ -16,14 +16,14 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
-            ImgPressureOK.BindingContext = App.DataModel;
-            ImgPressureLow.BindingContext = App.DataModel;
-            ImgSpeedOfBulletOK.BindingContext = App.DataModel;
-            ImgSpeedOfBulletLow.BindingContext = App.DataModel;
-            ImgBatteryOK.BindingContext = App.DataModel;
-            ImgBatteryLow.BindingContext = App.DataModel;
-            ImgPulsesYes.BindingContext = App.DataModel;
-            ImgPulsesNo.BindingContext = App.DataModel;
+            ImgPressureOK.BindingContext = App.DataModel.Aptx;
+            ImgPressureLow.BindingContext = App.DataModel.Aptx;
+            ImgSpeedOfBulletOK.BindingContext = App.DataModel.Aptx;
+            ImgSpeedOfBulletLow.BindingContext = App.DataModel.Aptx;
+            ImgBatteryOK.BindingContext = App.DataModel.Aptx;
+            ImgBatteryLow.BindingContext = App.DataModel.Aptx;
+            ImgPulsesYes.BindingContext = App.DataModel.Aptx;
+            ImgPulsesNo.BindingContext = App.DataModel.Aptx;
         }
     }
 }

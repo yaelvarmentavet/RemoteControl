@@ -40,7 +40,7 @@
                         <Label Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Style="{StaticResource Label24}" Text="APTX II – Welcome"/>
                         <Button Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="CMT" Command="{Binding NextPageCMT}"/>
                         <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="PROCEDURE" Command="{Binding NextPageTreatment}"/>
-                        <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="COW ID Management" Command="{Binding NextPageCowId}"/>
+                        <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="COW ID" Command="{Binding NextPageCowId}"/>
                         <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="AM ID :"/>
                         <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource Label16}" Text="{Binding SNum, Mode=TwoWay}" LineBreakMode="CharacterWrap"/>
                         <Label Grid.Row="6" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="APT ID :"/>

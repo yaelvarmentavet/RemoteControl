@@ -14,6 +14,8 @@ namespace RemoteControl.Views
             //InitMainPage();
             LblCowId.BindingContext = App.DataModel;
 
+            SwAuto.BindingContext = App.DataModel;
+
             LblFL.BindingContext = App.DataModel;
             LblRL.BindingContext = App.DataModel;
             LblFR.BindingContext = App.DataModel;

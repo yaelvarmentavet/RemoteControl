@@ -8,6 +8,10 @@ namespace RemoteControl.ViewModels
     {
         public CowIdViewModel()
         {
+            AddCow = new Command(async () =>
+            {
+                await Application.Current.MainPage.Navigation.PopToRootAsync();
+            });
             NextPageHome = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PopToRootAsync();
@@ -33,6 +37,7 @@ namespace RemoteControl.ViewModels
             }
         }
 
+        public Command AddCow { get; }
         public Command NextPageHome { get; }
         public Command NextPageSettings { get; }
     }

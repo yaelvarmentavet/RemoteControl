@@ -172,9 +172,9 @@ namespace RemoteControl.Droid
                 int count = port.Connection.BulkTransfer(port.EndpointRx, buf, buf.Length, 100);
                 if (count > 0)
                 {
-                    buf = buf.Where(b => (b != 0x00) && (b != 0x01) && (b != 0x60)).ToArray();
+                    //buf = buf.Where(b => (b != 0x00) && (b != 0x01) && (b != 0x60)).ToArray();
                     buf.CopyTo(buffer, 0);
-                    return buf.Length;
+                    return count;
                 }
             }
             return ERROR;
