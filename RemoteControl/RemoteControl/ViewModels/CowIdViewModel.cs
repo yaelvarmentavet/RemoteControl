@@ -1,4 +1,5 @@
-﻿using RemoteControl.Views;
+﻿using RemoteControl.Models;
+using RemoteControl.Views;
 using System.ComponentModel;
 using Xamarin.Forms;
 
@@ -11,6 +12,15 @@ namespace RemoteControl.ViewModels
             AddCow = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PopToRootAsync();
+                if (App.DataModel.CowId != DataModel.UERROR)
+                {
+                    App.DataModel.CmtRead();
+                    App.DataModel.CowIdOk = true;
+                }
+                else
+                {
+                    App.DataModel.CowIdOk = false;
+                }
             });
             NextPageHome = new Command(async () =>
             {
@@ -25,17 +35,6 @@ namespace RemoteControl.ViewModels
         public event PropertyChangedEventHandler PropertyChanged;
 
         public bool IsPageOpened = false;
-
-        string id;
-        public string Id
-        {
-            get { return id; }
-            set
-            {
-                id = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(id)));
-            }
-        }
 
         public Command AddCow { get; }
         public Command NextPageHome { get; }

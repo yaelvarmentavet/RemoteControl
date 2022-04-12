@@ -16,11 +16,16 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
+            LblCowId.BindingContext = App.DataModel;
+
             LblAmId.BindingContext = App.DataModel.Aptx;
             //LblAmId.SetBinding(Label.TextProperty, "SNum");
 
             LblAptxId.BindingContext = App.DataModel.Aptx;
             //LblAptxId.SetBinding(Label.TextProperty, "AptxId");
+
+            BtnCmt.BindingContext = App.DataModel;
+            BtnProcedure.BindingContext = App.DataModel;
         }
     }
 }

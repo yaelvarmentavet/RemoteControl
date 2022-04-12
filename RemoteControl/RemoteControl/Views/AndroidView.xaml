@@ -37,9 +37,11 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Style="{StaticResource Label24}" Text="APTX II – Welcome"/>
-                        <Button Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="CMT" Command="{Binding NextPageCMT}"/>
-                        <Button Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="PROCEDURE" Command="{Binding NextPageTreatment}"/>
+                        <Label Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="2" Style="{StaticResource Label24}" Text="APTX II   Welcome - Cow ID"/>
+                        <Label x:Name="LblCowId" Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="1" 
+                               Style="{StaticResource LabelAlignedStart}" Text="{Binding CowId}" LineBreakMode="CharacterWrap"/>
+                        <Button x:Name="BtnCmt" Grid.Row="2" Grid.Column="0" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="CMT" Command="{Binding NextPageCMT}" IsEnabled="{Binding CowIdOk}"/>
+                        <Button x:Name="BtnProcedure" Grid.Row="2" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="PROCEDURE" Command="{Binding NextPageTreatment}" IsEnabled="{Binding CowIdOk}"/>
                         <Button Grid.Row="2" Grid.Column="2" Grid.RowSpan="3" Style="{StaticResource ButtonCornerRadius10}" Text="COW ID" Command="{Binding NextPageCowId}"/>
                         <Label Grid.Row="5" Grid.Column="0" Style="{StaticResource LabelAlignedEnd}" Text="AM ID :"/>
                         <Label x:Name="LblAmId" Grid.Row="5" Grid.Column="1" Style="{StaticResource Label16}" Text="{Binding SNum, Mode=TwoWay}" LineBreakMode="CharacterWrap"/>

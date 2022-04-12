@@ -22,14 +22,6 @@ namespace RemoteControl.ViewModels
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new SettingsPage());
             });
-            NextPageCMT = new Command(async () =>
-            {
-                await Application.Current.MainPage.Navigation.PushAsync(new CMTPage());
-            });
-            NextPageTreatment = new Command(async () =>
-            {
-                await Application.Current.MainPage.Navigation.PushAsync(new ProcessPage());
-            });
             NextPageCowId = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PushAsync(new CowIdPage());
@@ -152,53 +144,6 @@ namespace RemoteControl.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        //const uint Error = 0xffffffff;
-
-        //uint snum = Error;
-        //public uint SNum
-        //{
-        //    get => snum;
-        //    set
-        //    {
-        //        snum = value;
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SNum)));
-        //    }
-        //}
-
-        //uint[] aptid = new uint[3] { Error, Error, Error};
-        
-        //public uint[] aptId
-        //{
-        //    get => aptid;
-        //    set
-        //    {
-        //        aptid = value;
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptId)));
-        //    }
-        //}
-
-        //public string AptId
-        //{
-        //    get => aptid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
-        //    set
-        //    {
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptId)));
-        //    }
-        //}
-
-        //uint remaining = Error;
-        //public uint Remaining
-        //{
-        //    get => remaining;
-        //    set
-        //    {
-        //        remaining = value;
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
-        //    }
-        //}
-        
-        //private bool DoneInit;
-
         public ObservableCollection<string> AllNotes { get; set; }
 
         string theNote;
@@ -214,10 +159,8 @@ namespace RemoteControl.ViewModels
             }
         }
 
-        public Command NextPageSettings { get; }
-        public Command NextPageCMT { get; }
-        public Command NextPageTreatment { get; }
         public Command NextPageCowId { get; }
+        public Command NextPageSettings { get; }
 
         //private uint[] DataParse(string data, string pattern, NumberStyles numberStyles)
         //{

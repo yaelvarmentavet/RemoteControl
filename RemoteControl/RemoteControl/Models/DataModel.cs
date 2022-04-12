@@ -788,6 +788,20 @@ namespace RemoteControl.Models
             }
         }
 
+        private bool cowIdOk = false;
+        public bool CowIdOk
+        {
+            get => cowIdOk;
+            set
+            {
+                cowIdOk = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CowIdOk)));
+            }
+        }
+
+        public Command NextPageCMT { get; }
+        public Command NextPageTreatment { get; }
+
         private string tagid = string.Empty;
         public string TagId
         {
@@ -939,7 +953,6 @@ namespace RemoteControl.Models
         //private readonly uint[] STATEs; // = new uint[APTX_COUNT];
         private const int QUARTERS_NUMBER = 4;
         private const int CONNECT_TIMEOUT = 3000;
-        private const int STATE_TIMEOUT = 3000; // in msec
         private const int REQUEST_TIMEOUT = 1000; // in msec
         private const int REQUEST_RETRIES = 3;
 
@@ -991,6 +1004,7 @@ namespace RemoteControl.Models
             else if (Device.RuntimePlatform == Device.UWP)
             {
                 Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
+                //Devices = new string[] { REMOTE };
                 TxQue = new List<TxPacket>() {
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
                     //TxQue = new List<TxPacket>() {
@@ -1028,8 +1042,14 @@ namespace RemoteControl.Models
                 SemaphorePorts.Release();
             }, null);
 
-            CmtRead();
-
+            NextPageCMT = new Command(async () =>
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new CMTPage());
+            });
+            NextPageTreatment = new Command(async () =>
+            {
+                await Application.Current.MainPage.Navigation.PushAsync(new ProcessPage());
+            });
             //AddCow = new Command(() =>
             //{
             //    if (!Cows.ContainsKey(CowId))
@@ -1137,6 +1157,8 @@ namespace RemoteControl.Models
                                 }
                             }
                         }
+                        if (usbPorts.Length == 0)
+                            Thread.Sleep(CONNECT_TIMEOUT);
                     }
                     catch
                     {
@@ -1564,7 +1586,7 @@ namespace RemoteControl.Models
         {
             uint[] num = new uint[6];
             string snum = data.Contains(pattern) ? 
-                new string(data.Substring(data.IndexOf(pattern) + pattern.Length)?.TakeWhile(c => ((c != '\r') && (c != 'p')))?.ToArray()) 
+                new string(data.Substring(data.IndexOf(pattern) + pattern.Length)?.TakeWhile(c => ((c != '\r') && (c != 'p') && (c != ' ')))?.ToArray()) 
                 : string.Empty;
             if (((numberStyles == NumberStyles.HexNumber) && (snum.Length <= 8)) ||
                 ((numberStyles == NumberStyles.Number) && (snum.Length <= 10)))
@@ -1589,12 +1611,12 @@ namespace RemoteControl.Models
 
         public void CmtSave()
         {
-            if (CowId != UERROR)
-            {
-                string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
-                File.AppendAllText(LOGFILE_COWS, string.Format("CowId: {0} CmtFL: {1} CmtRL: {2} CmtFR: {3} CmtRR: {4} Date: {5}\n",
-                    CowId, CmtFL, CmtRL, CmtFR, CmtRR, DateTime.Now));
-            }
+            //if (CowId != UERROR)
+            //{
+            string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
+            File.AppendAllText(LOGFILE_COWS, string.Format("CowId: {0} CmtFL: {1} CmtRL: {2} CmtFR: {3} CmtRR: {4} Date: {5}\n",
+                CowId, CmtFL, CmtRL, CmtFR, CmtRR, DateTime.Now));
+            //}
         }
 
         public void CmtRead()
@@ -1604,11 +1626,14 @@ namespace RemoteControl.Models
             if (data.Contains("CowId"))
             {
                 string line = data.Split(new char[] { '\n' }).Where(l => l.Contains("CowId")).Last();
-                uint[] id = DataParse(line, "CowId", NumberStyles.Number);
-                CmtFL = CmtParse(line, "CmtFL: ");
-                CmtRL = CmtParse(line, "CmtRL: ");
-                CmtFR = CmtParse(line, "CmtFR: ");
-                CmtRR = CmtParse(line, "CmtRR: ");
+                uint[] cowId = DataParse(line, "CowId: ", NumberStyles.Number);
+                if (cowId[0] == CowId)
+                {
+                    CmtFL = CmtParse(line, "CmtFL: ");
+                    CmtRL = CmtParse(line, "CmtRL: ");
+                    CmtFR = CmtParse(line, "CmtFR: ");
+                    CmtRR = CmtParse(line, "CmtRR: ");
+                }
             }
         }
 
