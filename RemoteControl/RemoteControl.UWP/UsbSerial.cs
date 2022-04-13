@@ -152,11 +152,12 @@ namespace RemoteControl.UWP
             SerialDevice port = SerialPorts.Values.FirstOrDefault(v => v?.PortName == portName);
             if (port != null)
             {
-                foreach (byte b in buffer)
-                {
-                    Thread.Sleep(100);
-                    await port.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(new byte[] { b }));
-                }
+                //foreach (byte b in buffer)
+                //{
+                //    Thread.Sleep(100);
+                //    await port.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(new byte[] { b }));
+                //}
+                await port.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(buffer));
                 return buffer.Length;
             }
             return ERROR;
