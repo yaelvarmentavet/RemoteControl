@@ -259,11 +259,12 @@ namespace RemoteControl.Droid
         {
             if (SerialPorts.TryGetValue(portName, out SerialDevice port))
             {
-                foreach (byte b in buffer)
-                {
-                    Thread.Sleep(100);
-                    port.Connection.BulkTransfer(port.EndpointTx, new byte[] { b }, 1, 10);
-                }
+                //foreach (byte b in buffer)
+                //{
+                //    Thread.Sleep(100);
+                //    port.Connection.BulkTransfer(port.EndpointTx, new byte[] { b }, 1, 10);
+                //}
+                port.Connection.BulkTransfer(port.EndpointTx, buffer, buffer.Length, 10);
                 return buffer.Length;
             }
             return ERROR;

@@ -72,16 +72,18 @@ namespace RemoteControl.Models
                 (uint)(*(buffer + 3));
         }
 
-        public bool PacketGet(ref byte[] buffer, int size)
+        public bool PacketGet(byte[] buffer, ref byte[] res, int size)
         {
-            while (buffer.Length >= size)
+            res = buffer.SkipWhile(b => b != Sop).ToArray();
+            while (res.Length >= size)
             {
-                buffer = buffer.SkipWhile(b => b != Sop).ToArray();
-                if (buffer.Length >= size)
+                //buffer = buffer.SkipWhile(b => b != Sop).ToArray();
+                res = res.SkipWhile(b => b != Sop).ToArray();
+                if (res.Length >= size)
                 {
-                    if (buffer[size - 1 - 2] == Eop)
+                    if (res[size - 1 - 2] == Eop)
                         return true;
-                    buffer = buffer.Skip(1).ToArray();
+                    res = res.Skip(1).ToArray();
                 }
             }
             return false;
@@ -151,18 +153,19 @@ namespace RemoteControl.Models
 
         public unsafe bool PacketParse(ref byte[] buffer)
         {
+            byte[] res = new byte[0];
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            if (PacketGet(ref buffer, sizeof(ReadTypeCUIIResponse)))
+            if (PacketGet(buffer, ref res, sizeof(ReadTypeCUIIResponse)))
             {
-                fixed (byte* pbuffer = buffer)
+                fixed (byte* pbuffer = res)
                 {
                     ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
                     if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
                     {
                         if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
                         {
-                            if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(buffer.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
+                            if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(res.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
                             {
                                 EPC[0] = readTypeCUIIResponse->EPCMSB;
                                 EPC[1] = readTypeCUIIResponse->EPC1;
@@ -176,13 +179,13 @@ namespace RemoteControl.Models
                                 EPC[9] = readTypeCUIIResponse->EPC9;
                                 EPC[10] = readTypeCUIIResponse->EPC10;
                                 EPC[11] = readTypeCUIIResponse->EPCLSB;
-                                buffer = buffer.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
+                                buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
                                 return true;
                             }
                         }
                     }
-                    buffer = buffer.Skip(1).ToArray();
                 }
+                buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
             }
             //}
             return false;
@@ -616,14 +619,15 @@ namespace RemoteControl.Models
 
         public unsafe bool PacketParse(ref byte[] buffer)
         {
+            byte[] res = new byte[0];
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            if (PacketGet(ref buffer, sizeof(PacketStatus)))
+            if (PacketGet(buffer, ref res, sizeof(PacketStatus)))
             {
-                fixed (byte* pbuffer = buffer)
+                fixed (byte* pbuffer = res)
                 {
                     PacketStatus* packetStatus = (PacketStatus*)pbuffer;
-                    if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(buffer.Take(sizeof(PacketStatus) - 2).ToArray()))
+                    if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(res.Take(sizeof(PacketStatus) - 2).ToArray()))
                     {
                         Id = packetStatus->APT_SERIAL_NUMBER;
                         SNum = ArrayToUint((byte*)&packetStatus->AM_number_msb);
@@ -639,11 +643,11 @@ namespace RemoteControl.Models
                         SpeedOfBullet = packetStatus->speed_of_bullet;
                         CowId = ArrayToUshort((byte*)&packetStatus->Cow_id_msb);
                         CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses_msb);
-                        buffer = buffer.Skip(sizeof(PacketStatus)).ToArray();
+                        buffer = res.Skip(sizeof(PacketStatus)).ToArray();
                         return true;
                     }
-                    buffer = buffer.Skip(1).ToArray();
                 }
+                buffer = res.Skip(sizeof(PacketStatus)).ToArray();
             }
             //}
             return false;
@@ -965,7 +969,8 @@ namespace RemoteControl.Models
         //private const int REQUEST_RETRIES = 3;
         //private const int REPLY_TIMEOUT = 1000; // in msec
         //private const int REPLY_RETRIES = 3;
-        private const int TXQUE_TIMEOUT = 1000;
+        private const int TXQUE_TIMEOUT = 1;
+        private const int TXRX_TIMEOUT = 1000;
         private const int TXRX_RETRIES = 1;
         //private const int RXBUFFER_SIZE = 1024;
 
@@ -1001,16 +1006,16 @@ namespace RemoteControl.Models
         //private bool Connected = false;
         private byte PauseResume = Aptx.STOP;
 
-        //private byte[] RxBufferRfid = new byte[1];// RXBUFFER_SIZE];
-        //private byte[] RxBufferAptx1 = new byte[1];// RXBUFFER_SIZE];
-        //private byte[] RxBufferEcomilk = new byte[1];// RXBUFFER_SIZE];
-        //private byte[] RxBufferRemote = new byte[1];// RXBUFFER_SIZE];
+        //private byte[] RxBufferRfid = new byte[0];// RXBUFFER_SIZE];
+        //private byte[] RxBufferAptx1 = new byte[0];// RXBUFFER_SIZE];
+        //private byte[] RxBufferEcomilk = new byte[0];// RXBUFFER_SIZE];
+        //private byte[] RxBufferRemote = new byte[0];// RXBUFFER_SIZE];
         Dictionary<string, byte[]> RxBuffers = new Dictionary<string, byte[]>();
         private Semaphore SemaphoreRxBuffers = new Semaphore(1, 1);
 
         private List<TxPacket> TxQue;
         private Semaphore SemaphoreTxQue = new Semaphore(1, 1);
-        ManualResetEvent WaitHandleTxQue = new ManualResetEvent(false);
+        //ManualResetEvent WaitHandleTxQue = new ManualResetEvent(false);
 
         public DataModel(IUsbSerial usbSerial)
         {
@@ -1029,27 +1034,16 @@ namespace RemoteControl.Models
                 //Devices = new string[] { APTX1 };
                 //Devices = new string[] { REMOTE };
                 TxQue = new List<TxPacket>() {
-                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
-                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
+                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
                     
-                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
-                    
-                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
-                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
-                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
-                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
                     new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
-                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
-                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
-                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
+                    
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_1, packet = Aptxs[1].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_2, packet = Aptxs[2].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
+                    
                     new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
-                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
-                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
-                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
                 };
             }
 
@@ -1130,10 +1124,12 @@ namespace RemoteControl.Models
             //new Thread(() => { Tx(); })
             //{ Name = "Tx" }.Start();
             
-            WaitHandleTxQue.Set();
+            //WaitHandleTxQue.Set();
 
-            new Thread(() => { TxDeque(); })
-            { Name = "Tx" }.Start();
+            //new Thread(() => { TxDeque(); })
+            //{ Name = "Tx" }.Start();
+            //ThreadPool.QueueUserWorkItem( (o) => { TxDeque(); });
+            Task.Run(() => { TxDeque(); });
         }
 
         private async Task TxRx(TxPacket txPacket, string device)
@@ -1146,7 +1142,7 @@ namespace RemoteControl.Models
                     if (Ports.TryGetValue(device, out string port))
                     {
                         ret = await PortRequest(txPacket, port);
-                        WaitHandleTxQue.Set();
+                        //WaitHandleTxQue.Set();
                         //await PortReply(device, port, RxBuffers);
                         await PortReply(device, port);
                     }
@@ -1163,7 +1159,7 @@ namespace RemoteControl.Models
                                 ret = await PortRequest(txPacket, prt);
                             }
                         }
-                        WaitHandleTxQue.Set();
+                        //WaitHandleTxQue.Set();
                         foreach (string prt in ports)
                         {
                             if (!Ports.Values.Contains(prt))
@@ -1191,18 +1187,18 @@ namespace RemoteControl.Models
                                 }
                             }
                         }
+                        //if (ports.Length == 0)
+                        //    Thread.Sleep(TXRX_TIMEOUT);
                     }
                 }
             }
             catch
             {
-                WaitHandleTxQue.Set();
+                //WaitHandleTxQue.Set();
                 SemaphorePorts.Release();
                 SemaphoreRxBuffers.Release();
                 SemaphoreTxQue.Release();
-            }
-            finally
-            {
+                //Thread.Sleep(TXRX_TIMEOUT);
             }
         }
 
@@ -1223,17 +1219,20 @@ namespace RemoteControl.Models
 
                     if (TxQue.Any())
                     {
-                        WaitHandleTxQue.WaitOne();
-                        WaitHandleTxQue.Reset();
+                        //WaitHandleTxQue.WaitOne();
+                        //WaitHandleTxQue.Reset();
 
                         TxPacket txPacket = TxQue.First();
                         string device = txPacket.device;
 
+                        await Task.Run(async () => { TxRx(txPacket, device); }).Wait();
+
                         //ThreadPool.QueueUserWorkItem( (o) => { TxRx(txPacket, device); });
+
                         //ThreadPool.QueueUserWorkItem((o) => { Thread.Sleep(TXQUE_TIMEOUT); });
 
                         //new Thread(async () => { await TxRx(txPacket, device); }).Start();
-                        new Thread(() => { TxRx(txPacket, device); }).Start();
+                        //new Thread(() => { TxRx(txPacket, device); }).Start();
 
                         //ThreadPool.QueueUserWorkItem( (o) => { TxRx(txPacket, device); });
                         //Thread.Sleep(TXQUE_TIMEOUT);
@@ -1245,16 +1244,18 @@ namespace RemoteControl.Models
                         if (txPacket.packetType != PacketType.EMPTY)
                             TxQue.Add(txPacket);
                         SemaphoreTxQue.Release();
-                    
+
                         Thread.Sleep(TXQUE_TIMEOUT);
                     }
+                    //Thread.Sleep(TXRX_TIMEOUT);
                 }
                 catch
                 {
-                    WaitHandleTxQue.Set();
+                    //WaitHandleTxQue.Set();
                     SemaphorePorts.Release();
                     SemaphoreRxBuffers.Release();
                     SemaphoreTxQue.Release();
+                    //Thread.Sleep(TXRX_TIMEOUT);
                 }
             }
         }
@@ -1262,9 +1263,15 @@ namespace RemoteControl.Models
         //private async Task<bool> PortReply(string device, string port, Dictionary<string, byte[]> RxBuffers)
         private async Task<bool> PortReply(string device, string port)
         {
+            SemaphoreRxBuffers.WaitOne();
             if (!RxBuffers.TryGetValue(port, out byte[] rxBuffer))
-                //rxBuffers.Add(port, (rxBuffer = new byte[1]));
-                rxBuffer = new byte[1];
+            {
+                //rxBuffers.Add(port, (rxBuffer = new byte[0]));
+                rxBuffer = new byte[0];
+                RxBuffers.Add(port, rxBuffer);
+            }
+            SemaphoreRxBuffers.Release();
+
             byte[] buffer = new byte[1024];
             //data += await UsbSerial.Read(port, buffer);
             int length = 0;
@@ -1273,14 +1280,17 @@ namespace RemoteControl.Models
             if ((length = await UsbSerial.Read(port, buffer)) > 0)
             {
                 rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
+            }
+
+            if (rxBuffer.Length > 0)
+            {
                 switch (device)
                 {
                     case ECOMILK:
-                        //if (!Ports.ContainsKey(device))
-                        //{
                         data = Encoding.UTF8.GetString(rxBuffer);
                         found = data.Contains(device);
-                        //}
+                        if (found)
+                            rxBuffer = new byte[0];
                         break;
                     case RFID:
                         //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
@@ -1326,7 +1336,7 @@ namespace RemoteControl.Models
                                 if (!found)
                                     found = data.Contains("0x1f-0x85-0x01");
                                 if (found)
-                                    rxBuffer = new byte[1];
+                                    rxBuffer = new byte[0];
                             }
                             else
                             {
@@ -1336,7 +1346,7 @@ namespace RemoteControl.Models
                                     if (snum[0] == 123)
                                     {
                                         Aptx.SNum++;
-                                        rxBuffer = new byte[1];
+                                        rxBuffer = new byte[0];
                                     }
                                 }
                                 //if (Aptx.SNum == UERROR)
@@ -1345,7 +1355,7 @@ namespace RemoteControl.Models
                                 //    {
                                 //        uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
                                 //        Aptx.SNum = snum[0];
-                                //        rxBuffer = new byte[1];
+                                //        rxBuffer = new byte[0];
                                 //    }
                                 //}
                                 //if ((Aptx.aptxId[0] == UERROR) ||
@@ -1359,7 +1369,7 @@ namespace RemoteControl.Models
                                 //        Aptx.aptxId[1] = aptid[1];
                                 //        Aptx.aptxId[2] = aptid[2];
                                 //        Aptx.AptxId = Aptx.AptxId;
-                                //        rxBuffer = new byte[1];
+                                //        rxBuffer = new byte[0];
                                 //    }
                                 //}
                                 //if ((Aptx.CurrentPulses == UERROR) || (Aptx.Maxi == UERROR))
@@ -1368,7 +1378,7 @@ namespace RemoteControl.Models
                                 //    {
                                 //        uint[] maxi = DataParse(data, "MAXI ", NumberStyles.Number);
                                 //        Aptx.Maxi = maxi[0];
-                                //        rxBuffer = new byte[1];
+                                //        rxBuffer = new byte[0];
                                 //    }
                                 //    if (data.Contains("Found: ") || data.Contains("pulses written "))
                                 //    {
@@ -1376,7 +1386,7 @@ namespace RemoteControl.Models
                                 //        if (current[0] == 0)
                                 //            current = DataParse(data, "pulses written ", NumberStyles.Number);
                                 //        Aptx.CurrentPulses = current[0];
-                                //        rxBuffer = new byte[1];
+                                //        rxBuffer = new byte[0];
                                 //    }
                                 //    if ((Aptx.Maxi != UERROR) && (Aptx.CurrentPulses != UERROR))
                                 //        Aptx.Remaining = Aptx.Maxi - Aptx.CurrentPulses;
@@ -1386,16 +1396,79 @@ namespace RemoteControl.Models
                         break;
                 }
             }
+
             SemaphoreRxBuffers.WaitOne();
             if (RxBuffers.ContainsKey(port))
             {
                 RxBuffers.Remove(port);
-                RxBuffers.Add(port, rxBuffer);
             }
+            RxBuffers.Add(port, rxBuffer);
             SemaphoreRxBuffers.Release();
             return found;
         }
 
+        //        data = Encoding.UTF8.GetString(rxBuffer);
+        //        if (!(found = data.Contains(ECOMILK)))
+        //        {
+        //            RfId rfId = new RfId();
+        //            if (found = rfId.PacketParse(ref rxBuffer))
+        //            {
+        //                unsafe
+        //                {
+        //                    fixed (byte* pepc = rfId.EPC)
+        //                    {
+        //                        CowId = rfId.ArrayToUint(pepc);
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (found = Aptx.PacketParse(ref rxBuffer))
+        //                {
+        //                    if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
+        //                    {
+        //                        AptxUpdate();
+        //                        Aptxs[Aptx.Id - 1] = Aptx;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+        //                    if (!Ports.ContainsKey(device))
+        //                    {
+        //                        found = data.Contains("1F-85-01");
+        //                        if (!found)
+        //                            found = data.Contains("0x1f-0x85-0x01");
+        //                        if (found)
+        //                            rxBuffer = new byte[0];
+        //                    }
+        //                    else
+        //                    {
+        //                        if (data.Contains("SNUM "))
+        //                        {
+        //                            uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
+        //                            if (snum[0] == 123)
+        //                            {
+        //                                Aptx.SNum++;
+        //                                rxBuffer = new byte[0];
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    SemaphoreRxBuffers.WaitOne();
+        //    if (RxBuffers.ContainsKey(port))
+        //    {
+        //        RxBuffers.Remove(port);
+        //        RxBuffers.Add(port, rxBuffer);
+        //    }
+        //    SemaphoreRxBuffers.Release();
+        //    return found;
+        //}
+        
         //private async Task<int> PortRequest(string device, string port, uint state)
         private async Task<int> PortRequest(TxPacket txPacket, string port)
         {
@@ -1477,6 +1550,8 @@ namespace RemoteControl.Models
                     }
                     break;
             }
+
+            //if((!CowIdOk) || (port == "COM14"))
             ret = await UsbSerial.Write(port, txPacket.packet);
 
             return ret;
