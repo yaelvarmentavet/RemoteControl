@@ -120,7 +120,7 @@ namespace RemoteControl.Models
             public byte CRC_16LSB;
         }
 
-        private byte[] epc;
+        private byte[] epc = new byte[12].Select(e => e = BERROR).ToArray();
         public byte[] EPC
         {
             get => epc;
@@ -148,7 +148,7 @@ namespace RemoteControl.Models
             Sop = PREEMBLE;
             Eop = END_MARK;
 
-            epc = new byte[12].Select(e => e = BERROR).ToArray();
+            //epc = new byte[12].Select(e => e = BERROR).ToArray();
         }
 
         public unsafe bool PacketParse(ref byte[] buffer)
@@ -819,7 +819,7 @@ namespace RemoteControl.Models
 
         public float Progress
         {
-            get => (Aptx.ProcessPulses - Aptx.PulsesPrev) / Aptx.PulsesPrev;
+            get => (Aptxs[0].ProcessPulses - Aptxs[0].PulsesPrev) / ECOMILK_PROCESS_PULSES;
         }
 
         private bool fl = false;
@@ -901,7 +901,7 @@ namespace RemoteControl.Models
             }
         }
 
-        private string[] usbPorts;
+        private string[] usbPorts = new string[0];
         public string UsbPorts
         {
             get => usbPorts.Aggregate("", (r, v) => r += v + " ");
@@ -960,6 +960,8 @@ namespace RemoteControl.Models
         private const string ECOMILK = "ECOMILK";
         private const string RFID = "RFID";
 
+        private const int ECOMILK_PROCESS_PULSES = 100;
+
         //private const uint APTX_COUNT = 4;
 
         //private readonly uint[] STATEs; // = new uint[APTX_COUNT];
@@ -969,9 +971,9 @@ namespace RemoteControl.Models
         //private const int REQUEST_RETRIES = 3;
         //private const int REPLY_TIMEOUT = 1000; // in msec
         //private const int REPLY_RETRIES = 3;
-        private const int TXQUE_TIMEOUT = 1;
-        private const int TXRX_TIMEOUT = 1000;
-        private const int TXRX_RETRIES = 1;
+        //private const int TXQUE_TIMEOUT = 1;
+        private const int TXDEQUE_TIMEOUT = 100;
+        //private const int TXRX_RETRIES = 1;
         //private const int RXBUFFER_SIZE = 1024;
 
         private const string LOGFILE_COWS = "LOGFILE_COWS";
@@ -984,7 +986,7 @@ namespace RemoteControl.Models
 
         //public string[] Devices;
 
-        public Aptx[] Aptxs; // = new Aptx[APTX_COUNT];
+        public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
         public Aptx Aptx = new Aptx();
 
         //private Dictionary<uint, string> Cows = new Dictionary<uint, string>();
@@ -1017,15 +1019,19 @@ namespace RemoteControl.Models
         private Semaphore SemaphoreTxQue = new Semaphore(1, 1);
         //ManualResetEvent WaitHandleTxQue = new ManualResetEvent(false);
 
+        Timer TxDequeTimer;
+
         public DataModel(IUsbSerial usbSerial)
         {
-            Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
+            //Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
             if (Device.RuntimePlatform == Device.Android)
             {
                 //Devices = new string[] { REMOTE };
                 //Devices = new string[] { REMOTE, APTX1 };
                 TxQue = new List<TxPacket>() {
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
+                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
+                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
                 };
             }
             else if (Device.RuntimePlatform == Device.UWP)
@@ -1034,7 +1040,7 @@ namespace RemoteControl.Models
                 //Devices = new string[] { APTX1 };
                 //Devices = new string[] { REMOTE };
                 TxQue = new List<TxPacket>() {
-                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
+                    new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
                     
                     new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
                     
@@ -1129,7 +1135,11 @@ namespace RemoteControl.Models
             //new Thread(() => { TxDeque(); })
             //{ Name = "Tx" }.Start();
             //ThreadPool.QueueUserWorkItem( (o) => { TxDeque(); });
-            Task.Run(() => { TxDeque(); });
+            //new Thread(() => { TxDeque(); }){ Priority = ThreadPriority.BelowNormal }.Start();
+
+            //Task.Run(() => { TxDeque(); });
+
+            TxDequeTimer = new Timer((a) => { TxDeque(); }, null, 0, TXDEQUE_TIMEOUT);
         }
 
         private async Task TxRx(TxPacket txPacket, string device)
@@ -1137,127 +1147,77 @@ namespace RemoteControl.Models
             try
             {
                 int ret = -1;
-                for (int i = 0; i < TXRX_RETRIES; i++)
+                //for (int i = 0; i < TXRX_RETRIES; i++)
+                //{
+                if (Ports.TryGetValue(device, out string port))
                 {
-                    if (Ports.TryGetValue(device, out string port))
+                    ret = await PortRequest(txPacket, port);
+                    await PortReply(device, port);
+                }
+                else
+                {
+                    string[] ports = UsbSerial.GetPorts().ToArray();
+                    usbPorts = ports;
+                    UsbPorts = UsbPorts;
+                    foreach (string prt in ports)
                     {
-                        ret = await PortRequest(txPacket, port);
-                        //WaitHandleTxQue.Set();
-                        //await PortReply(device, port, RxBuffers);
-                        await PortReply(device, port);
+                        if (!Ports.Values.Contains(prt))
+                        {
+                            ret = await PortRequest(txPacket, prt);
+                        }
                     }
-                    else
+                    foreach (string prt in ports)
                     {
-                        string[] ports = UsbSerial.GetPorts().ToArray();
-                        usbPorts = ports;
-                        UsbPorts = UsbPorts;
-                        foreach (string prt in ports)
+                        if (!Ports.Values.Contains(prt))
                         {
-                            if (!Ports.Values.Contains(prt))
+                            if (await PortReply(device, prt))
                             {
-                                //await PortRequest(device, prt, 0);
-                                ret = await PortRequest(txPacket, prt);
-                            }
-                        }
-                        //WaitHandleTxQue.Set();
-                        foreach (string prt in ports)
-                        {
-                            if (!Ports.Values.Contains(prt))
-                            {
-                                //if (await PortReply(device, prt, RxBuffers))
-                                if (await PortReply(device, prt))
+                                SemaphorePorts.WaitOne();
+                                if (!Ports.ContainsKey(device))
                                 {
-                                    SemaphorePorts.WaitOne();
-                                    if (!Ports.ContainsKey(device))
-                                    {
-                                        Ports.Add(device, prt);
-                                        //SemaphoreTxQue.WaitOne();
-                                        //TxPacket[] packets = TxQue.Where(t => (t.device == device) && (t.packetType != PacketType.EMPTY)).ToArray();
-                                        //if (packets.Any())
-                                        //{
-                                        //    TxPacket packet = packets.First();
-                                        //    int idx = TxQue.IndexOf(packet);
-                                        //    TxQue.Insert(idx, packet);
-                                        //    foreach (TxPacket pck in packets)
-                                        //        TxQue.Remove(pck);
-                                        //}
-                                        //SemaphoreTxQue.Release();
-                                    }
-                                    SemaphorePorts.Release();
+                                    Ports.Add(device, prt);
                                 }
+                                SemaphorePorts.Release();
                             }
                         }
-                        //if (ports.Length == 0)
-                        //    Thread.Sleep(TXRX_TIMEOUT);
                     }
                 }
+                //}
             }
             catch
             {
-                //WaitHandleTxQue.Set();
-                SemaphorePorts.Release();
-                SemaphoreRxBuffers.Release();
-                SemaphoreTxQue.Release();
-                //Thread.Sleep(TXRX_TIMEOUT);
             }
         }
 
         private async Task TxDeque()
         {
-            //string data = string.Empty;
-            //string device = string.Empty;
-            //Stopwatch stopWatch = new Stopwatch();
-            //stopWatch.Start();
-            //uint state = STATEs.First();
-            while (true)
+            //while (true)
+            //{
+            try
             {
-                try
+                if (TxQue.Any())
                 {
-                    //foreach (string dev in Devices)
-                    //{
-                    //    device = dev;
+                    TxPacket txPacket = TxQue.First();
+                    string device = txPacket.device;
 
-                    if (TxQue.Any())
-                    {
-                        //WaitHandleTxQue.WaitOne();
-                        //WaitHandleTxQue.Reset();
+                    //Task.Run(async () => { await TxRx(txPacket, device); }).Wait(TXRX_TIMEOUT);
+                    Task.Run(async () => { await TxRx(txPacket, device); });
 
-                        TxPacket txPacket = TxQue.First();
-                        string device = txPacket.device;
-
-                        await Task.Run(async () => { TxRx(txPacket, device); }).Wait();
-
-                        //ThreadPool.QueueUserWorkItem( (o) => { TxRx(txPacket, device); });
-
-                        //ThreadPool.QueueUserWorkItem((o) => { Thread.Sleep(TXQUE_TIMEOUT); });
-
-                        //new Thread(async () => { await TxRx(txPacket, device); }).Start();
-                        //new Thread(() => { TxRx(txPacket, device); }).Start();
-
-                        //ThreadPool.QueueUserWorkItem( (o) => { TxRx(txPacket, device); });
-                        //Thread.Sleep(TXQUE_TIMEOUT);
-                        //ThreadPool.QueueUserWorkItem( (o) => { TxRx(txPacket, device); });
-                        //Thread.Sleep(TXQUE_TIMEOUT);
-
-                        SemaphoreTxQue.WaitOne();
-                        TxQue.Remove(txPacket);
-                        if (txPacket.packetType != PacketType.EMPTY)
-                            TxQue.Add(txPacket);
-                        SemaphoreTxQue.Release();
-
-                        Thread.Sleep(TXQUE_TIMEOUT);
-                    }
-                    //Thread.Sleep(TXRX_TIMEOUT);
-                }
-                catch
-                {
-                    //WaitHandleTxQue.Set();
-                    SemaphorePorts.Release();
-                    SemaphoreRxBuffers.Release();
+                    SemaphoreTxQue.WaitOne();
+                    TxQue.Remove(txPacket);
+                    if (txPacket.packetType != PacketType.EMPTY)
+                        TxQue.Add(txPacket);
                     SemaphoreTxQue.Release();
-                    //Thread.Sleep(TXRX_TIMEOUT);
+
                 }
+                //else
+                //    Thread.Sleep(TXRX_TIMEOUT);
             }
+            catch
+            {
+                //Thread.Sleep(TXRX_TIMEOUT);
+            }
+            //}
         }
 
         //private async Task<bool> PortReply(string device, string port, Dictionary<string, byte[]> RxBuffers)
@@ -1329,7 +1289,8 @@ namespace RemoteControl.Models
                         break;
                     case APTX1:
                         {
-                            data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+                            //data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+                            data = Encoding.UTF8.GetString(rxBuffer);
                             if (!Ports.ContainsKey(device))
                             {
                                 found = data.Contains("1F-85-01");
@@ -1475,14 +1436,16 @@ namespace RemoteControl.Models
             int ret = ERROR;
             switch (txPacket.device)
             {
+                case ECOMILK:
+                    if (txPacket.packetType != PacketType.ECOMILK_ID)
+                        txPacket.packetType = PacketType.EMPTY;
+                    break;
                 case REMOTE:
-                    switch (txPacket.packetType)
-                    {
-                        case PacketType.REMOTE_START:
-                        case PacketType.REMOTE_STOP:
-                            txPacket.packetType = PacketType.EMPTY;
-                            break;
-                    }
+                    if (txPacket.packetType != PacketType.REMOTE_STATUS_0 &&
+                        txPacket.packetType != PacketType.REMOTE_STATUS_1 &&
+                        txPacket.packetType != PacketType.REMOTE_STATUS_2 &&
+                        txPacket.packetType != PacketType.REMOTE_STATUS_3)
+                        txPacket.packetType = PacketType.EMPTY;
                     break;
                 case APTX1:
                     //switch (txPacket.packetType)
@@ -1524,12 +1487,12 @@ namespace RemoteControl.Models
                     if (!Ports.ContainsKey(txPacket.device))
                     {
                         txPacket.packetType = PacketType.APTX1_ID;
-                        txPacket.packet = Encoding.UTF8.GetBytes("getid,3#");
+                        txPacket.packet = Encoding.UTF8.GetBytes("#getid,3#");
                     }
                     else
                     {
                         txPacket.packetType = PacketType.APTX1_SNUM;
-                        txPacket.packet = Encoding.UTF8.GetBytes("testread,3#");
+                        txPacket.packet = Encoding.UTF8.GetBytes("#testread,3#");
                         //if (Aptx.SNum == UERROR)
                         //{
                         //    txPacket.packetType = PacketType.APTX1_SNUM;
@@ -1681,6 +1644,7 @@ namespace RemoteControl.Models
             {
                 //if (await Process(aptx, Aptx.START) == ERROR)
                 //return ERROR;
+                aptx.PulsesPrev = aptx.ProcessPulses;
                 await Process(aptx, Aptx.START);
             }
             return OK;

@@ -82,12 +82,18 @@ namespace RemoteControl.Droid
 
         private void UsbAttached(object sender, EventArgs e)
         {
-            new Thread(async () =>
+            //new Thread(async () =>
+            //{
+            //    SemaphoreConnect.WaitOne();
+            //    await Connect();
+            //    SemaphoreConnect.Release();
+            //}).Start();
+            Task.Run(async () =>
             {
                 SemaphoreConnect.WaitOne();
                 await Connect();
                 SemaphoreConnect.Release();
-            }).Start();
+            });
         }
 
         private async Task<bool> Connect()

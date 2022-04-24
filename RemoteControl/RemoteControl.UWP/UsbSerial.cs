@@ -21,6 +21,7 @@ namespace RemoteControl.UWP
         private EventHandler EventRemoved;
         //private bool Connected = false;
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
+        //private Mutex SemaphoreConnect = new Mutex();
         private DeviceWatcher Watcher;
 
         public UsbSerial()
@@ -41,23 +42,36 @@ namespace RemoteControl.UWP
 
         private void DeviceUpdated(DeviceWatcher sender, DeviceInformationUpdate args)
         {
-            new Thread(async () =>
+            //new Thread(async () =>
+            //{
+            //    SemaphoreConnect.WaitOne();
+            //    //await Connect();
+            //    await Connect(args.Id);
+            //    SemaphoreConnect.Release();
+            //}).Start();
+            Task.Run(async () =>
             {
                 SemaphoreConnect.WaitOne();
                 //await Connect();
                 await Connect(args.Id);
                 SemaphoreConnect.Release();
-            }).Start();
+            });
         }
 
         private void DeviceEnumerationCompleted(DeviceWatcher sender, object args)
         {
-            new Thread(async () =>
+            //new Thread(async () =>
+            //{
+            //    SemaphoreConnect.WaitOne();
+            //    await Connect();
+            //    SemaphoreConnect.Release();
+            //}).Start();
+            Task.Run(async () =>
             {
                 SemaphoreConnect.WaitOne();
                 await Connect();
                 SemaphoreConnect.Release();
-            }).Start();
+            });
         }
 
         private void DeviceRemoved(DeviceWatcher sender, DeviceInformationUpdate args)
