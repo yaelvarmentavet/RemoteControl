@@ -591,7 +591,7 @@ namespace RemoteControl.Models
         public const byte STOP = 0x02;
         public const byte RESERVED = 0x00;
 
-        public static readonly byte[] APTXIDs = new byte[] { 0x01, 0x02, 0x03, 0x04 };
+        public static readonly byte[] APTXIDs = new byte[] { 0x00, 0x01, 0x02, 0x03 };
 
         public uint PulsesPrev = UERROR;
 
@@ -819,7 +819,7 @@ namespace RemoteControl.Models
 
         public float Progress
         {
-            get => (Aptxs[0].ProcessPulses - Aptxs[0].PulsesPrev) / ECOMILK_PROCESS_PULSES;
+            get => (Aptx.ProcessPulses - Aptx.PulsesPrev) / ECOMILK_PROCESS_PULSES;
         }
 
         private bool fl = false;
@@ -1029,7 +1029,7 @@ namespace RemoteControl.Models
                 //Devices = new string[] { REMOTE };
                 //Devices = new string[] { REMOTE, APTX1 };
                 TxQue = new List<TxPacket>() {
-                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
+                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
                     //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
                     //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
                 };
@@ -1618,17 +1618,20 @@ namespace RemoteControl.Models
         public void CmtRead()
         {
             string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
-            string data = File.ReadAllText(LOGFILE_COWS);
-            if (data.Contains("CowId"))
+            if (File.Exists(LOGFILE_COWS))
             {
-                string line = data.Split(new char[] { '\n' }).Where(l => l.Contains("CowId")).Last();
-                uint[] cowId = DataParse(line, "CowId: ", NumberStyles.Number);
-                if (cowId[0] == CowId)
+                string data = File.ReadAllText(LOGFILE_COWS);
+                if (data.Contains("CowId"))
                 {
-                    CmtFL = CmtParse(line, "CmtFL: ");
-                    CmtRL = CmtParse(line, "CmtRL: ");
-                    CmtFR = CmtParse(line, "CmtFR: ");
-                    CmtRR = CmtParse(line, "CmtRR: ");
+                    string line = data.Split(new char[] { '\n' }).Where(l => l.Contains("CowId")).Last();
+                    uint[] cowId = DataParse(line, "CowId: ", NumberStyles.Number);
+                    if (cowId[0] == CowId)
+                    {
+                        CmtFL = CmtParse(line, "CmtFL: ");
+                        CmtRL = CmtParse(line, "CmtRL: ");
+                        CmtFR = CmtParse(line, "CmtFR: ");
+                        CmtRR = CmtParse(line, "CmtRR: ");
+                    }
                 }
             }
         }
