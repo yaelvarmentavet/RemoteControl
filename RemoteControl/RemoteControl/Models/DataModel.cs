@@ -77,7 +77,7 @@ namespace RemoteControl.Models
         }
 
         //public bool PacketGet(byte[] buffer, ref byte[] res, int size)
-        public bool PacketGet(ref byte[] buffer, ref byte[] res)
+        public bool PacketGet(byte[] buffer, ref byte[] res)
         {
             //res = buffer.SkipWhile(b => b != Sop).ToArray();
             //while (res.Length >= size)
@@ -98,8 +98,7 @@ namespace RemoteControl.Models
             int count = 0;
             bool found = false;
             ushort check = 0;
-            buffer = buffer.SkipWhile(b => b != Sop).ToArray();
-            res = buffer.Where((b, i) =>
+            res = buffer.SkipWhile(b => b != Sop).Where((b, i) =>
             {
                 if (b == Eop)
                 {
@@ -129,7 +128,7 @@ namespace RemoteControl.Models
             byte[] res = new byte[0];
             uint count = 0;
             found = false;
-            while (PacketGet(ref buffer, ref res))
+            while (PacketGet(buffer, ref res))
             {
                 if (Dassign(res))
                     found = true;
@@ -1324,6 +1323,7 @@ namespace RemoteControl.Models
                         }
                         break;
                     case RFID:
+                        //byte[] RxBuffer = new byte[20];
                         //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
                         //RxBuffer[10] = RfId.PREEMBLE;
                         //RxBuffer[10 + 19] = RfId.END_MARK;
@@ -1343,6 +1343,7 @@ namespace RemoteControl.Models
                         }
                         break;
                     case REMOTE:
+                        //byte[] RxBuffer = new byte[30];
                         //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
                         //RxBuffer[10] = Aptx.STX;
                         //RxBuffer[11] = Aptx.APTXIDs[0];
