@@ -53,6 +53,10 @@ namespace RemoteControl.Models
     {
         public byte Sop;
         public byte Eop;
+        public delegate ushort DCheck(byte[] buffer);
+        public delegate bool DAssign(byte[] buffer);
+        public DCheck Dcheck;
+        public DAssign Dassign;
 
         public unsafe uint ArrayToUshort(byte* buffer)
         {
@@ -72,21 +76,67 @@ namespace RemoteControl.Models
                 (uint)(*(buffer + 3));
         }
 
-        public bool PacketGet(byte[] buffer, ref byte[] res, int size)
+        //public bool PacketGet(byte[] buffer, ref byte[] res, int size)
+        public bool PacketGet(ref byte[] buffer, ref byte[] res)
         {
-            res = buffer.SkipWhile(b => b != Sop).ToArray();
-            while (res.Length >= size)
+            //res = buffer.SkipWhile(b => b != Sop).ToArray();
+            //while (res.Length >= size)
+            //{
+            //    //buffer = buffer.SkipWhile(b => b != Sop).ToArray();
+            //    res = res.SkipWhile(b => b != Sop).ToArray();
+            //    if (res.Length >= size)
+            //    {
+            //        if (res[size - 1 - 2] == Eop)
+            //            return true;
+            //        res = res.Skip(1).ToArray();
+            //    }
+            //}
+            //return false;
+
+            //res = buffer.SkipWhile(b => b != Sop).TakeWhile(b => b != Eop).Take(3).ToArray();
+            int idx = -1;
+            int count = 0;
+            bool found = false;
+            ushort check = 0;
+            buffer = buffer.SkipWhile(b => b != Sop).ToArray();
+            res = buffer.Where((b, i) =>
             {
-                //buffer = buffer.SkipWhile(b => b != Sop).ToArray();
-                res = res.SkipWhile(b => b != Sop).ToArray();
-                if (res.Length >= size)
+                if (b == Eop)
                 {
-                    if (res[size - 1 - 2] == Eop)
-                        return true;
-                    res = res.Skip(1).ToArray();
+                    idx = i;
+                    found = true;
                 }
+                if (idx > 0)
+                    count++;
+                if (count == 2)
+                    check = (ushort)(b << 8);
+                if (count == 3)
+                    check += b;
+                if (count > 3)
+                    return false;
+                return true;
+            }).ToArray();
+            if (found)
+            {
+                if (check == Dcheck(res))
+                    return true;
             }
             return false;
+        }
+
+        public uint PacketParse(ref byte[] buffer, ref bool found)
+        {
+            byte[] res = new byte[0];
+            uint count = 0;
+            found = false;
+            while (PacketGet(ref buffer, ref res))
+            {
+                if (Dassign(res))
+                    found = true;
+                count++;
+                buffer = buffer.Skip(res.Length).ToArray();
+            }
+            return count;
         }
     }
 
@@ -149,44 +199,47 @@ namespace RemoteControl.Models
             Eop = END_MARK;
 
             //epc = new byte[12].Select(e => e = BERROR).ToArray();
+
+            Dcheck = CrcCalc;
+            Dassign = PacketAssign;
         }
 
-        public unsafe bool PacketParse(ref byte[] buffer)
+        public unsafe bool PacketAssign(byte[] buffer)
         {
-            byte[] res = new byte[0];
             //unsafe //we'll now pin unmanaged struct over managed byte array
             //{
-            if (PacketGet(buffer, ref res, sizeof(ReadTypeCUIIResponse)))
+            if (buffer.Length == sizeof(ReadTypeCUIIResponse))
             {
-                fixed (byte* pbuffer = res)
+                //if (PacketGet(buffer, ref res, sizeof(ReadTypeCUIIResponse)))
+                fixed (byte* pbuffer = buffer)
                 {
                     ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
                     if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
                     {
                         if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
                         {
-                            if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(res.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
-                            {
-                                EPC[0] = readTypeCUIIResponse->EPCMSB;
-                                EPC[1] = readTypeCUIIResponse->EPC1;
-                                EPC[2] = readTypeCUIIResponse->EPC2;
-                                EPC[3] = readTypeCUIIResponse->EPC3;
-                                EPC[4] = readTypeCUIIResponse->EPC4;
-                                EPC[5] = readTypeCUIIResponse->EPC5;
-                                EPC[6] = readTypeCUIIResponse->EPC6;
-                                EPC[7] = readTypeCUIIResponse->EPC7;
-                                EPC[8] = readTypeCUIIResponse->EPC8;
-                                EPC[9] = readTypeCUIIResponse->EPC9;
-                                EPC[10] = readTypeCUIIResponse->EPC10;
-                                EPC[11] = readTypeCUIIResponse->EPCLSB;
-                                buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
-                                return true;
-                            }
+                            //if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(res.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
+                            //{
+                            EPC[0] = readTypeCUIIResponse->EPCMSB;
+                            EPC[1] = readTypeCUIIResponse->EPC1;
+                            EPC[2] = readTypeCUIIResponse->EPC2;
+                            EPC[3] = readTypeCUIIResponse->EPC3;
+                            EPC[4] = readTypeCUIIResponse->EPC4;
+                            EPC[5] = readTypeCUIIResponse->EPC5;
+                            EPC[6] = readTypeCUIIResponse->EPC6;
+                            EPC[7] = readTypeCUIIResponse->EPC7;
+                            EPC[8] = readTypeCUIIResponse->EPC8;
+                            EPC[9] = readTypeCUIIResponse->EPC9;
+                            EPC[10] = readTypeCUIIResponse->EPC10;
+                            EPC[11] = readTypeCUIIResponse->EPCLSB;
+                            //buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
+                            return true;
+                            //}
                         }
                     }
                 }
-                buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
             }
+            //buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
             //}
             return false;
         }
@@ -200,6 +253,7 @@ namespace RemoteControl.Models
         public ushort CrcCalc(byte[] buffer)
         {
             ushort crc = 0xFFFF;
+            buffer = buffer.Skip(1).Take(buffer.Length - 3).ToArray();
             for (int i = 0; i < buffer.Length; i++)
             {
                 crc ^= (ushort)(buffer[i] << 8);
@@ -601,6 +655,9 @@ namespace RemoteControl.Models
         {
             Sop = STX;
             Eop = ETX;
+
+            Dcheck = ChecksumCalc;
+            Dassign = PacketAssign;
         }
 
         //public static uint PacketGetId(byte[] buffer)
@@ -617,18 +674,18 @@ namespace RemoteControl.Models
         //    return id;
         //}
 
-        public unsafe bool PacketParse(ref byte[] buffer)
+        public unsafe bool PacketAssign(byte[] buffer)
         {
-            byte[] res = new byte[0];
-            //unsafe //we'll now pin unmanaged struct over managed byte array
-            //{
-            if (PacketGet(buffer, ref res, sizeof(PacketStatus)))
+            unsafe //we'll now pin unmanaged struct over managed byte array
             {
-                fixed (byte* pbuffer = res)
+                if (buffer.Length == sizeof(PacketStatus))
                 {
-                    PacketStatus* packetStatus = (PacketStatus*)pbuffer;
-                    if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(res.Take(sizeof(PacketStatus) - 2).ToArray()))
+                    //if (PacketGet(buffer, ref res, sizeof(PacketStatus)))
+                    fixed (byte* pbuffer = buffer)
                     {
+                        PacketStatus* packetStatus = (PacketStatus*)pbuffer;
+                        //if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(res.Take(sizeof(PacketStatus) - 2).ToArray()))
+                        //{
                         Id = packetStatus->APT_SERIAL_NUMBER;
                         SNum = ArrayToUint((byte*)&packetStatus->AM_number_msb);
                         Maxi = ArrayToUint((byte*)&packetStatus->Max_number_msb);
@@ -643,13 +700,13 @@ namespace RemoteControl.Models
                         SpeedOfBullet = packetStatus->speed_of_bullet;
                         CowId = ArrayToUshort((byte*)&packetStatus->Cow_id_msb);
                         CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses_msb);
-                        buffer = res.Skip(sizeof(PacketStatus)).ToArray();
+                        //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
                         return true;
+                        //}
                     }
                 }
-                buffer = res.Skip(sizeof(PacketStatus)).ToArray();
+                //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
             }
-            //}
             return false;
         }
 
@@ -664,7 +721,7 @@ namespace RemoteControl.Models
 
         public ushort ChecksumCalc(byte[] buffer)
         {
-            return (ushort)buffer.Sum(b => b);
+            return (ushort)buffer.Take(buffer.Length - 2).Sum(b => b);
         }
 
         private byte[] ChecksumAppend(byte[] buffer)
@@ -909,6 +966,17 @@ namespace RemoteControl.Models
             {
                 usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
+            }
+        }
+
+        private uint packetCounter = 0;
+        public uint PacketCounter
+        {
+            get => packetCounter;
+            set
+            {
+                packetCounter = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketCounter)));
             }
         }
 
@@ -1250,7 +1318,10 @@ namespace RemoteControl.Models
                         data = Encoding.UTF8.GetString(rxBuffer);
                         found = data.Contains(device);
                         if (found)
+                        {
                             rxBuffer = new byte[0];
+                            PacketCounter++;
+                        }
                         break;
                     case RFID:
                         //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
@@ -1259,7 +1330,8 @@ namespace RemoteControl.Models
                         RfId rfId = new RfId();
                         //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
                         //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
-                        if (found = rfId.PacketParse(ref rxBuffer))
+                        PacketCounter += rfId.PacketParse(ref rxBuffer, ref found);
+                        if (found)
                         {
                             unsafe
                             {
@@ -1278,7 +1350,8 @@ namespace RemoteControl.Models
                         //Aptx aptx = new Aptx();
                         //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
                         //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
-                        if (found = Aptx.PacketParse(ref rxBuffer))
+                        PacketCounter += Aptx.PacketParse(ref rxBuffer, ref found);
+                        if (found)
                         {
                             if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
                             {
@@ -1297,7 +1370,10 @@ namespace RemoteControl.Models
                                 if (!found)
                                     found = data.Contains("0x1f-0x85-0x01");
                                 if (found)
+                                {
                                     rxBuffer = new byte[0];
+                                    PacketCounter++;
+                                }
                             }
                             else
                             {
@@ -1308,6 +1384,7 @@ namespace RemoteControl.Models
                                     {
                                         Aptx.SNum++;
                                         rxBuffer = new byte[0];
+                                        PacketCounter++;
                                     }
                                 }
                                 //if (Aptx.SNum == UERROR)

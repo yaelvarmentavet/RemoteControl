@@ -5,6 +5,7 @@
   <ContentView.Content>
       <StackLayout>
             <Label x:Name="LblPort" Style="{StaticResource Label8}" Text="{Binding UsbPorts}" LineBreakMode="CharacterWrap"/>
+            <Label x:Name="LblPacketCounter" Style="{StaticResource Label8}" Text="{Binding PacketCounter}" LineBreakMode="CharacterWrap"/>
         </StackLayout>
   </ContentView.Content>
 </ContentView>
