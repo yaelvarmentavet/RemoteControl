@@ -127,6 +127,7 @@ namespace RemoteControl.Models
         public uint PacketParse(ref byte[] buffer, ref bool found)
         {
             byte[] res = new byte[0];
+            byte[] buf = buffer;
             uint count = 0;
             bool sopeop = true;
 
@@ -134,14 +135,18 @@ namespace RemoteControl.Models
 
             while (sopeop)
             {
-                if (PacketGet(buffer, ref res, ref sopeop))
+                if (PacketGet(buf, ref res, ref sopeop))
                 {
                     if (Dassign(res))
                         found = true;
                     count++;
                 }
-                buffer = buffer.Skip(res.Length).ToArray();
+                buf = buf.Skip(res.Length).ToArray();
             }
+
+            if (count > 0)
+                buffer = buf;
+            
             return count;
         }
     }
