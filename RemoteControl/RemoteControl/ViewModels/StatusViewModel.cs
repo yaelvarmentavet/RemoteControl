@@ -7,11 +7,11 @@ namespace RemoteControl.ViewModels
     {
         public StatusViewModel()
         {
-            NextPage = new Command(() =>
+            NextPageKinematic = new Command(() =>
              {
                  App.Current.MainPage.Navigation.PushAsync(new KinematicPage());
              });
         }
-        public Command NextPage { get; }
+        public Command NextPageKinematic { get; }
     }
 }

@@ -9,11 +9,11 @@ namespace RemoteControl.ViewModels
         public ProcessViewModel()
         {
             
-            Save = new Command(async () =>
-            {
-                await Application.Current.MainPage.Navigation.PopToRootAsync();
-                App.DataModel.CmtSave();
-            });
+            //Save = new Command(async () =>
+            //{
+            //    await Application.Current.MainPage.Navigation.PopToRootAsync();
+            //    App.DataModel.CmtSave();
+            //});
             NextPageHome = new Command(async () =>
             {
                 await Application.Current.MainPage.Navigation.PopToRootAsync();
@@ -26,7 +26,7 @@ namespace RemoteControl.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Command Save { get; }
+        //public Command Save { get; }
         public Command NextPageHome { get; }
         public Command NextPageSettings { get; }
     }

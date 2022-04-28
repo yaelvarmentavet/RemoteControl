@@ -77,7 +77,7 @@ namespace RemoteControl.Models
         }
 
         //public bool PacketGet(byte[] buffer, ref byte[] res, int size)
-        public bool PacketGet(byte[] buffer, ref byte[] res)
+        public bool PacketGet(byte[] buffer, ref byte[] res, ref bool sopeop)
         {
             //res = buffer.SkipWhile(b => b != Sop).ToArray();
             //while (res.Length >= size)
@@ -115,7 +115,8 @@ namespace RemoteControl.Models
                     return false;
                 return true;
             }).ToArray();
-            if (found)
+            sopeop = found;
+            if (sopeop)
             {
                 if (check == Dcheck(res))
                     return true;
@@ -127,12 +128,18 @@ namespace RemoteControl.Models
         {
             byte[] res = new byte[0];
             uint count = 0;
+            bool sopeop = true;
+
             found = false;
-            while (PacketGet(buffer, ref res))
+
+            while (sopeop)
             {
-                if (Dassign(res))
-                    found = true;
-                count++;
+                if (PacketGet(buffer, ref res, ref sopeop))
+                {
+                    if (Dassign(res))
+                        found = true;
+                    count++;
+                }
                 buffer = buffer.Skip(res.Length).ToArray();
             }
             return count;
@@ -720,7 +727,8 @@ namespace RemoteControl.Models
 
         public ushort ChecksumCalc(byte[] buffer)
         {
-            return (ushort)buffer.Take(buffer.Length - 2).Sum(b => b);
+            buffer = buffer.Take(buffer.Length - 2).ToArray();
+            return (ushort)buffer.Sum(b => b);
         }
 
         private byte[] ChecksumAppend(byte[] buffer)
@@ -729,7 +737,7 @@ namespace RemoteControl.Models
             //foreach (byte b in buffer)
             //    checkSum += b;
             //return buffer.Concat(UshortToArray((ushort)buffer.Sum(b => b))).ToArray();
-            return buffer.Concat(UshortToArray(ChecksumCalc(buffer))).ToArray();
+            return buffer.Concat(UshortToArray(ChecksumCalc(buffer.Concat(new byte[2]).ToArray()))).ToArray();
         }
 
         public byte[] PacketBuild(byte process, ushort pulses = PULSES100)
@@ -748,10 +756,15 @@ namespace RemoteControl.Models
         public string Port;
     }
 
-    public class StreamEventArgs : EventArgs
-    {
-        public Stream Stream;
-    }
+    //public class StreamEventArgs : EventArgs
+    //{
+    //    public Stream Stream;
+    //}
+
+    //public class Commands
+    //{
+    //    public bool asdf = false;
+    //}
 
     public class DataModel : INotifyPropertyChanged
     {
@@ -859,9 +872,6 @@ namespace RemoteControl.Models
             }
         }
 
-        public Command NextPageCMT { get; }
-        public Command NextPageTreatment { get; }
-
         private string tagid = string.Empty;
         public string TagId
         {
@@ -922,7 +932,6 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool twice200 = false;
         private bool autoTransition = false;
         public bool AutoTransition
         {
@@ -979,7 +988,7 @@ namespace RemoteControl.Models
             }
         }
 
-        enum PacketType
+        private enum PacketType
         {
             EMPTY,
             REMOTE_STATUS_0,
@@ -1010,7 +1019,13 @@ namespace RemoteControl.Models
             ECOMILK_AF_STOP,
         }
 
-        class TxPacket
+        private enum ProcedureType
+        {
+            APTX2,
+            ECOMILK,
+        }
+
+        private class TxPacket
         {
             public static TxPacket Empty = new TxPacket() { device = string.Empty, packetType = PacketType.EMPTY };
             public string device;
@@ -1051,9 +1066,13 @@ namespace RemoteControl.Models
         public Command TappedFR { get; }
         public Command TappedRR { get; }
 
+        public Command NextPageCMT { get; }
+        public Command NextPageTreatment { get; }
+
         //public string[] Devices;
 
-        public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
+        //public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
+        public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = (ushort)i; return a; }).ToArray();
         public Aptx Aptx = new Aptx();
 
         //private Dictionary<uint, string> Cows = new Dictionary<uint, string>();
@@ -1079,14 +1098,18 @@ namespace RemoteControl.Models
         //private byte[] RxBufferAptx1 = new byte[0];// RXBUFFER_SIZE];
         //private byte[] RxBufferEcomilk = new byte[0];// RXBUFFER_SIZE];
         //private byte[] RxBufferRemote = new byte[0];// RXBUFFER_SIZE];
-        Dictionary<string, byte[]> RxBuffers = new Dictionary<string, byte[]>();
+        private Dictionary<string, byte[]> RxBuffers = new Dictionary<string, byte[]>();
         private Semaphore SemaphoreRxBuffers = new Semaphore(1, 1);
 
         private List<TxPacket> TxQue;
         private Semaphore SemaphoreTxQue = new Semaphore(1, 1);
         //ManualResetEvent WaitHandleTxQue = new ManualResetEvent(false);
 
-        Timer TxDequeTimer;
+        private Timer TxDequeTimer;
+        
+        private bool Twice = false;
+
+        private ProcedureType Procedure = ProcedureType.APTX2;
 
         public DataModel(IUsbSerial usbSerial)
         {
@@ -1108,16 +1131,17 @@ namespace RemoteControl.Models
                 //Devices = new string[] { REMOTE };
                 TxQue = new List<TxPacket>() {
                     new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
-                    
+
                     new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
-                    
+
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_1, packet = Aptxs[1].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_2, packet = Aptxs[2].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
-                    
+
                     new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
                 };
+                Procedure = ProcedureType.ECOMILK;
             }
 
             UsbSerial = usbSerial;
@@ -1354,10 +1378,11 @@ namespace RemoteControl.Models
                         PacketCounter += Aptx.PacketParse(ref rxBuffer, ref found);
                         if (found)
                         {
-                            if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
+                            //if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
+                            if (Aptxs.Any(a => a.Id == Aptx.Id))
                             {
                                 AptxUpdate();
-                                Aptxs[Aptx.Id - 1] = Aptx;
+                                Aptxs[Aptx.Id] = Aptx;
                             }
                         }
                         break;
@@ -1611,48 +1636,66 @@ namespace RemoteControl.Models
             Aptx.AptPulsesOK = Aptx.AptPulsesOK;
             Aptx.AptPulsesLow = Aptx.AptPulsesLow;
 
-            if (AutoTransition)
+            switch (Procedure)
             {
-                if (Aptx.ProcessPulses >= 180)
-                {
-                    if (twice200)
+                case ProcedureType.APTX2:
+                    if (Aptx.ProcessPulses > 190)
                     {
-                        if (fr)
+                        if (AutoTransition)
                         {
-                            fr = false;
-                            FR = FR;
-                        }
-                        else
-                        {
-                            if (rr)
+                            if (Twice)
                             {
-                                rr = false;
-                                RR = RR;
-                            }
-                            else
-                            {
-                                if (rl)
+                                if (fr)
                                 {
-                                    rl = false;
-                                    RL = RL;
+                                    fr = false;
+                                    FR = FR;
+                                    CmtSave(string.Format("CmtFR: {0}", CmtFR));
                                 }
                                 else
                                 {
-                                    if (fl)
+                                    if (rr)
                                     {
-                                        fl = false;
-                                        FL = FL;
+                                        rr = false;
+                                        RR = RR;
+                                        CmtSave(string.Format("CmtRR: {0}", CmtRR));
+                                    }
+                                    else
+                                    {
+                                        if (rl)
+                                        {
+                                            rl = false;
+                                            RL = RL;
+                                            CmtSave(string.Format("CmtRL: {0}", CmtRL));
+                                        }
+                                        else
+                                        {
+                                            if (fl)
+                                            {
+                                                fl = false;
+                                                FL = FL;
+                                                CmtSave(string.Format("CmtFL: {0}", CmtFL));
+                                            }
+                                        }
                                     }
                                 }
+                                Twice = false;
+                            }
+                            else
+                            {
+                                Twice = true;
                             }
                         }
-                        twice200 = false;
+                        else
+                        {
+                            if (!fl && !rl && !fr && !rr)
+                                CmtSave(string.Format("CmtFL: {0} CmtRL: {1} CmtFR: {2} CmtRR: {3}", CmtFL, CmtRL, CmtFR, CmtRR));
+                        }
                     }
-                    else
-                    {
-                        twice200 = true;
-                    }
-                }
+                    break;
+                case ProcedureType.ECOMILK:
+                    if (Aptx.ProcessPulses > 90)
+                        CmtSave(string.Format("CmtFL: {0} CmtRL: {1} CmtFR: {2} CmtRR: {3}", CmtFL, CmtRL, CmtFR, CmtRR));
+                    break;
             }
         }
 
@@ -1683,13 +1726,15 @@ namespace RemoteControl.Models
             return num;
         }
 
-        public void CmtSave()
+        public void CmtSave(string cmtData)
         {
             //if (CowId != UERROR)
             //{
             string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
-            File.AppendAllText(LOGFILE_COWS, string.Format("CowId: {0} CmtFL: {1} CmtRL: {2} CmtFR: {3} CmtRR: {4} Date: {5}\n",
-                CowId, CmtFL, CmtRL, CmtFR, CmtRR, DateTime.Now));
+            //File.AppendAllText(LOGFILE_COWS, string.Format("CowId: {0} CmtFL: {1} CmtRL: {2} CmtFR: {3} CmtRR: {4} Date: {5}\n",
+            //    CowId, CmtFL, CmtRL, CmtFR, CmtRR, DateTime.Now));
+            File.AppendAllText(LOGFILE_COWS, string.Format("CowId: {0} {1} Date: {2}\n",
+                CowId, cmtData, DateTime.Now));
             //}
         }
 

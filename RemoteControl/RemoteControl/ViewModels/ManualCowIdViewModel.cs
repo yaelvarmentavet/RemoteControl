@@ -8,12 +8,12 @@ namespace RemoteControl.ViewModels
     {
         public ManualCowIdViewModel()
         {
-            NextPage = new Command(async () =>
+            NextPageStatus = new Command(async () =>
             {
                 await App.Current.MainPage.Navigation.PushAsync(new StatusPage());
             });
         }
         public event PropertyChangedEventHandler PropertyChanged;
-        public Command NextPage { get; }
+        public Command NextPageStatus { get; }
     }
 }

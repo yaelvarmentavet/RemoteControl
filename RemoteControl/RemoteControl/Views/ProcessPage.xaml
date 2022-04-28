@@ -83,7 +83,7 @@
                         </Label>
                         <Label x:Name="LblCmtRL" Grid.Row="10" Grid.Column="1" Grid.RowSpan="2" Style="{StaticResource LabelRed}" Text="{Binding CmtRL}" BackgroundColor="{Binding CmtRLColor}"/>
                         <Editor x:Name="EdPulses" Grid.Row="7" Grid.Column="2" Grid.RowSpan="3" Grid.ColumnSpan="2" Style="{StaticResource Editor30}" Text="{Binding ProcessPulses}" IsReadOnly="True"/>
-                        <Button Grid.Row="10" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Text="Save" Command="{Binding Save}"/>
+                        <!--<Button Grid.Row="10" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Text="Save" Command="{Binding Save}"/>-->
                         <Label x:Name="LblFR" Grid.Row="7" Grid.Column="5" Grid.RowSpan="2" Grid.ColumnSpan="1" Text="Front Right" Style="{StaticResource LabelAliceBlue}"
                             BackgroundColor="{Binding FR, Mode=TwoWay}">
                             <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"-->
