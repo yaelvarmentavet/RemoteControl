@@ -1064,6 +1064,7 @@ namespace RemoteControl.Models
         //private const int RXBUFFER_SIZE = 1024;
 
         private const string LOGFILE_COWS = "LOGFILE_COWS";
+        private const int MAX_RXBUFFER_LENGTH = 1024;
 
         //public Command AddCow { get; }
         public Command TappedFL { get; }
@@ -1078,6 +1079,7 @@ namespace RemoteControl.Models
 
         //public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
         public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = (ushort)i; return a; }).ToArray();
+        private Semaphore SemaphoreAptxs = new Semaphore(1, 1);
         public Aptx Aptx = new Aptx();
 
         //private Dictionary<uint, string> Cows = new Dictionary<uint, string>();
@@ -1112,7 +1114,8 @@ namespace RemoteControl.Models
 
         private Timer TxDequeTimer;
         
-        private bool Twice = false;
+        private int Count = 0;
+        private uint PulsesPrev = 0;
 
         private ProcedureType Procedure = ProcedureType.APTX2;
 
@@ -1326,6 +1329,8 @@ namespace RemoteControl.Models
                 rxBuffer = new byte[0];
                 RxBuffers.Add(port, rxBuffer);
             }
+            if(rxBuffer.Length > MAX_RXBUFFER_LENGTH)
+                rxBuffer = new byte[0];
             SemaphoreRxBuffers.Release();
 
             byte[] buffer = new byte[1024];
@@ -1384,11 +1389,13 @@ namespace RemoteControl.Models
                         if (found)
                         {
                             //if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
+                            SemaphoreAptxs.WaitOne();
                             if (Aptxs.Any(a => a.Id == Aptx.Id))
                             {
                                 AptxUpdate();
                                 Aptxs[Aptx.Id] = Aptx;
                             }
+                            SemaphoreAptxs.Release();
                         }
                         break;
                     case APTX1:
@@ -1644,17 +1651,19 @@ namespace RemoteControl.Models
             switch (Procedure)
             {
                 case ProcedureType.APTX2:
-                    if (Aptx.ProcessPulses > 190)
+                    if ((Aptx.ProcessPulses == 200) && (PulsesPrev > 190) && (PulsesPrev < 200))
                     {
-                        if (AutoTransition)
+                        Count++;
+                        if (Count == 2)
                         {
-                            if (Twice)
+                            if (AutoTransition)
                             {
                                 if (fr)
                                 {
                                     fr = false;
                                     FR = FR;
-                                    CmtSave(string.Format("CmtFR: {0}", CmtFR));
+                                    Count = 0;
+                                    //CmtSave(string.Format("CmtFR: {0}", CmtFR));
                                 }
                                 else
                                 {
@@ -1662,7 +1671,8 @@ namespace RemoteControl.Models
                                     {
                                         rr = false;
                                         RR = RR;
-                                        CmtSave(string.Format("CmtRR: {0}", CmtRR));
+                                        Count = 0;
+                                        //CmtSave(string.Format("CmtRR: {0}", CmtRR));
                                     }
                                     else
                                     {
@@ -1670,7 +1680,8 @@ namespace RemoteControl.Models
                                         {
                                             rl = false;
                                             RL = RL;
-                                            CmtSave(string.Format("CmtRL: {0}", CmtRL));
+                                            Count = 0;
+                                            //CmtSave(string.Format("CmtRL: {0}", CmtRL));
                                         }
                                         else
                                         {
@@ -1678,28 +1689,23 @@ namespace RemoteControl.Models
                                             {
                                                 fl = false;
                                                 FL = FL;
-                                                CmtSave(string.Format("CmtFL: {0}", CmtFL));
+                                                Count = 0;
+                                                //CmtSave(string.Format("CmtFL: {0}", CmtFL));
                                             }
                                         }
                                     }
                                 }
-                                Twice = false;
                             }
-                            else
-                            {
-                                Twice = true;
-                            }
-                        }
-                        else
-                        {
                             if (!fl && !rl && !fr && !rr)
                                 CmtSave(string.Format("CmtFL: {0} CmtRL: {1} CmtFR: {2} CmtRR: {3}", CmtFL, CmtRL, CmtFR, CmtRR));
                         }
                     }
+                    //if ((Aptx.ProcessPulses > 10) && (PulsesPrev < 10) && (Count >= 2))
+                    //    Count = 0;
+                    PulsesPrev = Aptx.ProcessPulses;
                     break;
                 case ProcedureType.ECOMILK:
-                    if (Aptx.ProcessPulses > 90)
-                        CmtSave(string.Format("CmtFL: {0} CmtRL: {1} CmtFR: {2} CmtRR: {3}", CmtFL, CmtRL, CmtFR, CmtRR));
+                    CmtSave(string.Format("CmtFL: {0} CmtRL: {1} CmtFR: {2} CmtRR: {3}", CmtFL, CmtRL, CmtFR, CmtRR));
                     break;
             }
         }
@@ -1771,7 +1777,8 @@ namespace RemoteControl.Models
 
         public async Task<int> ProcessStart()
         {
-            foreach (Aptx aptx in Aptxs)
+            Aptx[] aptxs = Aptxs;
+            foreach (Aptx aptx in aptxs)
             {
                 //if (await Process(aptx, Aptx.START) == ERROR)
                 //return ERROR;
@@ -1783,8 +1790,9 @@ namespace RemoteControl.Models
 
         public async Task<int> ProcessStop()
         {
-            foreach (Aptx aptx in Aptxs)
-            {
+            Aptx[] aptxs = Aptxs;
+            foreach (Aptx aptx in aptxs)
+            { 
                 //if (await Process(aptx, Aptx.STOP) == ERROR)
                 //return ERROR;
                 await Process(aptx, Aptx.STOP);
@@ -1795,7 +1803,8 @@ namespace RemoteControl.Models
         public async Task<int> ProcessPauseResume()
         {
             PauseResume = PauseResume == Aptx.STOP ? PauseResume = Aptx.START : PauseResume = Aptx.STOP;
-            foreach (Aptx aptx in Aptxs)
+            Aptx[] aptxs = Aptxs;
+            foreach (Aptx aptx in aptxs)
             {
                 //if (await Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev))) == ERROR)
                 //return ERROR;
@@ -1810,7 +1819,7 @@ namespace RemoteControl.Models
             //int response = await UsbSerial.Write(Ports.TryGetValue(REMOTE, out string val) ? val : string.Empty,
             //    aptx.PacketBuild(process, pulses));
 
-            TxQueEnQue(REMOTE, process == Aptx.START ? PacketType.REMOTE_START : PacketType.REMOTE_STOP, aptx.PacketBuild(process, pulses));
+            TxQueEnque(REMOTE, process == Aptx.START ? PacketType.REMOTE_START : PacketType.REMOTE_STOP, aptx.PacketBuild(process, pulses));
 
             //string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
             //File.AppendAllText(LOGFILE_COWS, string.Format("Date: {0} Process: {1} Pulses: {2} Cow Id: {3} Current Pulses: {4}\n",
@@ -1820,7 +1829,7 @@ namespace RemoteControl.Models
             //return response;
         }
 
-        private void TxQueEnQue(string device, PacketType packetType, byte[] packet)
+        private void TxQueEnque(string device, PacketType packetType, byte[] packet)
         {
             SemaphoreTxQue.WaitOne();
             TxQue.Add(new TxPacket()
@@ -1834,25 +1843,25 @@ namespace RemoteControl.Models
 
         public async Task RCWStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_RCW_START, Encoding.UTF8.GetBytes("rcw 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_START, Encoding.UTF8.GetBytes("rcw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 1\r"));
         }
 
         public async Task RCWStop()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_RCW_STOP, Encoding.UTF8.GetBytes("rcw 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_STOP, Encoding.UTF8.GetBytes("rcw 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 0\r"));
         }
 
         public async Task RCCWStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_RCCW_START, Encoding.UTF8.GetBytes("rccw 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_START, Encoding.UTF8.GetBytes("rccw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 1\r"));
         }
 
         public async Task RCCWStop()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_RCCW_STOP, Encoding.UTF8.GetBytes("rccw 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_STOP, Encoding.UTF8.GetBytes("rccw 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 0\r"));
         }
 
@@ -1861,25 +1870,25 @@ namespace RemoteControl.Models
 
         public async Task AFStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_AF_START, Encoding.UTF8.GetBytes("af 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_START, Encoding.UTF8.GetBytes("af 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 1\r"));
         }
 
         public async Task AFStop()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_AF_STOP, Encoding.UTF8.GetBytes("af 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_STOP, Encoding.UTF8.GetBytes("af 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 0\r"));
         }
 
         public async Task ABStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_AB_START, Encoding.UTF8.GetBytes("ab 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_START, Encoding.UTF8.GetBytes("ab 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 1\r"));
         }
 
         public async Task ABStop()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_AB_STOP, Encoding.UTF8.GetBytes("ab 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_STOP, Encoding.UTF8.GetBytes("ab 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 0\r"));
         }
 
@@ -1888,37 +1897,37 @@ namespace RemoteControl.Models
 
         public async Task MZUStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_MZU_START, Encoding.UTF8.GetBytes("mzu 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_START, Encoding.UTF8.GetBytes("mzu 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 1\r"));
         }
 
         public async Task MZUStop()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_MZU_STOP, Encoding.UTF8.GetBytes("mzu 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_STOP, Encoding.UTF8.GetBytes("mzu 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 0\r"));
         }
 
         public async Task MZDStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_MZD_START, Encoding.UTF8.GetBytes("mzd 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_START, Encoding.UTF8.GetBytes("mzd 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 1\r"));
         }
 
         public async Task MZDStop()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_MZD_STOP, Encoding.UTF8.GetBytes("mzd 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_STOP, Encoding.UTF8.GetBytes("mzd 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 0\r"));
         }
 
         public async Task TCWStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_TCW_START, Encoding.UTF8.GetBytes("tcw 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_TCW_START, Encoding.UTF8.GetBytes("tcw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
         }
 
         public async Task XFStart()
         {
-            TxQueEnQue(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1\r"));
         }
 
