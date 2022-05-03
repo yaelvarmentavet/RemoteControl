@@ -21,6 +21,7 @@ namespace RemoteControl.UWP
 {
     public sealed partial class MainPage
     {
+
         public MainPage()
         {
             //Xamarin.Forms.DependencyService.Register<UsbDevice>();
@@ -28,6 +29,7 @@ namespace RemoteControl.UWP
             this.InitializeComponent();
 
             Bootstrap.Initialize();
+            App.UsbCamera = new UsbCamera();
 
             LoadApplication(new RemoteControl.App());
         }

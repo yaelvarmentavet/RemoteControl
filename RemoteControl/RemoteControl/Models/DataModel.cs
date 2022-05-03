@@ -971,25 +971,36 @@ namespace RemoteControl.Models
             }
         }
 
-        private string[] usbPorts = new string[0];
-        public string UsbPorts
-        {
-            get => usbPorts.Aggregate("", (r, v) => r += v + " ");
-            set
-            {
-                usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
-            }
-        }
+        //private string[] usbPorts = new string[0];
+        //public string UsbPorts
+        //{
+        //    get => usbPorts.Aggregate("", (r, v) => r += v + " ");
+        //    set
+        //    {
+        //        usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
+        //    }
+        //}
 
-        private uint packetCounter = 0;
-        public uint PacketCounter
+        //private uint packetCounter = 0;
+        //public uint PacketCounter
+        //{
+        //    get => packetCounter;
+        //    set
+        //    {
+        //        packetCounter = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketCounter)));
+        //    }
+        //}
+
+        private Dictionary<string, uint> packetCounters = new Dictionary<string, uint>();
+        public string PacketCounters
         {
-            get => packetCounter;
+            get => packetCounters.Aggregate("", (r, v) => r += v.Key + DELIMITER + v.Value + "\n");
+            //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
             {
-                packetCounter = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketCounter)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketCounters)));
             }
         }
 
@@ -1065,6 +1076,7 @@ namespace RemoteControl.Models
 
         private const string LOGFILE_COWS = "LOGFILE_COWS";
         private const int MAX_RXBUFFER_LENGTH = 1024;
+        private const string DELIMITER = "/";
 
         //public Command AddCow { get; }
         public Command TappedFL { get; }
@@ -1118,6 +1130,8 @@ namespace RemoteControl.Models
         private uint PulsesPrev = 0;
 
         private ProcedureType Procedure = ProcedureType.APTX2;
+
+        private Semaphore SemaphorePacketCounters = new Semaphore(1, 1);
 
         public DataModel(IUsbSerial usbSerial)
         {
@@ -1256,8 +1270,8 @@ namespace RemoteControl.Models
                 else
                 {
                     string[] ports = UsbSerial.GetPorts().ToArray();
-                    usbPorts = ports;
-                    UsbPorts = UsbPorts;
+                    //usbPorts = ports;
+                    //UsbPorts = UsbPorts;
                     foreach (string prt in ports)
                     {
                         if (!Ports.Values.Contains(prt))
@@ -1353,7 +1367,14 @@ namespace RemoteControl.Models
                         if (found)
                         {
                             rxBuffer = new byte[0];
-                            PacketCounter++;
+                            //PacketCounter++;
+                            SemaphorePacketCounters.WaitOne();
+                            if (packetCounters.ContainsKey(port + DELIMITER + device))
+                                packetCounters[port + DELIMITER + device]++;
+                            else
+                                packetCounters.Add(port + DELIMITER + device, 0);
+                            PacketCounters = PacketCounters;
+                            SemaphorePacketCounters.Release();
                         }
                         break;
                     case RFID:
@@ -1364,7 +1385,18 @@ namespace RemoteControl.Models
                         RfId rfId = new RfId();
                         //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
                         //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
-                        PacketCounter += rfId.PacketParse(ref rxBuffer, ref found);
+                        uint pcktCnt = rfId.PacketParse(ref rxBuffer, ref found);
+                        if (pcktCnt > 0)
+                        {
+                            SemaphorePacketCounters.WaitOne();
+                            if (packetCounters.ContainsKey(port + DELIMITER + device))
+                                packetCounters[port + DELIMITER + device] += pcktCnt;
+                            else
+                                packetCounters.Add(port + DELIMITER + device, 0);
+                            PacketCounters = PacketCounters;
+                            //PacketCounters.Contains(port + DELIMITER + device);
+                            SemaphorePacketCounters.Release();
+                        }
                         if (found)
                         {
                             unsafe
@@ -1385,7 +1417,17 @@ namespace RemoteControl.Models
                         //Aptx aptx = new Aptx();
                         //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
                         //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
-                        PacketCounter += Aptx.PacketParse(ref rxBuffer, ref found);
+                        pcktCnt = Aptx.PacketParse(ref rxBuffer, ref found);
+                        if (pcktCnt > 0)
+                        {
+                            SemaphorePacketCounters.WaitOne();
+                            if (packetCounters.ContainsKey(port + DELIMITER + device))
+                                packetCounters[port + DELIMITER + device] += pcktCnt;
+                            else
+                                packetCounters.Add(port + DELIMITER + device, 0);
+                            PacketCounters = PacketCounters;
+                            SemaphorePacketCounters.Release();
+                        }
                         if (found)
                         {
                             //if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
@@ -1410,7 +1452,14 @@ namespace RemoteControl.Models
                                 if (found)
                                 {
                                     rxBuffer = new byte[0];
-                                    PacketCounter++;
+                                    //PacketCounter++;
+                                    SemaphorePacketCounters.WaitOne();
+                                    if (packetCounters.ContainsKey(port + DELIMITER + device))
+                                        packetCounters[port + DELIMITER + device]++;
+                                    else
+                                        packetCounters.Add(port + DELIMITER + device, 0);
+                                    PacketCounters = PacketCounters;
+                                    SemaphorePacketCounters.Release();
                                 }
                             }
                             else
@@ -1422,7 +1471,13 @@ namespace RemoteControl.Models
                                     {
                                         Aptx.SNum++;
                                         rxBuffer = new byte[0];
-                                        PacketCounter++;
+                                        //PacketCounter++;
+                                        SemaphorePacketCounters.WaitOne();
+                                        if (packetCounters.ContainsKey(port + DELIMITER + device))
+                                            packetCounters[port + DELIMITER + device]++;
+                                        else
+                                            packetCounters.Add(port + DELIMITER + device, 0);
+                                        SemaphorePacketCounters.Release();
                                     }
                                 }
                                 //if (Aptx.SNum == UERROR)

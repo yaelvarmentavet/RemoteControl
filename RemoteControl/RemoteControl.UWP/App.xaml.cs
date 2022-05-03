@@ -9,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Capture;
 using Windows.System.Profile;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,9 @@ namespace RemoteControl.UWP
     /// </summary>
     sealed partial class App : Application
     {
+        public static UsbCamera UsbCamera = new UsbCamera();
+        public static Dictionary<string, MediaCapture> UsbCameras = new Dictionary<string, MediaCapture>();
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
