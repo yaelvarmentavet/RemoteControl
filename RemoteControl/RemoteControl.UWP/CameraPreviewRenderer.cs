@@ -1,11 +1,13 @@
 ﻿using RemoteControl.UWP;
 using RemoteControl.Views;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Media.Capture;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -16,8 +18,10 @@ namespace RemoteControl.UWP
 {
     public class CameraPreviewRenderer : ViewRenderer<CameraPreview, Windows.UI.Xaml.Controls.CaptureElement>
     {
-        CaptureElement CaptureElement;
+        private CaptureElement CaptureElement;
         //bool _isPreviewing;
+        private readonly object LockConnect = new object();
+        private readonly object LockDisconnect = new object();
 
         protected override void OnElementChanged(ElementChangedEventArgs<CameraPreview> e)
         {
@@ -27,6 +31,7 @@ namespace RemoteControl.UWP
             {
                 // Unsubscribe
                 //Tapped -= OnCameraPreviewTapped;
+                Disconnect();
             }
             if (e.NewElement != null)
             {
@@ -35,7 +40,9 @@ namespace RemoteControl.UWP
                     CaptureElement = new CaptureElement();
                     CaptureElement.Stretch = Stretch.UniformToFill;
 
-                    SetupCamera();
+                    //SetupCamera();
+                    //App.UsbCamera.EUsbCameraGUI += Connect;
+                    Connect();
                     SetNativeControl(CaptureElement);
                 }
                 // Subscribe
@@ -43,15 +50,55 @@ namespace RemoteControl.UWP
             }
         }
 
-        private async Task SetupCamera()
+        private void Disconnect()
         {
-            MediaCapture mediaCapture = new MediaCapture();
-            if ((App.UsbCamera.MediaCaptures.Where(m => { if (!App.UsbCameras.ContainsValue(m)) { mediaCapture = m; return true; } else return false; })).Any())
+            CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                App.UsbCameras.Add(CaptureElement.Name, mediaCapture);
-                CaptureElement.Source = mediaCapture;
-                await mediaCapture.StartPreviewAsync();
-            }
+                //lock (LockDisconnect)
+                //{
+                MediaCapture mediaCapture = new MediaCapture();
+                if (App.CaptureElements.Where(p =>
+                {
+                    if (p.Value == CaptureElement)
+                    {
+                        mediaCapture = p.Key;
+                        return true;
+                    }
+                    else
+                        return false;
+                }).Any())
+                {
+                    App.CaptureElements.Remove(mediaCapture, out CaptureElement captureElement);
+                    await mediaCapture.StopPreviewAsync();
+                }
+                //}
+            });
+        }
+
+        //private void Connect(object sender, EventArgs args)
+        private void Connect()
+        {
+            //Task.Run( async () =>
+            CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                MediaCapture mediaCapture = new MediaCapture();
+                //lock (LockConnect)
+                //{
+                if ((App.UsbCamera.MediaCaptures.Where(m => 
+                { 
+                    if (!App.CaptureElements.ContainsKey(m.Value)) 
+                    { 
+                        mediaCapture = m.Value; return true; 
+                    } 
+                    else return false; })).Any())
+                {
+                    App.CaptureElements.GetOrAdd(mediaCapture, CaptureElement);
+                    CaptureElement.Source = mediaCapture;
+                    await mediaCapture.StartPreviewAsync();
+                }
+                //}
+                //await mediaCapture.StartPreviewAsync();
+            });
         }
 
         //async void OnCameraPreviewTapped(object sender, TappedRoutedEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Ports;
@@ -27,8 +28,9 @@ namespace RemoteControl.UWP
     /// </summary>
     sealed partial class App : Application
     {
-        public static UsbCamera UsbCamera = new UsbCamera();
-        public static Dictionary<string, MediaCapture> UsbCameras = new Dictionary<string, MediaCapture>();
+        //public static UsbCamera UsbCamera = new UsbCamera();
+        public static UsbCamera UsbCamera;
+        public static ConcurrentDictionary<MediaCapture, CaptureElement> CaptureElements = new ConcurrentDictionary<MediaCapture, CaptureElement>();
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
