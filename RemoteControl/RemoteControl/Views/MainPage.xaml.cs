@@ -17,6 +17,8 @@ namespace RemoteControl.Views
             //{
             //InitMainPageUWP();
             InitializeComponent();
+
+            LblVersion.BindingContext = App.DataModel;
             //}
         }
 

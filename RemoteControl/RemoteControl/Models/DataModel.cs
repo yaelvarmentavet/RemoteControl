@@ -1004,6 +1004,12 @@ namespace RemoteControl.Models
             }
         }
 
+        private readonly string version = "Armenta Remote Control Version 1.0 " + DateTime.Now;
+        public string Version
+        {
+            get => version;
+        }
+
         private enum PacketType
         {
             EMPTY,
@@ -1812,10 +1818,19 @@ namespace RemoteControl.Models
                 string data = File.ReadAllText(LOGFILE_COWS);
                 if (data.Contains("CowId"))
                 {
-                    string line = data.Split(new char[] { '\n' }).Where(l => l.Contains("CowId")).Last();
-                    uint[] cowId = DataParse(line, "CowId: ", NumberStyles.Number);
-                    if (cowId[0] == CowId)
+                    //string line = data.Split(new char[] { '\n' }).Where(l => l.Contains("CowId")).Last();
+                    //uint[] cowId = DataParse(line, "CowId: ", NumberStyles.Number);
+                    //if (cowId[0] == CowId)
+                    IEnumerable<string> lines = data.Split(new char[] { '\n' }).Where(l =>
                     {
+                        uint[] cowId = DataParse(l, "CowId: ", NumberStyles.Number);
+                        if (cowId[0] == CowId)
+                            return true;
+                        else return false;
+                    });
+                    if(lines.Any())
+                    {
+                        string line = lines.Last();
                         CmtFL = CmtParse(line, "CmtFL: ");
                         CmtRL = CmtParse(line, "CmtRL: ");
                         CmtFR = CmtParse(line, "CmtFR: ");

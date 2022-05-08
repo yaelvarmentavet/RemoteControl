@@ -24,7 +24,6 @@ namespace RemoteControl
             {
                 BarBackgroundColor = color == null ? Color.Default : (Color)color,
             };
-            
         }
 
         protected override void OnStart()
