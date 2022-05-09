@@ -32,22 +32,26 @@
                 </Editor>-->
                 <!--<ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
                        Source="{resources:ImageResource RemoteControl.Icons.id.png}" Command="{Binding NextPageCowId}"/>-->
-                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}"
+                <!--<Image Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}"
                     Source="{resources:ImageResource RemoteControl.Icons.id.png}"
                     xct:TouchEffect.PressedOpacity="0.5">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
+                <Button Text="Insert Cow Id Manually" BackgroundColor="{StaticResource ButtonBlue}" Grid.Row="3" Grid.Column="1" Style="{StaticResource ButtonCornerRadius10}"
+                       Command="{Binding NextPageCowId}"/>
                 <!--<ImageButton Grid.Row="3" Grid.Column="2" Style="{StaticResource ImageButton}" 
                     Source="{resources:ImageResource RemoteControl.Icons.next.png}" Command="{Binding NextPageStatus}"/>-->
-                <Image Grid.Row="3" Grid.Column="2" Style="{StaticResource IconWhite}" 
+                <!--<Image Grid.Row="3" Grid.Column="2" Style="{StaticResource IconWhite}" 
                     Source="{resources:ImageResource RemoteControl.Icons.next.png}"
                     xct:TouchEffect.PressedOpacity="0.5">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageStatus}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
+                <Button Text="Next" BackgroundColor="{StaticResource ButtonGreen}" Grid.Row="3" Grid.Column="2" Style="{StaticResource ButtonCornerRadius10}" 
+                       Command="{Binding NextPageStatus}"/>
             </Grid>
         </StackLayout>
     </ContentView.Content>

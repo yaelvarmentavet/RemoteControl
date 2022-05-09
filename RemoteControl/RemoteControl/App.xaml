@@ -16,6 +16,10 @@
             <Color x:Key="BackgroundDarkCyan">DarkCyan</Color>
             <Color x:Key="BackgroundGreen">Green</Color>
             <Color x:Key="BackgroundRed">Red</Color>
+            <Color x:Key="ButtonGreen">PaleGreen</Color>
+            <Color x:Key="ButtonBlue">DeepSkyBlue</Color>
+            <Color x:Key="ButtonCoral">Coral</Color>
+            <Color x:Key="ButtonLightSteelBlue">LightSteelBlue</Color>
             <Style x:Key="FrameDarkGray" TargetType="Frame">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkGray}"/>
                 <Setter Property="CornerRadius" Value="10"/>
@@ -29,6 +33,7 @@
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="ButtonCornerRadius10" TargetType="Button">
+                <Setter Property="FontSize" Value="Medium"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>

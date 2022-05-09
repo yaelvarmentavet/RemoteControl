@@ -19,5 +19,10 @@ namespace RemoteControl.Views
             //App.DataModel.UsbCamera.ImageSet(new List<Image>() { ImgCam1, ImgCam2, ImgCam3 });
 
         }
+
+        private void RCWStart(object sender, EventArgs e)
+        {
+            App.DataModel.RCWStart();
+        }
     }
 }

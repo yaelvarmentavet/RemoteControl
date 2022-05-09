@@ -36,13 +36,15 @@
                 </Editor-->
                 <!--<ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.approve.png}" Command="{Binding NextPageStatus}"/>-->
-                <Image x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}" 
+                <!--<Image Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}" 
                     Source="{resources:ImageResource RemoteControl.Icons.approve.png}"
                     xct:TouchEffect.PressedOpacity="0.5">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageStatus}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
+                <Button Text="Approve" BackgroundColor="{StaticResource ButtonGreen}" Grid.Row="3" Grid.Column="1" Style="{StaticResource ButtonCornerRadius10}" 
+                       Command="{Binding NextPageStatus}"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>
