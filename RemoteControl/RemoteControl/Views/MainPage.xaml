@@ -7,8 +7,8 @@
              <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
     <!--NavigationPage.HasNavigationBar="False">-->
     <NavigationPage.TitleView>
-        <!--<StackLayout Orientation="Horizontal" BackgroundColor="{StaticResource BackgroundDarkGray}">-->
-        <StackLayout Orientation="Horizontal">
+        <StackLayout Orientation="Horizontal" BackgroundColor="{StaticResource BackgroundDarkGray}">
+        <!--<StackLayout Orientation="Horizontal">-->
             <Label x:Name="LblVersion" Text="{Binding Version}" VerticalTextAlignment="Center"/>
         </StackLayout>
     </NavigationPage.TitleView>

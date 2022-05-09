@@ -11,6 +11,7 @@ using Xamarin.Forms;
 using Windows.Media.Capture.Frames;
 using Windows.Media.Capture;
 using System.Collections.Concurrent;
+using Windows.UI.Xaml.Controls;
 //using Xamarin.Forms;
 
 namespace RemoteControl.UWP
@@ -91,79 +92,97 @@ namespace RemoteControl.UWP
 
             IReadOnlyList<MediaFrameSourceGroup> frameSourceGroups = await MediaFrameSourceGroup.FindAllAsync();
 
-            var selectedGroupObjects = frameSourceGroups.Select(group =>
-               new
-               {
-                   sourceGroup = group,
-                   colorSourceInfo = group.SourceInfos.FirstOrDefault((sourceInfo) =>
-                   {
-                       // On Xbox/Kinect, omit the MediaStreamType and EnclosureLocation tests
-                       return //sourceInfo.MediaStreamType == MediaStreamType.VideoPreview
-                            group.DisplayName.Contains("2K HD")
-                            && sourceInfo.SourceKind == MediaFrameSourceKind.Color;
-                       //&& sourceInfo.DeviceInformation?.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
-                   })
-
-               }).Where(t => t.colorSourceInfo != null);
-            //.FirstOrDefault();
-
-            foreach (var selectedGroupObject in selectedGroupObjects)
+            foreach(MediaFrameSourceGroup frameSourceGroup in frameSourceGroups)
             {
-                //MediaFrameSourceGroup selectedGroup = selectedGroupObject.sourceGroup;
-                ////MediaFrameSourceInfo colorSourceInfo = selectedGroupObject?.colorSourceInfo;
-
-                //if (selectedGroup != null)
-                //{
-                //    MediaCapture mediaCapture = new MediaCapture();
-                //    var settings = new MediaCaptureInitializationSettings()
-                //    {
-                //        SourceGroup = selectedGroup,
-                //        SharingMode = MediaCaptureSharingMode.ExclusiveControl,
-                //        MemoryPreference = MediaCaptureMemoryPreference.Cpu,
-                //        StreamingCaptureMode = StreamingCaptureMode.Video
-                //    };
-                //    try
-                //    {
-                //        await mediaCapture.InitializeAsync(settings);
-                //        //await mediaCapture.InitializeAsync();
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        //System.Diagnostics.Debug.WriteLine("MediaCapture initialization failed: " + ex.Message);
-                //    }
-                //    MediaCaptures.GetOrAdd(selectedGroup.Id, mediaCapture);
-                //}
-                Connect(selectedGroupObject.sourceGroup.Id);
+                Connect(frameSourceGroup.Id);
             }
             return true;
+
+            //var selectedGroupObjects = frameSourceGroups.Select(group =>
+            //   new
+            //   {
+            //       sourceGroup = group,
+            //       colorSourceInfo = group.SourceInfos.FirstOrDefault((sourceInfo) =>
+            //       {
+            //           // On Xbox/Kinect, omit the MediaStreamType and EnclosureLocation tests
+            //           return //sourceInfo.MediaStreamType == MediaStreamType.VideoPreview
+            //                group.DisplayName.Contains("2K HD")
+            //                && sourceInfo.SourceKind == MediaFrameSourceKind.Color;
+            //           //&& sourceInfo.DeviceInformation?.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+            //       })
+
+            //   }).Where(t => t.colorSourceInfo != null);
+            ////.FirstOrDefault();
+
+            //foreach (var selectedGroupObject in selectedGroupObjects)
+            //{
+            //MediaFrameSourceGroup selectedGroup = selectedGroupObject.sourceGroup;
+            ////MediaFrameSourceInfo colorSourceInfo = selectedGroupObject?.colorSourceInfo;
+
+            //if (selectedGroup != null)
+            //{
+            //    MediaCapture mediaCapture = new MediaCapture();
+            //    var settings = new MediaCaptureInitializationSettings()
+            //    {
+            //        SourceGroup = selectedGroup,
+            //        SharingMode = MediaCaptureSharingMode.ExclusiveControl,
+            //        MemoryPreference = MediaCaptureMemoryPreference.Cpu,
+            //        StreamingCaptureMode = StreamingCaptureMode.Video
+            //    };
+            //    try
+            //    {
+            //        await mediaCapture.InitializeAsync(settings);
+            //        //await mediaCapture.InitializeAsync();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        //System.Diagnostics.Debug.WriteLine("MediaCapture initialization failed: " + ex.Message);
+            //    }
+            //    MediaCaptures.GetOrAdd(selectedGroup.Id, mediaCapture);
+            //}
+            //    Connect(selectedGroupObject.sourceGroup.Id);
+            //}
+            //return true;
         }
 
         private async Task Connect(string id)
         {
             try
             {
-                MediaFrameSourceGroup selectedGroup = await MediaFrameSourceGroup.FromIdAsync(id);
+                MediaFrameSourceGroup frameSourceGroup = await MediaFrameSourceGroup.FromIdAsync(id);
 
-                if (selectedGroup != null)
+                if ((frameSourceGroup != null) &&
+                    (frameSourceGroup.SourceInfos.Where((sourceInfo) =>
+                      {
+                          // On Xbox/Kinect, omit the MediaStreamType and EnclosureLocation tests
+                          //return sourceInfo.MediaStreamType == MediaStreamType.VideoPreview &&
+                          return sourceInfo.Id.Contains(new string(id.SkipWhile(i => i == '\\' || i == '?').TakeWhile(i => i != '\\').ToArray())) &&
+                               frameSourceGroup.DisplayName.Contains("2K HD Camera")
+                               && sourceInfo.SourceKind == MediaFrameSourceKind.Color;
+                          //&& sourceInfo.DeviceInformation?.EnclosureLocation.Panel == Windows.Devices.Enumeration.Panel.Front;
+                      }).Any()))
                 {
                     MediaCapture mediaCapture = new MediaCapture();
                     var settings = new MediaCaptureInitializationSettings()
                     {
-                        SourceGroup = selectedGroup,
+                        SourceGroup = frameSourceGroup,
                         SharingMode = MediaCaptureSharingMode.ExclusiveControl,
                         MemoryPreference = MediaCaptureMemoryPreference.Cpu,
                         StreamingCaptureMode = StreamingCaptureMode.Video
                     };
-                    try
-                    {
-                        await mediaCapture.InitializeAsync(settings);
-                        //await mediaCapture.InitializeAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        //System.Diagnostics.Debug.WriteLine("MediaCapture initialization failed: " + ex.Message);
-                    }
-                    MediaCaptures.GetOrAdd(selectedGroup.Id, mediaCapture);
+                    //try
+                    //{
+                    await mediaCapture.InitializeAsync(settings);
+                    //await mediaCapture.InitializeAsync();
+                    //CaptureElement ce = new CaptureElement();
+                    //ce.Source = mediaCapture;
+                    //await mediaCapture.StartPreviewAsync();
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    //System.Diagnostics.Debug.WriteLine("MediaCapture initialization failed: " + ex.Message);
+                    //}
+                    MediaCaptures.GetOrAdd(frameSourceGroup.Id, mediaCapture);
                     //EUsbCameraGUI.Invoke(this, EventArgs.Empty);
                 }
             }

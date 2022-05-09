@@ -971,16 +971,16 @@ namespace RemoteControl.Models
             }
         }
 
-        //private string[] usbPorts = new string[0];
-        //public string UsbPorts
-        //{
-        //    get => usbPorts.Aggregate("", (r, v) => r += v + " ");
-        //    set
-        //    {
-        //        usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
-        //    }
-        //}
+        private string[] usbPorts = new string[0];
+        public string UsbPorts
+        {
+            get => usbPorts.Aggregate("", (r, v) => r += v + " ");
+            set
+            {
+                //usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
+            }
+        }
 
         //private uint packetCounter = 0;
         //public uint PacketCounter
@@ -1004,7 +1004,7 @@ namespace RemoteControl.Models
             }
         }
 
-        private readonly string version = "Armenta Remote Control Version 1.0 " + DateTime.Now;
+        private readonly string version = VERSION + " " + DateTime.Now;
         public string Version
         {
             get => version;
@@ -1055,6 +1055,7 @@ namespace RemoteControl.Models
             public byte[] packet;
         }
 
+        public const string VERSION = "Armenta - Remote Control Application V1.1";
         public const uint UERROR = 0xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
@@ -1147,6 +1148,7 @@ namespace RemoteControl.Models
                 //Devices = new string[] { REMOTE };
                 //Devices = new string[] { REMOTE, APTX1 };
                 TxQue = new List<TxPacket>() {
+                    //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
                     //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
                     //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
@@ -1167,7 +1169,7 @@ namespace RemoteControl.Models
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_2, packet = Aptxs[2].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
 
-                    new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
+                    new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#\r")},
                 };
                 Procedure = ProcedureType.ECOMILK;
             }
@@ -1276,8 +1278,8 @@ namespace RemoteControl.Models
                 else
                 {
                     string[] ports = UsbSerial.GetPorts().ToArray();
-                    //usbPorts = ports;
-                    //UsbPorts = UsbPorts;
+                    usbPorts = ports;
+                    UsbPorts = UsbPorts;
                     foreach (string prt in ports)
                     {
                         if (!Ports.Values.Contains(prt))
@@ -1483,6 +1485,7 @@ namespace RemoteControl.Models
                                             packetCounters[port + DELIMITER + device]++;
                                         else
                                             packetCounters.Add(port + DELIMITER + device, 0);
+                                        PacketCounters = PacketCounters;
                                         SemaphorePacketCounters.Release();
                                     }
                                 }

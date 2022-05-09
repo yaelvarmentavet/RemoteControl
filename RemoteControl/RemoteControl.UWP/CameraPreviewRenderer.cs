@@ -68,8 +68,8 @@ namespace RemoteControl.UWP
                         return false;
                 }).Any())
                 {
-                    App.CaptureElements.Remove(mediaCapture, out CaptureElement captureElement);
                     await mediaCapture.StopPreviewAsync();
+                    App.CaptureElements.Remove(mediaCapture, out CaptureElement captureElement);
                 }
                 //}
             });
