@@ -16,11 +16,20 @@
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
-                <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" HorizontalOptions="End">
+                <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Scale="0.72" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" HorizontalOptions="End">
                     <views:PortsView/>
                 </StackLayout>
-                <ProgressBar x:Name="PrgPulses" Grid.Row="2" Grid.Column="1" Progress="{Binding Progress}"/>
+                <Label Grid.Row="1" Grid.Column="1" Text="CowId -" Style="{StaticResource Label24}"/>
+                <Label x:Name="LblCowId" Grid.Row="1" Grid.Column="2" Text="{Binding CowId}" Style="{StaticResource Label24}"/>
+                <Label Grid.Row="2" Grid.Column="0" Text="Quarter 1" Style="{StaticResource Label20}"/>
+                <Label Grid.Row="3" Grid.Column="0" Text="Quarter 2" Style="{StaticResource Label20}"/>
+                <Label Grid.Row="4" Grid.Column="0" Text="Quarter 3" Style="{StaticResource Label20}"/>
+                <Label Grid.Row="5" Grid.Column="0" Text="Quarter 4" Style="{StaticResource Label20}"/>
+                <ProgressBar x:Name="PrgPulses0" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
+                <ProgressBar x:Name="PrgPulses1" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
+                <ProgressBar x:Name="PrgPulses2" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
+                <ProgressBar x:Name="PrgPulses3" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
                 <!--<ImageButton Grid.Row="1" Grid.Column="2" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.stop.png}" Command="{Binding StopProcess}"/>-->
                 <!--<Image Grid.Row="1" Grid.Column="2" Style="{StaticResource IconWhite}" 
@@ -30,7 +39,7 @@
                         <TapGestureRecognizer Command="{Binding StopProcess}"/>
                     </Image.GestureRecognizers>
                 </Image>-->
-                <Button Text="Stop Process" BackgroundColor="{StaticResource ButtonCoral}" Grid.Row="2" Grid.Column="2" Style="{StaticResource ButtonCornerRadius10}"
+                <Button Text="Stop Process" BackgroundColor="{StaticResource ButtonCoral}" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ButtonCornerRadius10}"
                         Command="{Binding StopProcess}"/>
                 <!--<ImageButton Grid.Row="2" Grid.Column="2" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.pause.png}" Command="{Binding PauseResumeProcess}"/>-->
@@ -41,7 +50,7 @@
                         <TapGestureRecognizer Command="{Binding PauseResumeProcess}"/>
                     </Image.GestureRecognizers>
                 </Image>-->
-                <Button Text="Pause/Resume Process" BackgroundColor="{StaticResource ButtonGreen}" Grid.Row="3" Grid.Column="2" Style="{StaticResource ButtonCornerRadius10}" 
+                <Button Text="Pause/Resume Process" BackgroundColor="{StaticResource ButtonGreen}" Grid.Row="6" Grid.Column="2" Grid.ColumnSpan="2" Style="{StaticResource ButtonCornerRadius10}" 
                        Command="{Binding PauseResumeProcess}"/>
                 <!--<Label Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Grid.ColumnSpan="5" Text="Choose quarter" Style="{StaticResource Label24}"/>
                 <Image Grid.Row="3" Grid.Column="1" Grid.RowSpan="3" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.rl.png}"/>

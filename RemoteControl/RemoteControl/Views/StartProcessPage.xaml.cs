@@ -11,16 +11,12 @@ namespace RemoteControl.Views
         {
             InitializeComponent();
 
-            PrgPulses.BindingContext = App.DataModel;
-            //EdCowId.BindingContext = App.DataModel;
-            //EdCowId.SetBinding(Editor.TextProperty, "SNum");
-
-            //EdInfo.BindingContext = App.DataModel;
-            //EdInfo.SetBinding(Editor.TextProperty, "SNum");
-
-            //TapGestureRecognizer tap = new TapGestureRecognizer();
-            //tap.SetBinding(TapGestureRecognizer.CommandProperty, "Start");
-            //ImgStart.GestureRecognizers.Add(tap);
+            LblCowId.BindingContext = App.DataModel;
+         
+            PrgPulses0.BindingContext = App.DataModel.Aptxs[0];
+            PrgPulses1.BindingContext = App.DataModel.Aptxs[1];
+            PrgPulses2.BindingContext = App.DataModel.Aptxs[2];
+            PrgPulses3.BindingContext = App.DataModel.Aptxs[3];
         }
     }
 }

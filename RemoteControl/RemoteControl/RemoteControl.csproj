@@ -51,6 +51,7 @@
     <None Remove="Icons\cancel.png" />
     <None Remove="Icons\cow.png" />
     <None Remove="Icons\down.png" />
+    <None Remove="Icons\down1.png" />
     <None Remove="Icons\empty.png" />
     <None Remove="Icons\fl.png" />
     <None Remove="Icons\fr.png" />
@@ -59,6 +60,7 @@
     <None Remove="Icons\home40.png" />
     <None Remove="Icons\id.png" />
     <None Remove="Icons\left.png" />
+    <None Remove="Icons\left1.png" />
     <None Remove="Icons\logo.png" />
     <None Remove="Icons\manual.png" />
     <None Remove="Icons\n2.bmp" />
@@ -75,8 +77,11 @@
     <None Remove="Icons\pulseNo.bmp" />
     <None Remove="Icons\pulseYes.bmp" />
     <None Remove="Icons\rccw.png" />
+    <None Remove="Icons\rccw1.png" />
     <None Remove="Icons\rcw.png" />
+    <None Remove="Icons\rcw1.png" />
     <None Remove="Icons\right.png" />
+    <None Remove="Icons\right1.png" />
     <None Remove="Icons\rl.png" />
     <None Remove="Icons\rr.png" />
     <None Remove="Icons\settings.png" />
@@ -87,6 +92,7 @@
     <None Remove="Icons\tilt.png" />
     <None Remove="Icons\top.png" />
     <None Remove="Icons\up.png" />
+    <None Remove="Icons\up1.png" />
     <None Remove="Icons\w.bmp" />
     <None Remove="Icons\w_cropped.bmp" />
     <None Remove="Icons\w_cropped.xcf" />
@@ -114,6 +120,7 @@
     <EmbeddedResource Include="Icons\cancel.png" />
     <EmbeddedResource Include="Icons\cow.png" />
     <EmbeddedResource Include="Icons\down.png" />
+    <EmbeddedResource Include="Icons\down1.png" />
     <EmbeddedResource Include="Icons\empty.png" />
     <EmbeddedResource Include="Icons\fl.png" />
     <EmbeddedResource Include="Icons\fr.png" />
@@ -121,6 +128,7 @@
     <EmbeddedResource Include="Icons\home40.png" />
     <EmbeddedResource Include="Icons\id.png" />
     <EmbeddedResource Include="Icons\left.png" />
+    <EmbeddedResource Include="Icons\left1.png" />
     <EmbeddedResource Include="Icons\logo.png" />
     <EmbeddedResource Include="Icons\manual.png" />
     <EmbeddedResource Include="Icons\n2.bmp" />
@@ -137,8 +145,11 @@
     <EmbeddedResource Include="Icons\pulseNo.bmp" />
     <EmbeddedResource Include="Icons\pulseYes.bmp" />
     <EmbeddedResource Include="Icons\rccw.png" />
+    <EmbeddedResource Include="Icons\rccw1.png" />
     <EmbeddedResource Include="Icons\rcw.png" />
+    <EmbeddedResource Include="Icons\rcw1.png" />
     <EmbeddedResource Include="Icons\right.png" />
+    <EmbeddedResource Include="Icons\right1.png" />
     <EmbeddedResource Include="Icons\rl.png" />
     <EmbeddedResource Include="Icons\rr.png" />
     <EmbeddedResource Include="Icons\settings.png" />
@@ -148,6 +159,7 @@
     <EmbeddedResource Include="Icons\stop.png" />
     <EmbeddedResource Include="Icons\top.png" />
     <EmbeddedResource Include="Icons\up.png" />
+    <EmbeddedResource Include="Icons\up1.png" />
     <EmbeddedResource Include="Icons\w.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.xcf" />

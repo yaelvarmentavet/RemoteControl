@@ -641,6 +641,15 @@ namespace RemoteControl.Models
                     (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.Cyan : Color.Red;
         }
 
+        public float Progress
+        {
+            get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
+            }
+        }
+        
         private const uint UERROR = 0xFFFFFFFF;
         private const int ERROR = -1;
         private const int OK = 0;
@@ -655,6 +664,8 @@ namespace RemoteControl.Models
         public const byte START = 0x01;
         public const byte STOP = 0x02;
         public const byte RESERVED = 0x00;
+
+        private const int ECOMILK_PROCESS_PULSES = 100;
 
         public static readonly byte[] APTXIDs = new byte[] { 0x00, 0x01, 0x02, 0x03 };
 
@@ -888,10 +899,41 @@ namespace RemoteControl.Models
             }
         }
 
-        public float Progress
-        {
-            get => (Aptx.ProcessPulses - Aptx.PulsesPrev) / ECOMILK_PROCESS_PULSES;
-        }
+        //public float Progress0
+        //{
+        //    get => (Aptxs[0].ProcessPulses - Aptxs[0].PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress0)));
+        //    }
+        //}
+
+        //public float Progress1
+        //{
+        //    get => (Aptxs[1].ProcessPulses - Aptxs[1].PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress1)));
+        //    }
+        //}
+
+        //public float Progress2
+        //{
+        //    get => (Aptxs[2].ProcessPulses - Aptxs[2].PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress2)));
+        //    }
+        //}
+
+        //public float Progress3
+        //{
+        //    get => (Aptxs[3].ProcessPulses - Aptxs[3].PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress3)));
+        //    }
+        //}
 
         private bool fl = false;
         public Color FL
@@ -1064,8 +1106,6 @@ namespace RemoteControl.Models
         private const string REMOTE = "REMOTE";
         private const string ECOMILK = "ECOMILK";
         private const string RFID = "RFID";
-
-        private const int ECOMILK_PROCESS_PULSES = 100;
 
         //private const uint APTX_COUNT = 4;
 
