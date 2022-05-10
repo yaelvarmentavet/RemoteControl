@@ -1055,7 +1055,7 @@ namespace RemoteControl.Models
             public byte[] packet;
         }
 
-        public const string VERSION = "Armenta - Remote Control Application V1.1";
+        public const string VERSION = "Armenta - Remote Control Application V1.2";
         public const uint UERROR = 0xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
@@ -1892,7 +1892,7 @@ namespace RemoteControl.Models
             //int response = await UsbSerial.Write(Ports.TryGetValue(REMOTE, out string val) ? val : string.Empty,
             //    aptx.PacketBuild(process, pulses));
 
-            TxQueEnque(REMOTE, process == Aptx.START ? PacketType.REMOTE_START : PacketType.REMOTE_STOP, aptx.PacketBuild(process, pulses));
+            await TxQueEnque(REMOTE, process == Aptx.START ? PacketType.REMOTE_START : PacketType.REMOTE_STOP, aptx.PacketBuild(process, pulses));
 
             //string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
             //File.AppendAllText(LOGFILE_COWS, string.Format("Date: {0} Process: {1} Pulses: {2} Cow Id: {3} Current Pulses: {4}\n",
@@ -1902,7 +1902,7 @@ namespace RemoteControl.Models
             //return response;
         }
 
-        private void TxQueEnque(string device, PacketType packetType, byte[] packet)
+        private async Task TxQueEnque(string device, PacketType packetType, byte[] packet)
         {
             SemaphoreTxQue.WaitOne();
             TxQue.Add(new TxPacket()
@@ -1916,25 +1916,25 @@ namespace RemoteControl.Models
 
         public async Task RCWStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_START, Encoding.UTF8.GetBytes("rcw 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_START, Encoding.UTF8.GetBytes("rcw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 1\r"));
         }
 
         public async Task RCWStop()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_STOP, Encoding.UTF8.GetBytes("rcw 0\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_STOP, Encoding.UTF8.GetBytes("rcw 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 0\r"));
         }
 
         public async Task RCCWStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_START, Encoding.UTF8.GetBytes("rccw 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_START, Encoding.UTF8.GetBytes("rccw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 1\r"));
         }
 
         public async Task RCCWStop()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_STOP, Encoding.UTF8.GetBytes("rccw 0\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_STOP, Encoding.UTF8.GetBytes("rccw 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 0\r"));
         }
 
@@ -1943,25 +1943,25 @@ namespace RemoteControl.Models
 
         public async Task AFStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_START, Encoding.UTF8.GetBytes("af 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_START, Encoding.UTF8.GetBytes("af 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 1\r"));
         }
 
         public async Task AFStop()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_STOP, Encoding.UTF8.GetBytes("af 0\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_STOP, Encoding.UTF8.GetBytes("af 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 0\r"));
         }
 
         public async Task ABStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_START, Encoding.UTF8.GetBytes("ab 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_START, Encoding.UTF8.GetBytes("ab 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 1\r"));
         }
 
         public async Task ABStop()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_STOP, Encoding.UTF8.GetBytes("ab 0\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_STOP, Encoding.UTF8.GetBytes("ab 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 0\r"));
         }
 
@@ -1970,37 +1970,37 @@ namespace RemoteControl.Models
 
         public async Task MZUStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_START, Encoding.UTF8.GetBytes("mzu 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_START, Encoding.UTF8.GetBytes("mzu 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 1\r"));
         }
 
         public async Task MZUStop()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_STOP, Encoding.UTF8.GetBytes("mzu 0\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_STOP, Encoding.UTF8.GetBytes("mzu 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 0\r"));
         }
 
         public async Task MZDStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_START, Encoding.UTF8.GetBytes("mzd 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_START, Encoding.UTF8.GetBytes("mzd 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 1\r"));
         }
 
         public async Task MZDStop()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_STOP, Encoding.UTF8.GetBytes("mzd 0\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_STOP, Encoding.UTF8.GetBytes("mzd 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 0\r"));
         }
 
         public async Task TCWStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_TCW_START, Encoding.UTF8.GetBytes("tcw 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_TCW_START, Encoding.UTF8.GetBytes("tcw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
         }
 
         public async Task XFStart()
         {
-            TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
+            await TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1\r"));
         }
 

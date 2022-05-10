@@ -11,7 +11,7 @@ namespace RemoteControl.ViewModels
         {
             RCWStart = new Command(async () =>
             {
-                App.DataModel.RCWStart();
+                await App.DataModel.RCWStart();
             });
             RCWStop = new Command(async () =>
             {
