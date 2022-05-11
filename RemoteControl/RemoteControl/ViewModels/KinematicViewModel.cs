@@ -73,6 +73,10 @@ namespace RemoteControl.ViewModels
                 await Application.Current.MainPage.Navigation.PushAsync(new StartProcessPage());
                 await App.DataModel.ProcessStart();
             });
+
+            Zoom = new Command(() =>
+            {
+            });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -93,5 +97,6 @@ namespace RemoteControl.ViewModels
         //public Command XFStart { get; }
 
         public Command StartProcessPage { get; }
+        public Command Zoom { get; }
     }
 }

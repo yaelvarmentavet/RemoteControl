@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Capture;
 using Windows.UI.Core;
@@ -19,9 +20,8 @@ namespace RemoteControl.UWP
     public class CameraPreviewRenderer : ViewRenderer<CameraPreview, Windows.UI.Xaml.Controls.CaptureElement>
     {
         private CaptureElement CaptureElement;
+        private bool Connected = false;
         //bool _isPreviewing;
-        private readonly object LockConnect = new object();
-        private readonly object LockDisconnect = new object();
 
         protected override void OnElementChanged(ElementChangedEventArgs<CameraPreview> e)
         {
@@ -54,8 +54,10 @@ namespace RemoteControl.UWP
         {
             CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                //lock (LockDisconnect)
-                //{
+                await Task.Run(() =>
+                {
+                    while (!Connected) ;
+                });
                 MediaCapture mediaCapture = new MediaCapture();
                 if (App.CaptureElements.Where(p =>
                 {
@@ -70,34 +72,34 @@ namespace RemoteControl.UWP
                 {
                     await mediaCapture.StopPreviewAsync();
                     App.CaptureElements.Remove(mediaCapture, out CaptureElement captureElement);
+                    Connected = false;
                 }
-                //}
             });
         }
 
-        //private void Connect(object sender, EventArgs args)
         private void Connect()
         {
-            //Task.Run( async () =>
             CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
+                await Task.Run(() =>
+                {
+                    while (Connected) ;
+                });
                 MediaCapture mediaCapture = new MediaCapture();
-                //lock (LockConnect)
-                //{
-                if ((App.UsbCamera.MediaCaptures.Where(m => 
-                { 
-                    if (!App.CaptureElements.ContainsKey(m.Value)) 
-                    { 
-                        mediaCapture = m.Value; return true; 
-                    } 
-                    else return false; })).Any())
+                if ((App.UsbCamera.MediaCaptures.Where(m =>
+                {
+                    if (!App.CaptureElements.ContainsKey(m.Value))
+                    {
+                        mediaCapture = m.Value; return true;
+                    }
+                    else return false;
+                })).Any())
                 {
                     App.CaptureElements.GetOrAdd(mediaCapture, CaptureElement);
                     CaptureElement.Source = mediaCapture;
                     await mediaCapture.StartPreviewAsync();
+                    Connected = true;
                 }
-                //}
-                //await mediaCapture.StartPreviewAsync();
             });
         }
 

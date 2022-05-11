@@ -25,6 +25,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" Text="CowId" Style="{StaticResource Label24}"/>
                 <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" HorizontalOptions="End">
                     <views:PortsView/>
                 </StackLayout>

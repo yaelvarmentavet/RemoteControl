@@ -20,11 +20,12 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Row="0" Grid.Column="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
-                <StackLayout Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="1" HorizontalOptions="End">
+                <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Scale="0.72" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="CowId" Style="{StaticResource Label24}"/>
+                <StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" HorizontalOptions="End">
                     <views:PortsView/>
                 </StackLayout>
-                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding CowId}"/>
+                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding CowId}"/>
                 <!--<Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding SNum}">
                     <Editor.BindingContext>
                         <binding:DataModel/>

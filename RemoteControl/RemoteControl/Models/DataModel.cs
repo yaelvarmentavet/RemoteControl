@@ -1014,15 +1014,15 @@ namespace RemoteControl.Models
         }
 
         private string[] usbPorts = new string[0];
-        public string UsbPorts
-        {
-            get => usbPorts.Aggregate("", (r, v) => r += v + " ");
-            set
-            {
-                //usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
-            }
-        }
+        //public string UsbPorts
+        //{
+        //    get => usbPorts.Aggregate("", (r, v) => r += v + " ");
+        //    set
+        //    {
+        //        //usbPorts = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UsbPorts)));
+        //    }
+        //}
 
         //private uint packetCounter = 0;
         //public uint PacketCounter
@@ -1038,7 +1038,7 @@ namespace RemoteControl.Models
         private Dictionary<string, uint> packetCounters = new Dictionary<string, uint>();
         public string PacketCounters
         {
-            get => packetCounters.Aggregate("", (r, v) => r += v.Key + DELIMITER + v.Value + "\n");
+            get => usbPorts.Aggregate("", (r, v) => r += v + " ") + "\n" + packetCounters.Aggregate("", (r, v) => r += v.Key + DELIMITER + v.Value + "\n");
             //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
             {
@@ -1319,7 +1319,8 @@ namespace RemoteControl.Models
                 {
                     string[] ports = UsbSerial.GetPorts().ToArray();
                     usbPorts = ports;
-                    UsbPorts = UsbPorts;
+                    //UsbPorts = UsbPorts;
+                    PacketCounters = PacketCounters;
                     foreach (string prt in ports)
                     {
                         if (!Ports.Values.Contains(prt))

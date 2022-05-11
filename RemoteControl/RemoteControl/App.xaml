@@ -63,50 +63,50 @@
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label24" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=24, Tablet=24, Desktop=48}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=24, UWP=48}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelAlignedStart" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=24, Tablet=24, Desktop=48}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=24, UWP=48}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Start"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label20" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=20, Tablet=20, Desktop=20}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=20, UWP=20}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label16" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label8" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=8, Tablet=8, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=8, UWP=16}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelAlignedEnd" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="HorizontalTextAlignment" Value="End"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label12" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=12}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=12, UWP=12}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelLightGreen" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=12, Tablet=12, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=12, UWP=16}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLightGreen}"/>
                 <Setter Property="TextColor" Value="{StaticResource TextWhite}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelAliceBlue" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundAliceBlue}"/>
                 <Setter Property="TextColor" Value="{StaticResource TextDarkCyan}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
@@ -114,7 +114,7 @@
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelYellowGreen" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="TextColor" Value="{StaticResource TextYellowGreen}"/>
                 <Setter Property="FontAttributes" Value="Bold"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
@@ -122,7 +122,7 @@
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelDarkCyan" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkCyan}"/>
                 <Setter Property="TextColor" Value="{StaticResource TextWhite}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
@@ -130,25 +130,25 @@
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelGreen" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundGreen}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelRed" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundRed}"/>
                 <Setter Property="HorizontalTextAlignment" Value="Center"/>
                 <Setter Property="VerticalTextAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Editor16" TargetType="Editor">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=16, Tablet=16, Desktop=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Editor30" TargetType="Editor">
-                <Setter Property="FontSize" Value="{OnIdiom Phone=30, Tablet=30, Desktop=30}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=30, UWP=30}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
                 <!--Setter Property="BindingContext" Value="{binding:DataModel}"/-->
             </Style>
