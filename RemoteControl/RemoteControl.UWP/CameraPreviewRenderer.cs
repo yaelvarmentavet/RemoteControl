@@ -3,12 +3,14 @@ using RemoteControl.Views;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Media.Capture;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -20,9 +22,10 @@ namespace RemoteControl.UWP
     public class CameraPreviewRenderer : ViewRenderer<CameraPreview, Windows.UI.Xaml.Controls.CaptureElement>
     {
         private CaptureElement CaptureElement;
-        private bool Connected = false;
+        //private static bool TaskRunning = false;
+        //private CaptureElement CaptureElementPrev;
+        //private bool Connected = false;
         //bool _isPreviewing;
-
         protected override void OnElementChanged(ElementChangedEventArgs<CameraPreview> e)
         {
             base.OnElementChanged(e);
@@ -31,7 +34,10 @@ namespace RemoteControl.UWP
             {
                 // Unsubscribe
                 //Tapped -= OnCameraPreviewTapped;
-                Disconnect();
+                Task.Run(async () =>
+                {
+                    await Disconnect();
+                });
             }
             if (e.NewElement != null)
             {
@@ -42,7 +48,10 @@ namespace RemoteControl.UWP
 
                     //SetupCamera();
                     //App.UsbCamera.EUsbCameraGUI += Connect;
-                    Connect();
+                    Task.Run(async () =>
+                    {
+                        await Connect();
+                    });
                     SetNativeControl(CaptureElement);
                 }
                 // Subscribe
@@ -50,41 +59,46 @@ namespace RemoteControl.UWP
             }
         }
 
-        private void Disconnect()
+        private async Task Disconnect()
         {
-            CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                await Task.Run(() =>
-                {
-                    while (!Connected) ;
-                });
+                //var wait = new SpinWait();
+                //while (TaskRunning)
+                //    wait.SpinOnce();
+                //if (!TaskRunning)
+                //{
+                //TaskRunning = true;
                 MediaCapture mediaCapture = new MediaCapture();
-                if (App.CaptureElements.Where(p =>
+                if (App.CaptureElements.Where(c =>
                 {
-                    if (p.Value == CaptureElement)
+                    if (c.Value == CaptureElement)
                     {
-                        mediaCapture = p.Key;
+                        mediaCapture = c.Key;
                         return true;
                     }
                     else
                         return false;
                 }).Any())
                 {
-                    await mediaCapture.StopPreviewAsync();
+                    //await mediaCapture.StopPreviewAsync();
                     App.CaptureElements.Remove(mediaCapture, out CaptureElement captureElement);
-                    Connected = false;
                 }
+                //    TaskRunning = false;
+                //}
             });
         }
 
-        private void Connect()
+        private async Task Connect()
         {
-            CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await CaptureElement?.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                await Task.Run(() =>
-                {
-                    while (Connected) ;
-                });
+                //var wait = new SpinWait();
+                //while (TaskRunning)
+                //    wait.SpinOnce();
+                //if (!TaskRunning)
+                //{
+                //TaskRunning = true;
                 MediaCapture mediaCapture = new MediaCapture();
                 if ((App.UsbCamera.MediaCaptures.Where(m =>
                 {
@@ -97,9 +111,18 @@ namespace RemoteControl.UWP
                 {
                     App.CaptureElements.GetOrAdd(mediaCapture, CaptureElement);
                     CaptureElement.Source = mediaCapture;
-                    await mediaCapture.StartPreviewAsync();
-                    Connected = true;
+                    try
+                    {
+                        await mediaCapture.StartPreviewAsync();
+                    }
+                    catch
+                    {
+                        await mediaCapture.StopPreviewAsync();
+                        await mediaCapture.StartPreviewAsync();
+                    }
                 }
+                //    TaskRunning = false;
+                //}
             });
         }
 

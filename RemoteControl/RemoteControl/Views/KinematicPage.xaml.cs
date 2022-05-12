@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -8,7 +9,9 @@ namespace RemoteControl.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class KinematicPage : ContentPage
     {
-        private bool ZoomDown = true;
+        private bool ZoomUp = true;
+        private int CamRow;
+        private int CamCol;
 
         public KinematicPage()
         {
@@ -111,23 +114,47 @@ namespace RemoteControl.Views
             });
         }
 
-        private void Zoom(object sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            if (ZoomDown)
+            base.OnAppearing();
+            CamRefresh(Cam1);
+            CamRefresh(Cam2);
+            CamRefresh(Cam3);
+        }
+
+        private void CamRefresh(View cameraView)
+        {
+            CamRow = Grid.GetRow(cameraView);
+            CamCol = Grid.GetColumn(cameraView);
+            GrKin.Children.Remove(cameraView);
+            GrKin.Children.Add(cameraView, CamCol, CamRow);
+            Grid.SetRowSpan(cameraView, 8);
+            Grid.SetColumnSpan(cameraView, 8);
+            //double scale = cameraView.Scale;
+            //cameraView.Scale = 1;
+            //cameraView.Scale = scale;
+        }
+
+        public void Zoom(View cameraView)
+        {
+            if (ZoomUp)
             {
-                GrKin.Children.Remove(Cam1);
-                GrKin.Children.Add(Cam1, 0, 0);
-                Grid.SetRowSpan(Cam1, 18);
-                Grid.SetColumnSpan(Cam1, 24);
-                ZoomDown = false;
+                CamRow = Grid.GetRow(cameraView);
+                CamCol = Grid.GetColumn(cameraView);
+
+                GrKin.Children.Remove(cameraView);
+                GrKin.Children.Add(cameraView, 0, 0);
+                Grid.SetRowSpan(cameraView, 18);
+                Grid.SetColumnSpan(cameraView, 24);
+                ZoomUp = false;
             }
             else
             {
-                GrKin.Children.Remove(Cam1);
-                GrKin.Children.Add(Cam1, 0, 0);
-                Grid.SetRowSpan(Cam1, 8);
-                Grid.SetColumnSpan(Cam1, 8);
-                ZoomDown = true;
+                GrKin.Children.Remove(cameraView);
+                GrKin.Children.Add(cameraView, CamCol, CamRow);
+                Grid.SetRowSpan(cameraView, 8);
+                Grid.SetColumnSpan(cameraView, 8);
+                ZoomUp = true;
             }
         }
     }

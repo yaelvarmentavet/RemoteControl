@@ -1,12 +1,14 @@
 ﻿using RemoteControl.Views;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace RemoteControl.ViewModels
 {
     class KinematicViewModel : INotifyPropertyChanged
     {
+        private bool ZoomDown = true;
         public KinematicViewModel()
         {
             //RCWStart = new Command(async () =>
@@ -74,8 +76,19 @@ namespace RemoteControl.ViewModels
                 await App.DataModel.ProcessStart();
             });
 
-            Zoom = new Command(() =>
+            Zoom = new Command((cameraView) =>
             {
+                //Application.Current.MainPage.Navigation.NavigationStack.Where(n =>
+                foreach (Page n in Application.Current.MainPage.Navigation.NavigationStack)
+                {
+                    if (n is KinematicPage)
+                    {
+                        (n as KinematicPage).Zoom(cameraView as View);
+                        //return true;
+                    }
+                    //return false;
+                    //});
+                }
             });
         }
 

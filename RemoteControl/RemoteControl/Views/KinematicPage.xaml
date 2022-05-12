@@ -26,15 +26,23 @@
                                         HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" 
                                         Grid.Row="0" Grid.Column="0" Grid.RowSpan="8" Grid.ColumnSpan="8" BackgroundColor="{StaticResource BackgroundLightGray}">
                     <renderer:CameraPreview.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="Zoom"/>
+                        <TapGestureRecognizer Command="{Binding Zoom}" CommandParameter="{x:Reference Cam1}"/>
                     </renderer:CameraPreview.GestureRecognizers>
                 </renderer:CameraPreview>
-                <renderer:CameraPreview Camera="External"
+                <renderer:CameraPreview x:Name="Cam2" Camera="External"
                                         HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" 
-                                        Grid.Row="0" Grid.Column="8" Grid.RowSpan="8" Grid.ColumnSpan="8" BackgroundColor="{StaticResource BackgroundLightGray}" />
-                <renderer:CameraPreview Camera="External"
+                                        Grid.Row="0" Grid.Column="8" Grid.RowSpan="8" Grid.ColumnSpan="8" BackgroundColor="{StaticResource BackgroundLightGray}">
+                    <renderer:CameraPreview.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Zoom}" CommandParameter="{x:Reference Cam2}"/>
+                    </renderer:CameraPreview.GestureRecognizers>
+                </renderer:CameraPreview>
+                <renderer:CameraPreview x:Name="Cam3" Camera="External"
                                         HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" 
-                                        Grid.Row="0" Grid.Column="16" Grid.RowSpan="8" Grid.ColumnSpan="8" BackgroundColor="{StaticResource BackgroundLightGray}" />
+                                        Grid.Row="0" Grid.Column="16" Grid.RowSpan="8" Grid.ColumnSpan="8" BackgroundColor="{StaticResource BackgroundLightGray}">
+                    <renderer:CameraPreview.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Zoom}" CommandParameter="{x:Reference Cam3}"/>
+                    </renderer:CameraPreview.GestureRecognizers>
+                </renderer:CameraPreview>
                 <!--<Image x:Name="ImgCam1" Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="6" BackgroundColor="Aqua"/>-->
                 <!--<Image x:Name="ImgCam2" Grid.Row="0" Grid.Column="6" Grid.RowSpan="4" Grid.ColumnSpan="6" BackgroundColor="Aqua"/>-->
                 <!--<Image x:Name="ImgCam3" Grid.Row="0" Grid.Column="12" Grid.RowSpan="4" Grid.ColumnSpan="6" BackgroundColor="Aqua"/>-->
