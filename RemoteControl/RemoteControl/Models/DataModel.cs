@@ -1097,7 +1097,7 @@ namespace RemoteControl.Models
             public byte[] packet;
         }
 
-        public const string VERSION = "Armenta - Remote Control Application V1.2";
+        public const string VERSION = "Armenta - Remote Control Application V1.3";
         public const uint UERROR = 0xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
@@ -1189,9 +1189,9 @@ namespace RemoteControl.Models
                 //Devices = new string[] { REMOTE, APTX1 };
                 TxQue = new List<TxPacket>() {
                     //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
-                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
-                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
-                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
+                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
+                    new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
+                    new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
                 };
             }
             else if (Device.RuntimePlatform == Device.UWP)
@@ -1215,7 +1215,7 @@ namespace RemoteControl.Models
             }
 
             UsbSerial = usbSerial;
-            UsbSerial.Event((obj, args) =>
+            UsbSerial.Event((sender, args) =>
             {
                 SemaphorePorts.WaitOne();
                 if (args is PortEventArgs)

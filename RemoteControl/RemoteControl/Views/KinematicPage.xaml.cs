@@ -9,9 +9,9 @@ namespace RemoteControl.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class KinematicPage : ContentPage
     {
-        private bool ZoomUp = true;
-        private int CamRow;
-        private int CamCol;
+        private bool _zoomUp = true;
+        private int _camRow;
+        private int _camCol;
 
         public KinematicPage()
         {
@@ -114,47 +114,56 @@ namespace RemoteControl.Views
             });
         }
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            CamRefresh(Cam1);
-            CamRefresh(Cam2);
-            CamRefresh(Cam3);
-        }
+        //protected override void OnDisappearing()
+        //{
+        //    base.OnDisappearing();
+        //    grkin.children.remove(cam1);
+        //    grkin.children.remove(cam2);
+        //    GrKin.Children.Remove(Cam2);
+        //}
 
-        private void CamRefresh(View cameraView)
-        {
-            CamRow = Grid.GetRow(cameraView);
-            CamCol = Grid.GetColumn(cameraView);
-            GrKin.Children.Remove(cameraView);
-            GrKin.Children.Add(cameraView, CamCol, CamRow);
-            Grid.SetRowSpan(cameraView, 8);
-            Grid.SetColumnSpan(cameraView, 8);
-            //double scale = cameraView.Scale;
-            //cameraView.Scale = 1;
-            //cameraView.Scale = scale;
-        }
+        //protected override void OnAppearing()
+        //{
+        //    base.OnAppearing();
+        //    //CamRefresh(Cam1);
+        //    //CamRefresh(Cam2);
+        //    //CamRefresh(Cam3);
+        //    //App.Current.MainPage.Navigation.PushAsync(new KinematicPage());
+        //}
+
+        //private void CamRefresh(View cameraView)
+        //    {
+        //        CamRow = Grid.GetRow(cameraView);
+        //        CamCol = Grid.GetColumn(cameraView);
+        //        GrKin.Children.Remove(cameraView);
+        //        GrKin.Children.Add(cameraView, CamCol, CamRow);
+        //        Grid.SetRowSpan(cameraView, 8);
+        //        Grid.SetColumnSpan(cameraView, 8);
+        //        //double scale = cameraView.Scale;
+        //        //cameraView.Scale = 1;
+        //        //cameraView.Scale = scale;
+        //    }
 
         public void Zoom(View cameraView)
         {
-            if (ZoomUp)
+            if (_zoomUp)
             {
-                CamRow = Grid.GetRow(cameraView);
-                CamCol = Grid.GetColumn(cameraView);
+                _camRow = Grid.GetRow(cameraView);
+                _camCol = Grid.GetColumn(cameraView);
 
                 GrKin.Children.Remove(cameraView);
                 GrKin.Children.Add(cameraView, 0, 0);
                 Grid.SetRowSpan(cameraView, 18);
                 Grid.SetColumnSpan(cameraView, 24);
-                ZoomUp = false;
+                _zoomUp = false;
             }
             else
             {
                 GrKin.Children.Remove(cameraView);
-                GrKin.Children.Add(cameraView, CamCol, CamRow);
+                GrKin.Children.Add(cameraView, _camCol, _camRow);
                 Grid.SetRowSpan(cameraView, 8);
                 Grid.SetColumnSpan(cameraView, 8);
-                ZoomUp = true;
+                _zoomUp = true;
             }
         }
     }

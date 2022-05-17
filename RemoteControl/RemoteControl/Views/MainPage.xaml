@@ -14,12 +14,12 @@
     </NavigationPage.TitleView>
 
     <ContentPage.BindingContext>
-        <viewModels:MainViewModelUWP/>
+        <viewModels:MainViewModelAndroid/>
         <!--<binding:DataModel/>-->
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <views:UWPView/>
+            <views:AndroidView/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

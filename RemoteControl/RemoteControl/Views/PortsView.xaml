@@ -4,7 +4,7 @@
              x:Class="RemoteControl.Views.PortsView">
   <ContentView.Content>
       <StackLayout>
-            <Label x:Name="LblPort" Style="{StaticResource Label8}" Text="{Binding UsbPorts}" LineBreakMode="CharacterWrap"/>
+            <!--<Label x:Name="LblPort" Style="{StaticResource Label8}" Text="{Binding UsbPorts}" LineBreakMode="CharacterWrap"/>-->
             <Label x:Name="LblPacketCounter" Style="{StaticResource Label8}" Text="{Binding PacketCounters}" LineBreakMode="CharacterWrap"/>
         </StackLayout>
   </ContentView.Content>

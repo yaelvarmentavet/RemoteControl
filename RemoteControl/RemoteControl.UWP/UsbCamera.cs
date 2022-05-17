@@ -12,6 +12,7 @@ using Windows.Media.Capture.Frames;
 using Windows.Media.Capture;
 using System.Collections.Concurrent;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Core;
 //using Xamarin.Forms;
 
 namespace RemoteControl.UWP
@@ -173,6 +174,8 @@ namespace RemoteControl.UWP
                     //try
                     //{
                     await mediaCapture.InitializeAsync(settings);
+
+                    mediaCapture.CaptureDeviceExclusiveControlStatusChanged += MediaCapture_CaptureDeviceExclusiveControlStatusChanged;
                     //await mediaCapture.InitializeAsync();
                     //CaptureElement ce = new CaptureElement();
                     //ce.Source = mediaCapture;
@@ -194,6 +197,21 @@ namespace RemoteControl.UWP
                     //EUsbCameraGUI.Invoke(this, EventArgs.Empty);
                 }
             }
+        }
+
+        private async void MediaCapture_CaptureDeviceExclusiveControlStatusChanged(MediaCapture sender, MediaCaptureDeviceExclusiveControlStatusChangedEventArgs args)
+        {
+            //if (args.Status == MediaCaptureDeviceExclusiveControlStatus.SharedReadOnlyAvailable)
+            //{
+            //    ShowMessageToUser("The camera preview can't be displayed because another app has exclusive access");
+            //}
+            //else if (args.Status == MediaCaptureDeviceExclusiveControlStatus.ExclusiveControlAvailable && !isPreviewing)
+            //{
+            //    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            //    {
+            //        await StartPreviewAsync();
+            //    });
+            //}
         }
 
         //IReadOnlyList<IMediaEncodingProperties> properties = mediaCapture.VideoDeviceController.GetAvailableMediaStreamProperties(MediaStreamType.VideoRecord);
