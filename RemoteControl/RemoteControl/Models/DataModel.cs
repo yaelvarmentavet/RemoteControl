@@ -1145,7 +1145,7 @@ namespace RemoteControl.Models
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private IUsbSerial UsbSerial;
+        private readonly IUsbSerial _usbSerial;
 
         //private ConcurrentDictionary<string, string> Ports = new ConcurrentDictionary<string, string>();
         private Dictionary<string, string> Ports = new Dictionary<string, string>();
@@ -1189,9 +1189,9 @@ namespace RemoteControl.Models
                 //Devices = new string[] { REMOTE, APTX1 };
                 TxQue = new List<TxPacket>() {
                     //new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
-                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
-                    new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
-                    new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
+                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
+                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#")},
+                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
                 };
             }
             else if (Device.RuntimePlatform == Device.UWP)
@@ -1214,8 +1214,8 @@ namespace RemoteControl.Models
                 Procedure = ProcedureType.ECOMILK;
             }
 
-            UsbSerial = usbSerial;
-            UsbSerial.Event((sender, args) =>
+            _usbSerial = usbSerial;
+            _usbSerial.Event((sender, args) =>
             {
                 SemaphorePorts.WaitOne();
                 if (args is PortEventArgs)
@@ -1317,7 +1317,7 @@ namespace RemoteControl.Models
                 }
                 else
                 {
-                    string[] ports = UsbSerial.GetPorts().ToArray();
+                    string[] ports = _usbSerial.GetPorts().ToArray();
                     usbPorts = ports;
                     //UsbPorts = UsbPorts;
                     PacketCounters = PacketCounters;
@@ -1401,7 +1401,7 @@ namespace RemoteControl.Models
             int length = 0;
             bool found = false;
             string data;
-            if ((length = await UsbSerial.Read(port, buffer)) > 0)
+            if ((length = await _usbSerial.Read(port, buffer)) > 0)
             {
                 rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
             }
@@ -1735,7 +1735,7 @@ namespace RemoteControl.Models
             }
 
             //if((!CowIdOk) || (port == "COM14"))
-            ret = await UsbSerial.Write(port, txPacket.packet);
+            ret = await _usbSerial.Write(port, txPacket.packet);
 
             return ret;
         }
