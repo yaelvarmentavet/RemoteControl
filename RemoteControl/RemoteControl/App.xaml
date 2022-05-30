@@ -2,6 +2,7 @@
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:binding="clr-namespace:RemoteControl.Models"
+             xmlns:behaviors="clr-namespace:RemoteControl.ViewModels"
              x:Class="RemoteControl.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -21,6 +22,7 @@
             <Color x:Key="ButtonBlue">DeepSkyBlue</Color>
             <Color x:Key="ButtonCoral">Coral</Color>
             <Color x:Key="ButtonLightSteelBlue">LightSteelBlue</Color>
+            <Color x:Key="BlackColor">Black</Color>
             <Style x:Key="FrameDarkGray" TargetType="Frame">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkGray}"/>
                 <Setter Property="CornerRadius" Value="10"/>
@@ -160,6 +162,22 @@
             <Style x:Key="ListViewCyan" TargetType="ListView">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundCyan}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
+            <Style x:Key="EntryStyle"  
+                TargetType="{x:Type Entry}">
+                <Setter Property="behaviors:LineColorBehavior.ApplyLineColor"  
+                    Value="True" />
+                <Setter Property="behaviors:LineColorBehavior.LineColor"  
+                    Value="False" />
+                    <!--Value="{StaticResource BlackColor}" />-->
+            </Style>
+            <Style x:Key="UwpEntryStyle"  
+                TargetType="{x:Type Entry}">
+                <Setter Property="behaviors:LineColorBehavior.ApplyLineColor"  
+                    Value="True" />
+                <Setter Property="behaviors:LineColorBehavior.LineColor"  
+                    Value="False" />
+                    <!--Value="{StaticResource BlackColor}" />-->
             </Style>
         </ResourceDictionary>
     </Application.Resources>

@@ -2,7 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:RemoteControl.Views"
-             xmlns:viewModels="clr-namespace:RemoteControl.ViewModels"
+             xmlns:viewModels="clr-namespace:RemoteControl.ViewModels" 
+             xmlns:behaviors="clr-namespace:RemoteControl.ViewModels" 
+             xmlns:behaviors1="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:local="clr-namespace:RemoteControl.Behaviors"
              x:Class="RemoteControl.Views.MainPage">
              <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
     <!--NavigationPage.HasNavigationBar="False">-->
@@ -14,12 +17,58 @@
     </NavigationPage.TitleView>
 
     <ContentPage.BindingContext>
-        <viewModels:MainViewModelAndroid/>
+        <viewModels:MainViewModelUWP/>
         <!--<binding:DataModel/>-->
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <views:AndroidView/>
+            <views:UWPView/>
+            <Entry Text="{Binding UserName.Value, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <behaviors1:EventToCommandBehavior  
+                        EventName="TextChanged"  
+                        Command="{Binding ValidateUserNameCommand}" />
+                </Entry.Behaviors>
+                <Entry.Style>
+                    <OnPlatform x:TypeArguments="Style">
+                        <On Platform="iOS, Android" Value="{StaticResource EntryStyle}" />
+                        <On Platform="UWP" Value="{StaticResource UwpEntryStyle}" />
+                    </OnPlatform>
+                </Entry.Style>
+                <Entry.Triggers>
+                    <DataTrigger   
+                        TargetType="Entry"  
+                        Binding="{Binding UserName.IsValid}"  
+                        Value="False">
+                        <Setter Property="behaviors:LineColorBehavior.LineColor"   
+                            Value="True" />
+                            <!--Value="{StaticResource ErrorColor}" />-->
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
+            <!--<Label Text="{Binding UserName.Errors, Converter={StaticResource FirstValidationErrorConverter}}"  
+                Style="{StaticResource ValidationErrorLabelStyle}" />-->
+            <Grid>
+            <Picker Grid.Row="0" Grid.Column="1" Title="Rate your beard"
+                ItemsSource="{Binding BeardRatings}"
+                SelectedItem="{Binding SelectedBeardRating}"
+                ItemDisplayBinding="{Binding Description}">
+                <Picker.Behaviors>
+                    <!--<local:SimplePickerValidator/>-->
+                    <local:PickerColorBehavior
+                        ValidValues="{x:Static viewModels:MainViewModelUWP.ValidRatings}"
+                        InvalidColor="Fuchsia"
+                        ValidColor="Blue"
+                        x:Name="pickerValidator"/>
+                </Picker.Behaviors>
+            </Picker>
+                <Label Grid.Row="0" Grid.Column="0" Text="Beard Diary"/>
+                <Entry Grid.Row="1" Grid.Column="0">
+                    <Entry.Behaviors>
+                        <local:EntryPressCommandBehavior Command="{Binding EntryPressCommand}"/>
+                    </Entry.Behaviors>
+                </Entry>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

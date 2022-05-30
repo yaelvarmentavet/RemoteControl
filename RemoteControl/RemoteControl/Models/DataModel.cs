@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -782,7 +783,8 @@ namespace RemoteControl.Models
     //    public bool asdf = false;
     //}
 
-    public class DataModel : INotifyPropertyChanged
+    //public class DataModel : INotifyPropertyChanged
+    public class DataModel : BindableObject//, INotifyPropertyChanged
     {
         //public class Reply
         //{
@@ -1137,13 +1139,15 @@ namespace RemoteControl.Models
         //public string[] Devices;
 
         //public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
-        public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = (ushort)i; return a; }).ToArray();
+        //public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = (ushort)i; return a; }).ToArray();
+        public ObservableCollection<Aptx> Aptxs = new ObservableCollection<Aptx>(
+            new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = (ushort)i; return a; }));
         private Semaphore SemaphoreAptxs = new Semaphore(1, 1);
         public Aptx Aptx = new Aptx();
 
         //private Dictionary<uint, string> Cows = new Dictionary<uint, string>();
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         private readonly IUsbSerial _usbSerial;
 
