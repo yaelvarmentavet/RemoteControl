@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
@@ -171,6 +172,7 @@ namespace RemoteControl.UWP
                 //    Thread.Sleep(100);
                 //    await port.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(new byte[] { b }));
                 //}
+                string data = Encoding.UTF8.GetString(buffer);
                 await port.OutputStream.WriteAsync(CryptographicBuffer.CreateFromByteArray(buffer));
                 return buffer.Length;
             }

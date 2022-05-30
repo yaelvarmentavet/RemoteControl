@@ -9,9 +9,9 @@ namespace RemoteControl.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class KinematicPage : ContentPage
     {
-        private bool _zoomUp = true;
-        private int _camRow;
-        private int _camCol;
+        private bool ZoomUp = true;
+        private int CamRow;
+        private int CamCol;
 
         public KinematicPage()
         {
@@ -146,24 +146,24 @@ namespace RemoteControl.Views
 
         public void Zoom(View cameraView)
         {
-            if (_zoomUp)
+            if (ZoomUp)
             {
-                _camRow = Grid.GetRow(cameraView);
-                _camCol = Grid.GetColumn(cameraView);
+                CamRow = Grid.GetRow(cameraView);
+                CamCol = Grid.GetColumn(cameraView);
 
                 GrKin.Children.Remove(cameraView);
                 GrKin.Children.Add(cameraView, 0, 0);
                 Grid.SetRowSpan(cameraView, 18);
                 Grid.SetColumnSpan(cameraView, 24);
-                _zoomUp = false;
+                ZoomUp = false;
             }
             else
             {
                 GrKin.Children.Remove(cameraView);
-                GrKin.Children.Add(cameraView, _camCol, _camRow);
+                GrKin.Children.Add(cameraView, CamCol, CamRow);
                 Grid.SetRowSpan(cameraView, 8);
                 Grid.SetColumnSpan(cameraView, 8);
-                _zoomUp = true;
+                ZoomUp = true;
             }
         }
     }

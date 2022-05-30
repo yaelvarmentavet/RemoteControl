@@ -28,6 +28,14 @@ namespace RemoteControl.UWP
                          if (args.HoldingState == Windows.UI.Input.HoldingState.Completed)
                              customButton.OnReleased();
                      };
+                    //thisButton.ClickMode = 
+                    //thisButton.Click += (sender, args) =>
+                    //{
+                    //    if (args.== Windows.UI.Input.HoldingState.Started)
+                    //        customButton.OnPressed();
+                    //    if (args.HoldingState == Windows.UI.Input.HoldingState.Completed)
+                    //        customButton.OnReleased();
+                    //};
                 }
             }
         }
