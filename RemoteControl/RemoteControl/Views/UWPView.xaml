@@ -8,7 +8,7 @@
               <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
    <ContentView.Content>
         <StackLayout>
-            <Grid>
+            <Grid Style="{StaticResource GridMargin}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -40,7 +40,8 @@
                         <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
                     </Image.GestureRecognizers>
                 </Image>-->
-                <Button Text="Insert Cow Id Manually" BackgroundColor="{StaticResource ButtonBlue}" Grid.Row="3" Grid.Column="1" Style="{StaticResource ButtonCornerRadius10}"
+                <!--new line-->
+                <Button Text="Insert Cow Id &#x0a;    Manually" BackgroundColor="{StaticResource ButtonBlue}" Grid.Row="3" Grid.Column="1" Style="{StaticResource ButtonCornerRadius10}"
                        Command="{Binding NextPageCowId}"/>
                 <!--<ImageButton Grid.Row="3" Grid.Column="2" Style="{StaticResource ImageButton}" 
                     Source="{resources:ImageResource RemoteControl.Icons.next.png}" Command="{Binding NextPageStatus}"/>-->

@@ -5,17 +5,48 @@ namespace RemoteControl.Views
 {
     public class CustomButton : ImageButton
     {
-        public event EventHandler Pressed;
-        public event EventHandler Released;
+        public delegate void DBindableEvent();
 
-        public virtual void OnPressed()
+        public static readonly BindableProperty CustomPressedProperty =
+                 BindableProperty.Create("CustomPressed", typeof(DBindableEvent),
+                                  typeof(CustomButton),
+                                  null);
+        public static readonly BindableProperty CustomReleasedProperty =
+                 BindableProperty.Create("CustomReleased", typeof(DBindableEvent),
+                                  typeof(CustomButton),
+                                  null);
+
+        public DBindableEvent CustomPressed
         {
-            Pressed?.Invoke(this, EventArgs.Empty);
+            get
+            {
+                return (DBindableEvent)GetValue(CustomPressedProperty);
+            }
+            set
+            {
+                SetValue(CustomPressedProperty, value);
+            }
+        }
+        public DBindableEvent CustomReleased
+        {
+            get
+            {
+                return (DBindableEvent)GetValue(CustomReleasedProperty);
+            }
+            set
+            {
+                SetValue(CustomReleasedProperty, value);
+            }
         }
 
-        public virtual void OnReleased()
+        public void OnCustomPressed()
         {
-            Released?.Invoke(this, EventArgs.Empty);
+            CustomPressed?.Invoke();
+        }
+
+        public void OnCustomReleased()
+        {
+            CustomReleased?.Invoke();
         }
     }
 }

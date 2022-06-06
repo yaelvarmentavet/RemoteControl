@@ -53,6 +53,7 @@
     <None Remove="Icons\down.png" />
     <None Remove="Icons\down1.png" />
     <None Remove="Icons\empty.png" />
+    <None Remove="Icons\EmptyBath.png" />
     <None Remove="Icons\fl.png" />
     <None Remove="Icons\fr.png" />
     <None Remove="Icons\height.png" />
@@ -80,6 +81,7 @@
     <None Remove="Icons\rccw1.png" />
     <None Remove="Icons\rcw.png" />
     <None Remove="Icons\rcw1.png" />
+    <None Remove="Icons\restoreBath.png" />
     <None Remove="Icons\right.png" />
     <None Remove="Icons\right1.png" />
     <None Remove="Icons\rl.png" />
@@ -122,6 +124,7 @@
     <EmbeddedResource Include="Icons\down.png" />
     <EmbeddedResource Include="Icons\down1.png" />
     <EmbeddedResource Include="Icons\empty.png" />
+    <EmbeddedResource Include="Icons\EmptyBath.png" />
     <EmbeddedResource Include="Icons\fl.png" />
     <EmbeddedResource Include="Icons\fr.png" />
     <EmbeddedResource Include="Icons\home.png" />
@@ -148,6 +151,7 @@
     <EmbeddedResource Include="Icons\rccw1.png" />
     <EmbeddedResource Include="Icons\rcw.png" />
     <EmbeddedResource Include="Icons\rcw1.png" />
+    <EmbeddedResource Include="Icons\restoreBath.png" />
     <EmbeddedResource Include="Icons\right.png" />
     <EmbeddedResource Include="Icons\right1.png" />
     <EmbeddedResource Include="Icons\rl.png" />

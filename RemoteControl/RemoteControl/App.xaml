@@ -21,6 +21,9 @@
             <Color x:Key="ButtonBlue">DeepSkyBlue</Color>
             <Color x:Key="ButtonCoral">Coral</Color>
             <Color x:Key="ButtonLightSteelBlue">LightSteelBlue</Color>
+            <Style x:Key="GridMargin" TargetType="Grid">
+                <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
             <Style x:Key="FrameDarkGray" TargetType="Frame">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkGray}"/>
                 <Setter Property="CornerRadius" Value="10"/>
@@ -83,7 +86,7 @@
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label8" TargetType="Label">
-                <Setter Property="FontSize" Value="{OnPlatform Android=8, UWP=16}"/>
+                <Setter Property="FontSize" Value="{OnPlatform Android=8, UWP=14}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>

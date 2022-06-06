@@ -11,7 +11,7 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <Grid>
+            <Grid  Style="{StaticResource GridMargin}">
                 <Grid.RowDefinitions>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>

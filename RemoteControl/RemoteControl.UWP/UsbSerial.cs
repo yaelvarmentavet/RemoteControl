@@ -104,8 +104,9 @@ namespace RemoteControl.UWP
             try
             {
                 //SemaphoreConnect.WaitOne();
+                //using (SerialDevice serialDevice = await SerialDevice.FromIdAsync(id))
                 SerialDevice serialDevice = await SerialDevice.FromIdAsync(id);
-
+                //{
                 if (serialDevice != null)
                 {
                     serialDevice.BaudRate = 115200;
@@ -116,6 +117,7 @@ namespace RemoteControl.UWP
                     serialDevice.WriteTimeout = TimeSpan.FromMilliseconds(1);
                     SerialPorts.Add(id, serialDevice);
                 }
+                //}
             }
             catch
             {
@@ -156,6 +158,7 @@ namespace RemoteControl.UWP
                 IBuffer response = await port.InputStream.ReadAsync(ibuffer, ibuffer.Capacity, InputStreamOptions.Partial);
                 CryptographicBuffer.CopyToByteArray(ibuffer, out byte[] buf);
                 buf?.CopyTo(buffer, 0);
+                string data = Encoding.UTF8.GetString(buffer);
                 return (int)ibuffer.Length;
             }
             return ERROR;

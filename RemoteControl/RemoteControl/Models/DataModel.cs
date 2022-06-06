@@ -1,787 +1,17 @@
 ﻿using RemoteControl.Views;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Windows.Media.Capture;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace RemoteControl.Models
 {
-    //public enum EError
-    //{
-    //    ERROR = -1,
-    //    OK = 0,
-    //}
-
-    //public enum ECount
-    //{
-    //    //public static readonly byte COUNTDOWN = 0x01;
-    //    //public static readonly byte COUNTUP = 0x02;
-    //    DOWN = 1,
-    //    UP = 2
-    //}
-
-    //public enum EPulses
-    //{
-    //    //public static readonly UInt16 PULSES100 = 100;
-    //    //public static readonly UInt16 PULSES400 = 400;
-    //    PULSES100 = 100,
-    //    PULSES400 = 400
-    //}
-
-    //public enum EProcess
-    //{
-    //    //public static readonly byte STATUS = 0x00;
-    //    //public static readonly byte START = 0x01;
-    //    //public static readonly byte STOP = 0x02;
-    //    STATUS = 0,
-    //    START = 1,
-    //    STOP = 2
-    //}
-
-    public class Packet
-    {
-        public byte Sop;
-        public byte Eop;
-        public delegate ushort DCheck(byte[] buffer);
-        public delegate bool DAssign(byte[] buffer);
-        public DCheck Dcheck;
-        public DAssign Dassign;
-
-        public unsafe uint ArrayToUshort(byte* buffer)
-        {
-            return (uint)(*buffer << 8) + (uint)(*(buffer + 1));
-        }
-
-        public byte[] UshortToArray(ushort buffer)
-        {
-            return new byte[] { (byte)((buffer & 0xFF00) >> 8), (byte)(buffer & 0x00FF) };
-        }
-
-        public unsafe uint ArrayToUint(byte* buffer)
-        {
-            return (uint)(*(buffer) << 24) +
-                (uint)(*(buffer + 1) << 16) +
-                (uint)(*(buffer + 2) << 8) +
-                (uint)(*(buffer + 3));
-        }
-
-        //public bool PacketGet(byte[] buffer, ref byte[] res, int size)
-        public bool PacketGet(byte[] buffer, ref byte[] res, ref bool sopeop)
-        {
-            //res = buffer.SkipWhile(b => b != Sop).ToArray();
-            //while (res.Length >= size)
-            //{
-            //    //buffer = buffer.SkipWhile(b => b != Sop).ToArray();
-            //    res = res.SkipWhile(b => b != Sop).ToArray();
-            //    if (res.Length >= size)
-            //    {
-            //        if (res[size - 1 - 2] == Eop)
-            //            return true;
-            //        res = res.Skip(1).ToArray();
-            //    }
-            //}
-            //return false;
-
-            //res = buffer.SkipWhile(b => b != Sop).TakeWhile(b => b != Eop).Take(3).ToArray();
-            int idx = -1;
-            int count = 0;
-            bool found = false;
-            ushort check = 0;
-            res = buffer.SkipWhile(b => b != Sop).Where((b, i) =>
-            {
-                if (b == Eop)
-                {
-                    idx = i;
-                    found = true;
-                }
-                if (idx > 0)
-                    count++;
-                if (count == 2)
-                    check = (ushort)(b << 8);
-                if (count == 3)
-                    check += b;
-                if (count > 3)
-                    return false;
-                return true;
-            }).ToArray();
-            sopeop = found;
-            if (sopeop)
-            {
-                if (check == Dcheck(res))
-                    return true;
-            }
-            return false;
-        }
-
-        public uint PacketParse(ref byte[] buffer, ref bool found)
-        {
-            byte[] res = new byte[0];
-            byte[] buf = buffer;
-            uint count = 0;
-            bool sopeop = true;
-
-            found = false;
-
-            while (sopeop)
-            {
-                if (PacketGet(buf, ref res, ref sopeop))
-                {
-                    if (Dassign(res))
-                        found = true;
-                    count++;
-                }
-                buf = buf.Skip(res.Length).ToArray();
-            }
-
-            if (count > 0)
-                buffer = buf;
-            
-            return count;
-        }
-    }
-
-    public class RfId : Packet, INotifyPropertyChanged
-    {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        unsafe struct ReadTypeCUIIResponse
-        {
-            [MarshalAs(UnmanagedType.U2)]
-            public byte Preamble;
-            public byte MsgType;
-            public byte Code;
-            public byte PLMSB;
-            public byte PLLSB;
-            public byte PCMSB;
-            public byte PCLSB;
-            public byte EPCMSB;
-            public byte EPC1;
-            public byte EPC2;
-            public byte EPC3;
-            public byte EPC4;
-            public byte EPC5;
-            public byte EPC6;
-            public byte EPC7;
-            public byte EPC8;
-            public byte EPC9;
-            public byte EPC10;
-            public byte EPCLSB;
-            public byte End_Mark;
-            public byte CRC_16MSB;
-            public byte CRC_16LSB;
-        }
-
-        private byte[] epc = new byte[12].Select(e => e = BERROR).ToArray();
-        public byte[] EPC
-        {
-            get => epc;
-            set
-            {
-                epc = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(EPC)));
-            }
-        }
-
-        private const uint UERROR = 0xFFFFFFFF;
-        private const byte BERROR = 0xFF;
-
-        public const byte PREEMBLE = 0xBB;
-        public const byte END_MARK = 0x7E;
-        private const byte MSG_TYPE_READ_TYPE_C_UII = 0x00;
-        private const byte MSG_TYPE_RESPONSE = 0x01;
-        private const byte CODE_READ_TYPE_C_UII = 0x22;
-        private const byte CODE_ERROR = 0xFF;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public RfId()
-        {
-            Sop = PREEMBLE;
-            Eop = END_MARK;
-
-            //epc = new byte[12].Select(e => e = BERROR).ToArray();
-
-            Dcheck = CrcCalc;
-            Dassign = PacketAssign;
-        }
-
-        public unsafe bool PacketAssign(byte[] buffer)
-        {
-            //unsafe //we'll now pin unmanaged struct over managed byte array
-            //{
-            if (buffer.Length == sizeof(ReadTypeCUIIResponse))
-            {
-                //if (PacketGet(buffer, ref res, sizeof(ReadTypeCUIIResponse)))
-                fixed (byte* pbuffer = buffer)
-                {
-                    ReadTypeCUIIResponse* readTypeCUIIResponse = (ReadTypeCUIIResponse*)pbuffer;
-                    if (readTypeCUIIResponse->MsgType == MSG_TYPE_RESPONSE)
-                    {
-                        if (readTypeCUIIResponse->Code == CODE_READ_TYPE_C_UII)
-                        {
-                            //if (ArrayToUshort((byte*)&readTypeCUIIResponse->CRC_16MSB) == CrcCalc(res.Skip(1).Take(sizeof(ReadTypeCUIIResponse) - 3).ToArray()))
-                            //{
-                            EPC[0] = readTypeCUIIResponse->EPCMSB;
-                            EPC[1] = readTypeCUIIResponse->EPC1;
-                            EPC[2] = readTypeCUIIResponse->EPC2;
-                            EPC[3] = readTypeCUIIResponse->EPC3;
-                            EPC[4] = readTypeCUIIResponse->EPC4;
-                            EPC[5] = readTypeCUIIResponse->EPC5;
-                            EPC[6] = readTypeCUIIResponse->EPC6;
-                            EPC[7] = readTypeCUIIResponse->EPC7;
-                            EPC[8] = readTypeCUIIResponse->EPC8;
-                            EPC[9] = readTypeCUIIResponse->EPC9;
-                            EPC[10] = readTypeCUIIResponse->EPC10;
-                            EPC[11] = readTypeCUIIResponse->EPCLSB;
-                            //buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
-                            return true;
-                            //}
-                        }
-                    }
-                }
-            }
-            //buffer = res.Skip(sizeof(ReadTypeCUIIResponse)).ToArray();
-            //}
-            return false;
-        }
-
-        public byte[] PacketBuild()
-        {
-            return new byte[] { PREEMBLE }.Concat(
-                CrcAppend(new byte[] { MSG_TYPE_READ_TYPE_C_UII, CODE_READ_TYPE_C_UII, 0, 0, END_MARK })).ToArray();
-        }
-
-        public ushort CrcCalc(byte[] buffer)
-        {
-            ushort crc = 0xFFFF;
-            buffer = buffer.Skip(1).Take(buffer.Length - 3).ToArray();
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                crc ^= (ushort)(buffer[i] << 8);
-                for (int j = 0; j < 8; j++)
-                {
-                    if ((crc & 0x8000) != 0)
-                        crc = (ushort)((crc << 1) ^ 0x1021);
-                    else
-                        crc <<= 1;
-                }
-            }
-            return crc;
-        }
-
-        private byte[] CrcAppend(byte[] buffer)
-        {
-            //ushort crc = 0;
-            //for (int i = 0; i < buffer.Length; i++)
-            //{
-            //    crc ^= (ushort)(buffer[i] << 8);
-            //    for (int j = 0; j < 8; j++)
-            //    {
-            //        if ((crc & 0x8000) != 0)
-            //            crc = (ushort)((crc << 1) ^ 0x1021);
-            //        else
-            //            crc <<= 1;
-            //    }
-            //}
-            return buffer.Concat(UshortToArray(CrcCalc(buffer))).ToArray();
-        }
-    }
-
-    public class Aptx : Packet, INotifyPropertyChanged
-    {
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        unsafe struct PacketStatus
-        {
-            [MarshalAs(UnmanagedType.U2)]
-            public byte STX;
-            public byte APT_SERIAL_NUMBER;
-            public byte AM_number_msb;
-            public byte AM_number_2;
-            public byte AM_number_3;
-            public byte AM_number_lsb;
-            public byte Max_number_msb;
-            public byte Max_number_2;
-            public byte Max_number_3;
-            public byte Max_number_lsb;
-            public byte Current_number_msb;
-            public byte Current_number_2;
-            public byte Current_number_3;
-            public byte Current_number_lsb;
-            public byte Apt_number_msb;
-            public byte Apt_number_2;
-            public byte Apt_number_3;
-            public byte Apt_number_lsb;
-            public byte Pressure_flag;
-            public byte Battery_flag;
-            public byte motor_is_running;
-            public byte Apt_pulses_flag;
-            public byte errors;
-            public byte motor_temperature;
-            public byte motor_voltage;
-            public byte speed_of_bullet;
-            public byte Cow_id_msb;
-            public byte Cow_id_lsb;
-            public byte Sum_pulses_msb;
-            public byte Sum_pulses_2;
-            public byte Sum_pulses_3;
-            public byte Sum_pulses_lsb;
-            public byte ETX;
-            public byte Check_sum_msb;
-            public byte Check_sum_lsb;
-        }
-
-        private uint id = UERROR;
-        public uint Id
-        {
-            get => id;
-            set
-            {
-                id = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Id)));
-            }
-        }
-
-        private uint snum = UERROR;
-        public uint SNum
-        {
-            get => snum;
-            set
-            {
-                snum = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SNum)));
-            }
-        }
-
-        //private uint current1 = UERROR;
-        //public uint Current1 { get => current1; set => current1 = value; }
-
-        private uint maxi = UERROR;
-        public uint Maxi
-        {
-            get => maxi;
-            set
-            {
-                maxi = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Maxi)));
-            }
-        }
-
-        private uint remaining = UERROR;
-        public uint Remaining
-        {
-            get => remaining;
-            set
-            {
-                remaining = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
-            }
-        }
-
-        private uint processPulses = UERROR;
-        public uint ProcessPulses
-        {
-            get => processPulses;
-            set
-            {
-                processPulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses)));
-            }
-        }
-
-        private uint[] aptxid = new uint[3] { UERROR, UERROR, UERROR };
-        public uint[] aptxId
-        {
-            get => aptxid;
-            set
-            {
-                aptxid = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptxId)));
-            }
-        }
-
-        public string AptxId
-        {
-            //get => aptxid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
-            get => aptxid[0].ToString();
-            set
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptxId)));
-            }
-        }
-
-        private uint pressure = UERROR;
-        public uint Pressure
-        {
-            get => pressure;
-            set
-            {
-                pressure = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pressure)));
-            }
-        }
-
-        private uint battery = UERROR;
-        public uint Battery
-        {
-            get => battery;
-            set
-            {
-                battery = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery)));
-            }
-        }
-
-        private uint motorisrunning = UERROR;
-        public uint MotorIsRunning
-        {
-            get => motorisrunning;
-            set
-            {
-                motorisrunning = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorIsRunning)));
-            }
-        }
-
-        private uint aptpulses = UERROR;
-        public uint AptPulses
-        {
-            get => aptpulses;
-            set
-            {
-                aptpulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulses)));
-            }
-        }
-
-        private uint motortemperature = UERROR;
-        public uint MotorTemperature
-        {
-            get => motortemperature;
-            set
-            {
-                motortemperature = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorTemperature)));
-            }
-        }
-
-        private uint motorvoltage = UERROR;
-        public uint MotorVoltage
-        {
-            get => motorvoltage;
-            set
-            {
-                motorvoltage = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorVoltage)));
-            }
-        }
-
-        private uint speedofbullet = UERROR;
-        public uint SpeedOfBullet
-        {
-            get => speedofbullet;
-            set
-            {
-                speedofbullet = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SpeedOfBullet)));
-            }
-        }
-
-        private uint cowid = UERROR;
-        public uint CowId
-        {
-            get => cowid;
-            set
-            {
-                cowid = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CowId)));
-            }
-        }
-
-        private uint currentPulses = UERROR;
-        public uint CurrentPulses
-        {
-            get => currentPulses;
-            set
-            {
-                currentPulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPulses)));
-            }
-        }
-
-        private bool pressureOK;
-        public bool PressureOK
-        {
-            get => Pressure == 1;
-            set
-            {
-                pressureOK = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PressureOK)));
-            }
-        }
-
-        private bool pressureLow;
-        public bool PressureLow
-        {
-            get => Pressure != 1;
-            set
-            {
-                pressureLow = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PressureLow)));
-            }
-        }
-
-        private bool remainingOK;
-        public bool RemainingOK
-        {
-            get => Remaining > Maxi * 0.1;
-            set
-            {
-                remainingOK = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RemainingOK)));
-            }
-        }
-
-        private bool remainingLow;
-        public bool RemainingLow
-        {
-            get => Remaining <= Maxi * 0.1;
-            set
-            {
-                remainingLow = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RemainingLow)));
-            }
-        }
-
-        private bool batteryOK;
-        public bool BatteryOK
-        {
-            get => Battery == 1;
-            set
-            {
-                batteryOK = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BatteryOK)));
-            }
-        }
-
-        private bool batteryLow;
-        public bool BatteryLow
-        {
-            get => Battery != 1;
-            set
-            {
-                batteryLow = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BatteryLow)));
-            }
-        }
-
-        private bool aptPulsesOK;
-        public bool AptPulsesOK
-        {
-            get => AptPulses == 1;
-            set
-            {
-                aptPulsesOK = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesOK)));
-            }
-        }
-
-        private bool aptPulsesLow;
-        public bool AptPulsesLow
-        {
-            get => AptPulses != 1;
-            set
-            {
-                aptPulsesLow = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesLow)));
-            }
-        }
-
-        public string StatusMessage
-        {
-            get
-            {
-                string sts = string.Empty;
-                if (Pressure == 1)
-                    sts += "Pressure OK\n";
-                else
-                    sts += "Pressure fault\n";
-                if (Battery == 1)
-                    sts += "Battery OK\n";
-                else
-                    sts += "Battery fault\n";
-                if (MotorTemperature == 1)
-                    sts += "Motor temperature OK\n";
-                else
-                    sts += "Motor temperature fault\n";
-                if (MotorVoltage == 1)
-                    sts += "Motor voltage OK\n";
-                else
-                    sts += "Motor voltage fault\n";
-                if (SpeedOfBullet == 1)
-                    sts += "Speed of bullet OK\n";
-                else
-                    sts += "Speed of bullet fault\n";
-                return sts;
-            }
-        }
-
-        public Color StatusColor
-        {
-            get => ((Pressure == 1) && (Battery == 1) && (MotorTemperature == 1) &&
-                    (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.Cyan : Color.Red;
-        }
-
-        public float Progress
-        {
-            get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
-            set
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
-            }
-        }
-        
-        private const uint UERROR = 0xFFFFFFFF;
-        private const int ERROR = -1;
-        private const int OK = 0;
-
-        public const byte STX = 0xBB;
-        public const byte ETX = 0x7E;
-        public const byte COUNTDOWN = 0x01;
-        public const byte COUNTUP = 0x02;
-        public const ushort PULSES100 = 100;
-        public const ushort PULSES400 = 400;
-        public const byte STATUS = 0x00;
-        public const byte START = 0x01;
-        public const byte STOP = 0x02;
-        public const byte RESERVED = 0x00;
-
-        private const int ECOMILK_PROCESS_PULSES = 100;
-
-        public static readonly byte[] APTXIDs = new byte[] { 0x00, 0x01, 0x02, 0x03 };
-
-        public uint PulsesPrev = UERROR;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public Aptx()
-        {
-            Sop = STX;
-            Eop = ETX;
-
-            Dcheck = ChecksumCalc;
-            Dassign = PacketAssign;
-        }
-
-        //public static uint PacketGetId(byte[] buffer)
-        //{
-        //    uint id = UERROR;
-        //    unsafe //we'll now pin unmanaged struct over managed byte array
-        //    {
-        //        fixed (byte* pbuffer = buffer)
-        //        {
-        //            PacketStatus* packetStatus = (PacketStatus*)pbuffer;
-        //            id = packetStatus->APT_SERIAL_NUMBER;
-        //        }
-        //    }
-        //    return id;
-        //}
-
-        public unsafe bool PacketAssign(byte[] buffer)
-        {
-            unsafe //we'll now pin unmanaged struct over managed byte array
-            {
-                if (buffer.Length == sizeof(PacketStatus))
-                {
-                    //if (PacketGet(buffer, ref res, sizeof(PacketStatus)))
-                    fixed (byte* pbuffer = buffer)
-                    {
-                        PacketStatus* packetStatus = (PacketStatus*)pbuffer;
-                        //if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(res.Take(sizeof(PacketStatus) - 2).ToArray()))
-                        //{
-                        Id = packetStatus->APT_SERIAL_NUMBER;
-                        SNum = ArrayToUint((byte*)&packetStatus->AM_number_msb);
-                        Maxi = ArrayToUint((byte*)&packetStatus->Max_number_msb);
-                        ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number_msb);
-                        aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
-                        Pressure = packetStatus->Pressure_flag;
-                        Battery = packetStatus->Battery_flag;
-                        MotorIsRunning = packetStatus->motor_is_running;
-                        AptPulses = packetStatus->Apt_pulses_flag;
-                        MotorTemperature = packetStatus->motor_temperature;
-                        MotorVoltage = packetStatus->motor_voltage;
-                        SpeedOfBullet = packetStatus->speed_of_bullet;
-                        CowId = ArrayToUshort((byte*)&packetStatus->Cow_id_msb);
-                        CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses_msb);
-                        //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
-                        return true;
-                        //}
-                    }
-                }
-                //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
-            }
-            return false;
-        }
-
-        public byte[] PacketBuild(byte count, ushort pulses, byte process)
-        {
-            byte[] bpulses = UshortToArray(pulses);
-            return ChecksumAppend(new byte[] { STX, (byte)Id,
-                    count, bpulses[0], bpulses[1], process,
-                    RESERVED, RESERVED, RESERVED,
-                    ETX}).ToArray();
-        }
-
-        public ushort ChecksumCalc(byte[] buffer)
-        {
-            buffer = buffer.Take(buffer.Length - 2).ToArray();
-            return (ushort)buffer.Sum(b => b);
-        }
-
-        private byte[] ChecksumAppend(byte[] buffer)
-        {
-            //UInt16 checkSum = 0;
-            //foreach (byte b in buffer)
-            //    checkSum += b;
-            //return buffer.Concat(UshortToArray((ushort)buffer.Sum(b => b))).ToArray();
-            return buffer.Concat(UshortToArray(ChecksumCalc(buffer.Concat(new byte[2]).ToArray()))).ToArray();
-        }
-
-        public byte[] PacketBuild(byte process, ushort pulses = PULSES100)
-        {
-            return PacketBuild(COUNTDOWN, pulses, process);
-        }
-
-        public byte[] PacketBuild()
-        {
-            return PacketBuild(RESERVED, RESERVED, STATUS);
-        }
-    }
-
-    public class PortEventArgs : EventArgs
-    {
-        public string Port;
-    }
-
-    //public class StreamEventArgs : EventArgs
-    //{
-    //    public Stream Stream;
-    //}
-
-    //public class Commands
-    //{
-    //    public bool asdf = false;
-    //}
-
     public class DataModel : INotifyPropertyChanged
     {
         //public class Reply
@@ -1039,10 +269,21 @@ namespace RemoteControl.Models
         private Dictionary<string, uint> packetCounters = new Dictionary<string, uint>();
         public string PacketCounters
         {
-            get =>
-                TxQue.Aggregate("", (r, v) => r += v.packetType + " ") + "\n" +
-                usbPorts.Aggregate("", (r, v) => r += v + " ") + "\n" +
-                packetCounters.Aggregate("", (r, v) => r += v.Key + DELIMITER + v.Value + "\n");
+            get
+            {
+                //List<TxPacket> txPackets = new List<TxPacket>();
+                //if (TxQue.Any())
+                //    txPackets = TxQue.Where(t => t.packetType != PacketType.EMPTY).OrderBy(t => t.packetType).ToList();
+                //return txPackets.Aggregate("", (r, v) => r += v.packetType + " ") + "\n" +
+                //return (TxQue.Where(t => t.packetType != PacketType.EMPTY) != null ? 
+                //    TxQue.Where(t => t.packetType != PacketType.EMPTY).OrderBy(t => t.packetType).ToList() :
+                //    TxQue).
+                return TxQue.Where(t => t?.packetType != PacketType.EMPTY).
+                    OrderBy(t => t?.packetType).
+                    Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
+                usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
+                packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n");
+            }
             //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
             {
@@ -1078,6 +319,9 @@ namespace RemoteControl.Models
             ECOMILK_AF_START,
             ECOMILK_AB_START,
             ECOMILK_TCW_START,
+            ECOMILK_TCW_STOP,
+            ECOMILK_TCCW_START,
+            ECOMILK_TCCW_STOP,
             ECOMILK_XF_START,
             ECOMILK_MZD_STOP,
             ECOMILK_MZD_START,
@@ -1204,16 +448,16 @@ namespace RemoteControl.Models
                 //Devices = new string[] { APTX1 };
                 //Devices = new string[] { REMOTE };
                 TxQue = new List<TxPacket>() {
-                    new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("ecomilkid\r")},
+                    new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("\recomilkid\r")},
 
-                    //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
+                    new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
 
-                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
-                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_1, packet = Aptxs[1].PacketBuild() },
-                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_2, packet = Aptxs[2].PacketBuild() },
-                    //new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
+                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
+                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_1, packet = Aptxs[1].PacketBuild() },
+                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_2, packet = Aptxs[2].PacketBuild() },
+                    new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
 
-                    //new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#\r")},
+                    new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#\r")},
                 };
                 Procedure = ProcedureType.ECOMILK;
             }
@@ -1228,7 +472,7 @@ namespace RemoteControl.Models
             //            return r;
             //        });
 
-        this.UsbSerial = usbSerial;
+            this.UsbSerial = usbSerial;
             this.UsbSerial.Event((sender, args) =>
             {
                 SemaphorePorts.WaitOne();
@@ -1246,6 +490,7 @@ namespace RemoteControl.Models
                         Aptx.aptxId[0] = UERROR;
                         Aptx.aptxId[1] = UERROR;
                         Aptx.aptxId[2] = UERROR;
+                        packetCounters = new Dictionary<string, uint>();
                     }
                 }
                 SemaphorePorts.Release();
@@ -1298,23 +543,9 @@ namespace RemoteControl.Models
                 //lbl.SetDynamicResource(Label.BackgroundColorProperty, "BackgroundCyan");
             });
 
-            //foreach (string dev in Devices)
-            //    new Thread((device) => { Rx(device); })
-            //    { Name = dev }.Start(dev);
+            //Task.Run(async () => { while (true) await TxDeque(); });
 
-            //new Thread(() => { Tx(); })
-            //{ Name = "Tx" }.Start();
-            
-            //WaitHandleTxQue.Set();
-
-            //new Thread(() => { TxDeque(); })
-            //{ Name = "Tx" }.Start();
-            //ThreadPool.QueueUserWorkItem( (o) => { TxDeque(); });
-            //new Thread(() => { TxDeque(); }){ Priority = ThreadPriority.BelowNormal }.Start();
-
-            //Task.Run(() => { TxDeque(); });
-
-            TxDequeTimer = new Timer((a) => { TxDeque(); }, null, 0, TXDEQUE_TIMEOUT);
+            TxDequeTimer = new Timer(async (a) => { await TxDeque(); }, null, 0, TXDEQUE_TIMEOUT);
         }
 
         private async Task TxRx(TxPacket txPacket, string device)
@@ -1340,12 +571,12 @@ namespace RemoteControl.Models
                         if (!Ports.Values.Contains(prt))
                         {
                             ret = await PortRequest(txPacket, prt);
-                        }
-                    }
-                    foreach (string prt in ports)
-                    {
-                        if (!Ports.Values.Contains(prt))
-                        {
+                    //    }
+                    //}
+                    //foreach (string prt in ports)
+                    //{
+                    //    if (!Ports.Values.Contains(prt))
+                    //    {
                             if (await PortReply(device, prt))
                             {
                                 SemaphorePorts.WaitOne();
@@ -1376,7 +607,14 @@ namespace RemoteControl.Models
                     TxPacket txPacket = TxQue.First();
                     string device = txPacket.device;
 
-                    //Task.Run(async () => { await TxRx(txPacket, device); }).Wait(TXRX_TIMEOUT);
+                    //bool res = false;
+                    //while (true)
+                    //{
+                    //    res = await Task.Run(async () => { return await TxRx(txPacket, device); });
+                    //    if (res)
+                    //        break;
+                    //}
+                    //TxRx(txPacket, device).Wait(1000);
                     Task.Run(async () => { await TxRx(txPacket, device); });
 
                     SemaphoreTxQue.WaitOne();
@@ -1903,7 +1141,7 @@ namespace RemoteControl.Models
             return new string(line.Substring(line.IndexOf(pattern) + pattern.Length).Take(1).ToArray());
         }
 
-        public async Task<int> ProcessStart()
+        public int ProcessStart()
         {
             Aptx[] aptxs = Aptxs;
             foreach (Aptx aptx in aptxs)
@@ -1911,24 +1149,24 @@ namespace RemoteControl.Models
                 //if (await Process(aptx, Aptx.START) == ERROR)
                 //return ERROR;
                 aptx.PulsesPrev = aptx.ProcessPulses;
-                await Process(aptx, Aptx.START);
+                Process(aptx, Aptx.START);
             }
             return OK;
         }
 
-        public async Task<int> ProcessStop()
+        public int ProcessStop()
         {
             Aptx[] aptxs = Aptxs;
             foreach (Aptx aptx in aptxs)
             { 
                 //if (await Process(aptx, Aptx.STOP) == ERROR)
                 //return ERROR;
-                await Process(aptx, Aptx.STOP);
+                Process(aptx, Aptx.STOP);
             }
             return OK;
         }
 
-        public async Task<int> ProcessPauseResume()
+        public int ProcessPauseResume()
         {
             PauseResume = PauseResume == Aptx.STOP ? PauseResume = Aptx.START : PauseResume = Aptx.STOP;
             Aptx[] aptxs = Aptxs;
@@ -1936,18 +1174,18 @@ namespace RemoteControl.Models
             {
                 //if (await Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev))) == ERROR)
                 //return ERROR;
-                await Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev)));
+                Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev)));
             }
             return OK;
         }
 
         //public async Task<int> Process(Aptx aptx, byte process, ushort pulses = Aptx.PULSES100)
-        public async Task Process(Aptx aptx, byte process, ushort pulses = Aptx.PULSES100)
+        public void Process(Aptx aptx, byte process, ushort pulses = Aptx.PULSES100)
         {
             //int response = await UsbSerial.Write(Ports.TryGetValue(REMOTE, out string val) ? val : string.Empty,
             //    aptx.PacketBuild(process, pulses));
 
-            await TxQueEnque(REMOTE, process == Aptx.START ? PacketType.REMOTE_START : PacketType.REMOTE_STOP, aptx.PacketBuild(process, pulses));
+            TxQueEnque(REMOTE, process == Aptx.START ? PacketType.REMOTE_START : PacketType.REMOTE_STOP, aptx.PacketBuild(process, pulses));
 
             //string LOGFILE_COWS = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LogFileCows.txt");
             //File.AppendAllText(LOGFILE_COWS, string.Format("Date: {0} Process: {1} Pulses: {2} Cow Id: {3} Current Pulses: {4}\n",
@@ -1957,105 +1195,126 @@ namespace RemoteControl.Models
             //return response;
         }
 
-        private async Task TxQueEnque(string device, PacketType packetType, byte[] packet)
+        private void TxQueEnque(string device, PacketType packetType, byte[] packet)
         {
-            SemaphoreTxQue.WaitOne();
-            TxQue.Add(new TxPacket()
+            if (Ports.ContainsKey(device))
             {
-                device = device,
-                packetType = packetType,
-                packet = packet,
-            });
-            SemaphoreTxQue.Release();
+                SemaphoreTxQue.WaitOne();
+                TxQue.Insert(0, new TxPacket()
+                {
+                    device = device,
+                    packetType = packetType,
+                    packet = packet,
+                });
+                SemaphoreTxQue.Release();
+            }
         }
 
-        public async Task RCWStart()
+        public void RCWStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_START, Encoding.UTF8.GetBytes("rcw 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_START, Encoding.UTF8.GetBytes("rcw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 1\r"));
         }
 
-        public async Task RCWStop()
+        public void RCWStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_STOP, Encoding.UTF8.GetBytes("rcw 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCW_STOP, Encoding.UTF8.GetBytes("rcw 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rcw 0\r"));
         }
 
-        public async Task RCCWStart()
+        public void RCCWStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_START, Encoding.UTF8.GetBytes("rccw 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_START, Encoding.UTF8.GetBytes("rccw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 1\r"));
         }
 
-        public async Task RCCWStop()
+        public void RCCWStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_STOP, Encoding.UTF8.GetBytes("rccw 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_RCCW_STOP, Encoding.UTF8.GetBytes("rccw 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("rccw 0\r"));
         }
 
 
 
 
-        public async Task AFStart()
+        public void AFStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_START, Encoding.UTF8.GetBytes("af 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_START, Encoding.UTF8.GetBytes("ayf 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 1\r"));
         }
 
-        public async Task AFStop()
+        public void AFStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_STOP, Encoding.UTF8.GetBytes("af 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AF_STOP, Encoding.UTF8.GetBytes("ayf 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("af 0\r"));
         }
 
-        public async Task ABStart()
+        public void ABStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_START, Encoding.UTF8.GetBytes("ab 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_START, Encoding.UTF8.GetBytes("ayb 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 1\r"));
         }
 
-        public async Task ABStop()
+        public void ABStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_STOP, Encoding.UTF8.GetBytes("ab 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_AB_STOP, Encoding.UTF8.GetBytes("ayb 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("ab 0\r"));
         }
 
 
 
 
-        public async Task MZUStart()
+        public void MZUStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_START, Encoding.UTF8.GetBytes("mzu 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_START, Encoding.UTF8.GetBytes("mzu 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 1\r"));
         }
 
-        public async Task MZUStop()
+        public void MZUStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_STOP, Encoding.UTF8.GetBytes("mzu 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZU_STOP, Encoding.UTF8.GetBytes("mzu 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzu 0\r"));
         }
 
-        public async Task MZDStart()
+        public void MZDStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_START, Encoding.UTF8.GetBytes("mzd 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_START, Encoding.UTF8.GetBytes("mzd 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 1\r"));
         }
 
-        public async Task MZDStop()
+        public void MZDStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_STOP, Encoding.UTF8.GetBytes("mzd 0\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_MZD_STOP, Encoding.UTF8.GetBytes("mzd 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("mzd 0\r"));
         }
 
-        public async Task TCWStart()
+        public void TCWStart()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_TCW_START, Encoding.UTF8.GetBytes("tcw 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_TCW_START, Encoding.UTF8.GetBytes("tcw 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
         }
 
-        public async Task XFStart()
+        public void TCWStop()
         {
-            await TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_TCW_STOP, Encoding.UTF8.GetBytes("tcw 0\r"));
+            //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
+        }
+
+        public void TCCWStart()
+        {
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_TCCW_START, Encoding.UTF8.GetBytes("tccw 1\r"));
+            //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
+        }
+
+        public void TCCWStop()
+        {
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_TCCW_STOP, Encoding.UTF8.GetBytes("tccw 0\r"));
+            //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("tcw 1\r"));
+        }
+
+        public void XFStart()
+        {
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1\r"));
         }
 
