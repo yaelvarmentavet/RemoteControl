@@ -52,8 +52,8 @@ namespace RemoteControl.Droid
         private const int ERROR = -1;
 
         private Dictionary<string, SerialDevice> SerialPorts = new Dictionary<string, SerialDevice>();
-        private EventHandler EventAdded;
-        private EventHandler EventRemoved;
+        //private EventHandler EventAdded;
+        //private EventHandler EventRemoved;
         //private bool Connected = false;
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
 
@@ -74,7 +74,7 @@ namespace RemoteControl.Droid
         {
             //if (SerialPorts.ContainsKey(id))
             //{
-            EventRemoved?.Invoke(this, new PortEventArgs() { Port = SerialPorts.Any() ? SerialPorts.First().Key : string.Empty });
+            //EventRemoved?.Invoke(this, new PortEventArgs() { Port = SerialPorts.Any() ? SerialPorts.First().Key : string.Empty });
             SerialPorts.Remove(SerialPorts.Any() ? SerialPorts.First().Key : string.Empty);
             //}
         }
@@ -313,10 +313,10 @@ namespace RemoteControl.Droid
             //return -1;
         }
 
-        public void Event(EventHandler eventRemoved, EventHandler eventAdded)
-        {
-            EventRemoved = eventRemoved;
-            EventAdded = eventAdded;
-        }
+        //public void Event(EventHandler eventRemoved, EventHandler eventAdded)
+        //{
+        //    EventRemoved = eventRemoved;
+        //    EventAdded = eventAdded;
+        //}
     }
 }

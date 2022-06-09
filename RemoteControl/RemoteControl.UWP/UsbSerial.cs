@@ -18,8 +18,8 @@ namespace RemoteControl.UWP
         private const int ERROR = -1;
 
         private Dictionary<string, SerialDevice> SerialPorts = new Dictionary<string, SerialDevice>();
-        private EventHandler EventAdded;
-        private EventHandler EventRemoved;
+        //private EventHandler EventAdded;
+        //private EventHandler EventRemoved;
         //private bool Connected = false;
         private Semaphore SemaphoreConnect = new Semaphore(1, 1);
         //private Mutex SemaphoreConnect = new Mutex();
@@ -123,7 +123,7 @@ namespace RemoteControl.UWP
             {
                 if (SerialPorts.ContainsKey(id))
                 {
-                    EventRemoved?.Invoke(this, new PortEventArgs() { Port = SerialPorts.TryGetValue(id, out SerialDevice device) ? device.PortName : string.Empty });
+                    //EventRemoved?.Invoke(this, new PortEventArgs() { Port = SerialPorts.TryGetValue(id, out SerialDevice device) ? device.PortName : string.Empty });
                     SerialPorts.Remove(id);
                 }
             }
@@ -182,10 +182,10 @@ namespace RemoteControl.UWP
             return ERROR;
         }
 
-        public void Event(EventHandler eventRemoved, EventHandler eventAdded)
-        {
-            EventRemoved = eventRemoved;
-            EventAdded = eventAdded;
-        }
+        //public void Event(EventHandler eventRemoved, EventHandler eventAdded)
+        //{
+        //    EventRemoved = eventRemoved;
+        //    EventAdded = eventAdded;
+        //}
     }
 }

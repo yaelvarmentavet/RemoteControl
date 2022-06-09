@@ -11,6 +11,6 @@ namespace RemoteControl
         IEnumerable<string> GetPorts();
         Task<int> Read(string portName, byte[] buffer);
         Task<int> Write(string portName, byte[] buffer);
-        void Event(EventHandler eventRemoved, EventHandler eventAdded);
+        //void Event(EventHandler eventRemoved, EventHandler eventAdded);
     }
 }

@@ -30,6 +30,10 @@
                 <ProgressBar x:Name="PrgPulses1" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
                 <ProgressBar x:Name="PrgPulses2" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
                 <ProgressBar x:Name="PrgPulses3" Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Progress="{Binding Progress}"/>
+                <Label x:Name="LblPulses0" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding ProcessPulses}"/>
+                <Label x:Name="LblPulses1" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding ProcessPulses}"/>
+                <Label x:Name="LblPulses2" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding ProcessPulses}"/>
+                <Label x:Name="LblPulses3" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding ProcessPulses}"/>
                 <!--<ImageButton Grid.Row="1" Grid.Column="2" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.stop.png}" Command="{Binding StopProcess}"/>-->
                 <!--<Image Grid.Row="1" Grid.Column="2" Style="{StaticResource IconWhite}" 

@@ -341,19 +341,30 @@ namespace RemoteControl.Models
                     sts += "Speed of bullet fault\n";
                 return sts;
             }
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusMessage)));
+            }
         }
 
         public Color StatusColor
         {
             get => ((Pressure == 1) && (Battery == 1) && (MotorTemperature == 1) &&
-                    (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.Cyan : Color.Red;
-        }
-
-        public float Progress
-        {
-            get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+                    (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.LightGreen : Color.Red;
             set
             {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusColor)));
+            }
+        }
+
+        //public float progress = UERROR;
+        public float Progress
+        {
+            //get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+            get => (float)ProcessPulses / (float)ECOMILK_PROCESS_PULSES;
+            set
+            {
+                //progress = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
             }
         }
@@ -371,13 +382,14 @@ namespace RemoteControl.Models
         public const byte STATUS = 0x00;
         public const byte START = 0x01;
         public const byte STOP = 0x02;
+        public const byte RESUME = 0x03;
         public const byte RESERVED = 0x00;
 
-        private const int ECOMILK_PROCESS_PULSES = 100;
+        public const int ECOMILK_PROCESS_PULSES = 100;
 
         public static readonly byte[] APTXIDs = new byte[] { 0x00, 0x01, 0x02, 0x03 };
 
-        public uint PulsesPrev = UERROR;
+        //public uint PulsesPrev = UERROR;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

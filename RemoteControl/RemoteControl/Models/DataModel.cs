@@ -297,6 +297,90 @@ namespace RemoteControl.Models
             get => version;
         }
 
+        //private uint processPulses0 = UERROR;
+        //public uint ProcessPulses0
+        //{
+        //    get => processPulses0;
+        //    set
+        //    {
+        //        processPulses0 = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses0)));
+        //    }
+        //}
+
+        //private uint processPulses1 = UERROR;
+        //public uint ProcessPulses1
+        //{
+        //    get => processPulses1;
+        //    set
+        //    {
+        //        processPulses1 = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses1)));
+        //    }
+        //}
+
+        //private uint processPulses2 = UERROR;
+        //public uint ProcessPulses2
+        //{
+        //    get => processPulses2;
+        //    set
+        //    {
+        //        processPulses2 = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses2)));
+        //    }
+        //}
+
+        //private uint processPulses3 = UERROR;
+        //public uint ProcessPulses3
+        //{
+        //    get => processPulses3;
+        //    set
+        //    {
+        //        processPulses3 = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses3)));
+        //    }
+        //}
+
+        //public float Progress0
+        //{
+        //    //get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    get => (float)ProcessPulses0 / (float)Aptx.ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress0)));
+        //    }
+        //}
+
+        //public float Progress1
+        //{
+        //    //get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    get => (float)ProcessPulses1 / (float)Aptx.ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress1)));
+        //    }
+        //}
+
+        //public float Progress2
+        //{
+        //    //get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    get => (float)ProcessPulses2 / (float)Aptx.ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress2)));
+        //    }
+        //}
+
+        //public float Progress3
+        //{
+        //    //get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
+        //    get => (float)ProcessPulses3 / (float)Aptx.ECOMILK_PROCESS_PULSES;
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress3)));
+        //    }
+        //}
+
         private enum PacketType
         {
             EMPTY,
@@ -386,8 +470,13 @@ namespace RemoteControl.Models
 
         //public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
         public Aptx[] Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = (ushort)i; return a; }).ToArray();
-        private Semaphore SemaphoreAptxs = new Semaphore(1, 1);
+        //private Semaphore SemaphoreAptxs = new Semaphore(1, 1);
         public Aptx Aptx = new Aptx();
+
+        //public Aptx Aptx0 = new Aptx();
+        //public Aptx Aptx1 = new Aptx();
+        //public Aptx Aptx2 = new Aptx();
+        //public Aptx Aptx3 = new Aptx();
 
         //private Dictionary<uint, string> Cows = new Dictionary<uint, string>();
 
@@ -397,7 +486,8 @@ namespace RemoteControl.Models
 
         //private ConcurrentDictionary<string, string> Ports = new ConcurrentDictionary<string, string>();
         private Dictionary<string, string> Ports = new Dictionary<string, string>();
-        private Semaphore SemaphorePorts = new Semaphore(1, 1);
+        //private Semaphore SemaphorePorts = new Semaphore(1, 1);
+        private object PortsLock = new object();
 
         //ManualResetEvent WaitHandleEcomilk = new ManualResetEvent(false);
         //ManualResetEvent WaitHandleRemote = new ManualResetEvent(false);
@@ -413,20 +503,24 @@ namespace RemoteControl.Models
         //private byte[] RxBufferEcomilk = new byte[0];// RXBUFFER_SIZE];
         //private byte[] RxBufferRemote = new byte[0];// RXBUFFER_SIZE];
         private Dictionary<string, byte[]> RxBuffers = new Dictionary<string, byte[]>();
-        private Semaphore SemaphoreRxBuffers = new Semaphore(1, 1);
+        //private Semaphore SemaphoreRxBuffers = new Semaphore(1, 1);
+        private object RxBuffersLock = new object();
+        private List<string> RxDump = new List<string>();
 
         private List<TxPacket> TxQue;
-        private Semaphore SemaphoreTxQue = new Semaphore(1, 1);
+        //private Semaphore SemaphoreTxQue = new Semaphore(1, 1);
+        private object TxQueLock = new object();
         //ManualResetEvent WaitHandleTxQue = new ManualResetEvent(false);
 
         private Timer TxDequeTimer;
-        
+
         private int Count = 0;
         private uint PulsesPrev = 0;
 
         private ProcedureType Procedure = ProcedureType.APTX2;
 
-        private Semaphore SemaphorePacketCounters = new Semaphore(1, 1);
+        //private Semaphore SemaphorePacketCounters = new Semaphore(1, 1);
+        private object PacketCountersLock = new object();
 
         public DataModel(IUsbSerial usbSerial)
         {
@@ -473,28 +567,28 @@ namespace RemoteControl.Models
             //        });
 
             this.UsbSerial = usbSerial;
-            this.UsbSerial.Event((sender, args) =>
-            {
-                SemaphorePorts.WaitOne();
-                if (args is PortEventArgs)
-                {
-                    if (Ports.ContainsValue((args as PortEventArgs).Port))
-                    {
-                        //string key = Ports.Select((kv) => kv.Value == (args as PortEventArgs).Port ? kv : new KeyValuePair<string, string>()).First().Key;
-                        string key = Ports.First((kv) => kv.Value == (args as PortEventArgs).Port).Key;
-                        Ports.Remove(key);
-                        CowId = UERROR;
-                        Aptx.SNum = UERROR;
-                        Aptx.CurrentPulses = UERROR;
-                        Aptx.Remaining = UERROR;
-                        Aptx.aptxId[0] = UERROR;
-                        Aptx.aptxId[1] = UERROR;
-                        Aptx.aptxId[2] = UERROR;
-                        packetCounters = new Dictionary<string, uint>();
-                    }
-                }
-                SemaphorePorts.Release();
-            }, null);
+            //this.UsbSerial.Event((sender, args) =>
+            //{
+            //    SemaphorePorts.WaitOne();
+            //    if (args is PortEventArgs)
+            //    {
+            //        if (Ports.ContainsValue((args as PortEventArgs).Port))
+            //        {
+            //            //string key = Ports.Select((kv) => kv.Value == (args as PortEventArgs).Port ? kv : new KeyValuePair<string, string>()).First().Key;
+            //            string key = Ports.First((kv) => kv.Value == (args as PortEventArgs).Port).Key;
+            //            Ports.Remove(key);
+            //            CowId = UERROR;
+            //            Aptx.SNum = UERROR;
+            //            Aptx.CurrentPulses = UERROR;
+            //            Aptx.Remaining = UERROR;
+            //            Aptx.aptxId[0] = UERROR;
+            //            Aptx.aptxId[1] = UERROR;
+            //            Aptx.aptxId[2] = UERROR;
+            //            packetCounters = new Dictionary<string, uint>();
+            //        }
+            //    }
+            //    SemaphorePorts.Release();
+            //}, null);
 
             NextPageCMT = new Command(async () =>
             {
@@ -571,20 +665,23 @@ namespace RemoteControl.Models
                         if (!Ports.Values.Contains(prt))
                         {
                             ret = await PortRequest(txPacket, prt);
-                    //    }
-                    //}
-                    //foreach (string prt in ports)
-                    //{
-                    //    if (!Ports.Values.Contains(prt))
-                    //    {
+                            //    }
+                            //}
+                            //foreach (string prt in ports)
+                            //{
+                            //    if (!Ports.Values.Contains(prt))
+                            //    {
                             if (await PortReply(device, prt))
                             {
-                                SemaphorePorts.WaitOne();
-                                if (!Ports.ContainsKey(device))
+                                //SemaphorePorts.WaitOne();
+                                lock (PortsLock)
                                 {
-                                    Ports.Add(device, prt);
+                                    if (!Ports.ContainsKey(device))
+                                    {
+                                        Ports.Add(device, prt);
+                                    }
                                 }
-                                SemaphorePorts.Release();
+                                //SemaphorePorts.Release();
                             }
                         }
                     }
@@ -593,6 +690,36 @@ namespace RemoteControl.Models
             }
             catch
             {
+                //SemaphorePorts.WaitOne();
+                lock (PortsLock)
+                {
+                    if (Ports.ContainsKey(device))
+                        Ports.Remove(device);
+                }
+                //SemaphorePorts.Release();
+                switch (device)
+                {
+                    case RFID:
+                        CowId = UERROR;
+                        break;
+                    case REMOTE:
+                        Aptx.SNum = UERROR;
+                        Aptx.CurrentPulses = UERROR;
+                        Aptx.Remaining = UERROR;
+                        Aptx.aptxId[0] = UERROR;
+                        Aptx.aptxId[1] = UERROR;
+                        Aptx.aptxId[2] = UERROR;
+                        break;
+                }
+                //SemaphorePacketCounters.WaitOne();
+                ////packetCounters = new Dictionary<string, uint>();
+                lock (PacketCountersLock)
+                {
+                    IEnumerable<KeyValuePair<string, uint>> kvs = packetCounters.Where(p => p.Key.Contains(device));
+                    foreach (KeyValuePair<string, uint> kv in kvs)
+                        packetCounters.Remove(kv.Key);
+                }
+                //SemaphorePacketCounters.Release();
             }
         }
 
@@ -616,12 +743,16 @@ namespace RemoteControl.Models
                     //}
                     //TxRx(txPacket, device).Wait(1000);
                     Task.Run(async () => { await TxRx(txPacket, device); });
+                    //Task.Run(async () => { TxRx(txPacket, device).Wait(100); });
 
-                    SemaphoreTxQue.WaitOne();
-                    TxQue.Remove(txPacket);
-                    if (txPacket.packetType != PacketType.EMPTY)
-                        TxQue.Add(txPacket);
-                    SemaphoreTxQue.Release();
+                    //SemaphoreTxQue.WaitOne();
+                    lock (TxQueLock)
+                    {
+                        TxQue.Remove(txPacket);
+                        if (txPacket.packetType != PacketType.EMPTY)
+                            TxQue.Add(txPacket);
+                    }
+                    //SemaphoreTxQue.Release();
 
                 }
                 //else
@@ -637,16 +768,16 @@ namespace RemoteControl.Models
         //private async Task<bool> PortReply(string device, string port, Dictionary<string, byte[]> RxBuffers)
         private async Task<bool> PortReply(string device, string port)
         {
-            SemaphoreRxBuffers.WaitOne();
-            if (!RxBuffers.TryGetValue(port, out byte[] rxBuffer))
-            {
-                //rxBuffers.Add(port, (rxBuffer = new byte[0]));
-                rxBuffer = new byte[0];
-                RxBuffers.Add(port, rxBuffer);
-            }
-            if(rxBuffer.Length > MAX_RXBUFFER_LENGTH)
-                rxBuffer = new byte[0];
-            SemaphoreRxBuffers.Release();
+            //SemaphoreRxBuffers.WaitOne();
+            //if (!RxBuffers.TryGetValue(port, out byte[] rxBuffer))
+            //{
+            //    //rxBuffers.Add(port, (rxBuffer = new byte[0]));
+            //    rxBuffer = new byte[0];
+            //    RxBuffers.Add(port, rxBuffer);
+            //}
+            //if (rxBuffer.Length > MAX_RXBUFFER_LENGTH)
+            //    rxBuffer = new byte[0];
+            //SemaphoreRxBuffers.Release();
 
             byte[] buffer = new byte[1024];
             //data += await UsbSerial.Read(port, buffer);
@@ -655,340 +786,214 @@ namespace RemoteControl.Models
             string data;
             if ((length = await UsbSerial.Read(port, buffer)) > 0)
             {
-                rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
-            }
-
-            if (rxBuffer.Length > 0)
-            {
-                switch (device)
+                //SemaphoreRxBuffers.WaitOne();
+                lock (RxBuffersLock)
                 {
-                    case ECOMILK:
-                        data = Encoding.UTF8.GetString(rxBuffer);
-                        found = data.Contains(device);
-                        if (found)
-                        {
-                            rxBuffer = new byte[0];
-                            //PacketCounter++;
-                            SemaphorePacketCounters.WaitOne();
-                            if (packetCounters.ContainsKey(port + DELIMITER + device))
-                                packetCounters[port + DELIMITER + device]++;
-                            else
-                                packetCounters.Add(port + DELIMITER + device, 0);
-                            PacketCounters = PacketCounters;
-                            SemaphorePacketCounters.Release();
-                        }
-                        break;
-                    case RFID:
-                        //byte[] RxBuffer = new byte[20];
-                        //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
-                        //RxBuffer[10] = RfId.PREEMBLE;
-                        //RxBuffer[10 + 19] = RfId.END_MARK;
-                        RfId rfId = new RfId();
-                        //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
-                        //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
-                        uint pcktCnt = rfId.PacketParse(ref rxBuffer, ref found);
-                        if (pcktCnt > 0)
-                        {
-                            SemaphorePacketCounters.WaitOne();
-                            if (packetCounters.ContainsKey(port + DELIMITER + device))
-                                packetCounters[port + DELIMITER + device] += pcktCnt;
-                            else
-                                packetCounters.Add(port + DELIMITER + device, 0);
-                            PacketCounters = PacketCounters;
-                            //PacketCounters.Contains(port + DELIMITER + device);
-                            SemaphorePacketCounters.Release();
-                        }
-                        if (found)
-                        {
-                            unsafe
-                            {
-                                fixed (byte* pepc = rfId.EPC)
-                                {
-                                    CowId = rfId.ArrayToUint(pepc);
-                                }
-                            }
-                        }
-                        break;
-                    case REMOTE:
-                        //byte[] RxBuffer = new byte[30];
-                        //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
-                        //RxBuffer[10] = Aptx.STX;
-                        //RxBuffer[11] = Aptx.APTXIDs[0];
-                        //RxBuffer[10 + 32] = Aptx.ETX;
-                        //Aptx aptx = new Aptx();
-                        //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
-                        //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
-                        pcktCnt = Aptx.PacketParse(ref rxBuffer, ref found);
-                        if (pcktCnt > 0)
-                        {
-                            SemaphorePacketCounters.WaitOne();
-                            if (packetCounters.ContainsKey(port + DELIMITER + device))
-                                packetCounters[port + DELIMITER + device] += pcktCnt;
-                            else
-                                packetCounters.Add(port + DELIMITER + device, 0);
-                            PacketCounters = PacketCounters;
-                            SemaphorePacketCounters.Release();
-                        }
-                        if (found)
-                        {
-                            //if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
-                            SemaphoreAptxs.WaitOne();
-                            if (Aptxs.Any(a => a.Id == Aptx.Id))
-                            {
-                                AptxUpdate();
-                                Aptxs[Aptx.Id] = Aptx;
-                            }
-                            SemaphoreAptxs.Release();
-                        }
-                        break;
-                    case APTX1:
-                        {
-                            //data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+                    if (!RxBuffers.TryGetValue(port, out byte[] rxBuffer))
+                    {
+                        //rxBuffers.Add(port, (rxBuffer = new byte[0]));
+                        rxBuffer = new byte[0];
+                        RxBuffers.Add(port, rxBuffer);
+                    }
+                    if (rxBuffer.Length > MAX_RXBUFFER_LENGTH)
+                        rxBuffer = new byte[0];
+                    //SemaphoreRxBuffers.Release();
+                    rxBuffer = rxBuffer.Concat(buffer.Take(length)).ToArray();
+                    //}
+
+                    //if (rxBuffer.Length > 0)
+                    //if (length > 0)
+                    //{
+                    switch (device)
+                    {
+                        case ECOMILK:
                             data = Encoding.UTF8.GetString(rxBuffer);
-                            if (!Ports.ContainsKey(device))
+                            found = data.Contains(device);
+                            if (found)
                             {
-                                found = data.Contains("1F-85-01");
-                                if (!found)
-                                    found = data.Contains("0x1f-0x85-0x01");
-                                if (found)
+                                rxBuffer = new byte[0];
+                                //PacketCounter++;
+                                //SemaphorePacketCounters.WaitOne();
+                                lock (PacketCountersLock)
                                 {
-                                    rxBuffer = new byte[0];
-                                    //PacketCounter++;
-                                    SemaphorePacketCounters.WaitOne();
-                                    if (packetCounters.ContainsKey(port + DELIMITER + device))
-                                        packetCounters[port + DELIMITER + device]++;
-                                    else
+                                    if (!packetCounters.ContainsKey(port + DELIMITER + device))
                                         packetCounters.Add(port + DELIMITER + device, 0);
+                                    packetCounters[port + DELIMITER + device]++;
                                     PacketCounters = PacketCounters;
-                                    SemaphorePacketCounters.Release();
                                 }
+                                //SemaphorePacketCounters.Release();
                             }
-                            else
+                            break;
+                        case RFID:
+                            //byte[] RxBuffer = new byte[20];
+                            //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+                            //RxBuffer[10] = RfId.PREEMBLE;
+                            //RxBuffer[10 + 19] = RfId.END_MARK;
+                            RfId rfId = new RfId();
+                            //RxBuffer[10 + 20] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[0];
+                            //RxBuffer[10 + 21] = rfId.UshortToArray(rfId.CrcCalc(RxBuffer.Skip(11).Take(19).ToArray()))[1];
+                            uint pcktCnt = rfId.PacketParse(ref rxBuffer, ref found);
+                            if (pcktCnt > 0)
                             {
-                                if (data.Contains("SNUM "))
+                                //SemaphorePacketCounters.WaitOne();
+                                lock (PacketCountersLock)
                                 {
-                                    uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
-                                    if (snum[0] == 123)
+                                    if (!packetCounters.ContainsKey(port + DELIMITER + device))
+                                        packetCounters.Add(port + DELIMITER + device, 0);
+                                    packetCounters[port + DELIMITER + device] += pcktCnt;
+                                    PacketCounters = PacketCounters;
+                                    //PacketCounters.Contains(port + DELIMITER + device);
+                                }
+                                //SemaphorePacketCounters.Release();
+                            }
+                            if (found)
+                            {
+                                unsafe
+                                {
+                                    fixed (byte* pepc = rfId.EPC)
                                     {
-                                        Aptx.SNum++;
-                                        rxBuffer = new byte[0];
-                                        //PacketCounter++;
-                                        SemaphorePacketCounters.WaitOne();
-                                        if (packetCounters.ContainsKey(port + DELIMITER + device))
-                                            packetCounters[port + DELIMITER + device]++;
-                                        else
-                                            packetCounters.Add(port + DELIMITER + device, 0);
-                                        PacketCounters = PacketCounters;
-                                        SemaphorePacketCounters.Release();
+                                        CowId = rfId.ArrayToUint(pepc);
                                     }
                                 }
-                                //if (Aptx.SNum == UERROR)
-                                //{
-                                //    if (data.Contains("SNUM "))
-                                //    {
-                                //        uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
-                                //        Aptx.SNum = snum[0];
-                                //        rxBuffer = new byte[0];
-                                //    }
-                                //}
-                                //if ((Aptx.aptxId[0] == UERROR) ||
-                                //    (Aptx.aptxId[1] == UERROR) ||
-                                //    (Aptx.aptxId[2] == UERROR))
-                                //{
-                                //    if (data.Contains("readid Device_id"))
-                                //    {
-                                //        uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
-                                //        Aptx.aptxId[0] = aptid[0];
-                                //        Aptx.aptxId[1] = aptid[1];
-                                //        Aptx.aptxId[2] = aptid[2];
-                                //        Aptx.AptxId = Aptx.AptxId;
-                                //        rxBuffer = new byte[0];
-                                //    }
-                                //}
-                                //if ((Aptx.CurrentPulses == UERROR) || (Aptx.Maxi == UERROR))
-                                //{
-                                //    if (data.Contains("MAXI "))
-                                //    {
-                                //        uint[] maxi = DataParse(data, "MAXI ", NumberStyles.Number);
-                                //        Aptx.Maxi = maxi[0];
-                                //        rxBuffer = new byte[0];
-                                //    }
-                                //    if (data.Contains("Found: ") || data.Contains("pulses written "))
-                                //    {
-                                //        uint[] current = DataParse(data, "Found: ", NumberStyles.Number);
-                                //        if (current[0] == 0)
-                                //            current = DataParse(data, "pulses written ", NumberStyles.Number);
-                                //        Aptx.CurrentPulses = current[0];
-                                //        rxBuffer = new byte[0];
-                                //    }
-                                //    if ((Aptx.Maxi != UERROR) && (Aptx.CurrentPulses != UERROR))
-                                //        Aptx.Remaining = Aptx.Maxi - Aptx.CurrentPulses;
-                                //}
                             }
-                        }
-                        break;
+                            break;
+                        case REMOTE:
+                            //byte[] RxBuffer = new byte[30];
+                            //RxBuffer = RxBuffer.Select((b, i) => b = (byte)i).ToArray();
+                            //RxBuffer[10] = Aptx.STX;
+                            //RxBuffer[11] = Aptx.APTXIDs[0];
+                            //RxBuffer[10 + 32] = Aptx.ETX;
+                            //Aptx aptx = new Aptx();
+                            //RxBuffer[10 + 33] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[0];
+                            //RxBuffer[10 + 34] = aptx.UshortToArray(aptx.ChecksumCalc(RxBuffer.Skip(10).Take(33).ToArray()))[1];
+                            RxDump.Add(string.Format("port {0} rxBuffer.Length {1} length {2}", port, rxBuffer.Length, length));
+                            //Aptx aptx = new Aptx();
+                            pcktCnt = Aptx.PacketParse(ref rxBuffer, ref found);
+                            if ((pcktCnt > 0) && (Aptxs.Any(a => a.Id == Aptx.Id)))
+                            {
+                                //SemaphorePacketCounters.WaitOne();
+                                lock (PacketCountersLock)
+                                {
+                                    if (!packetCounters.ContainsKey(port + DELIMITER + device + DELIMITER + Aptx.Id))
+                                        packetCounters.Add(port + DELIMITER + device + DELIMITER + Aptx.Id, 0);
+                                    packetCounters[port + DELIMITER + device + DELIMITER + Aptx.Id] += pcktCnt;
+                                    PacketCounters = PacketCounters;
+                                }
+                                //SemaphorePacketCounters.Release();
+                                if (found)
+                                {
+                                    //if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
+                                    //SemaphoreAptxs.WaitOne();
+                                    //if (Aptxs.Any(a => a.Id == Aptx.Id))
+                                    //{
+                                    //Aptxs[Aptx.Id] = Aptx;
+                                    //Aptxs[aptx.Id] = aptx;
+                                    //Aptx = aptx;
+                                    AptxUpdate();
+                                    //}
+                                    //SemaphoreAptxs.Release();
+                                }
+                            }
+                            break;
+                        case APTX1:
+                            {
+                                //data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+                                data = Encoding.UTF8.GetString(rxBuffer);
+                                if (!Ports.ContainsKey(device))
+                                {
+                                    found = data.Contains("1F-85-01");
+                                    if (!found)
+                                        found = data.Contains("0x1f-0x85-0x01");
+                                    if (found)
+                                    {
+                                        rxBuffer = new byte[0];
+                                        //PacketCounter++;
+                                        //SemaphorePacketCounters.WaitOne();
+                                        lock (PacketCountersLock)
+                                        {
+                                            if (!packetCounters.ContainsKey(port + DELIMITER + device))
+                                                packetCounters.Add(port + DELIMITER + device, 0);
+                                            packetCounters[port + DELIMITER + device]++;
+                                            PacketCounters = PacketCounters;
+                                        }
+                                        //SemaphorePacketCounters.Release();
+                                    }
+                                }
+                                else
+                                {
+                                    if (data.Contains("SNUM "))
+                                    {
+                                        uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
+                                        if (snum[0] == 123)
+                                        {
+                                            Aptx.SNum++;
+                                            rxBuffer = new byte[0];
+                                            //PacketCounter++;
+                                            //SemaphorePacketCounters.WaitOne();
+                                            lock (PacketCountersLock)
+                                            {
+                                                if (!packetCounters.ContainsKey(port + DELIMITER + device))
+                                                    packetCounters.Add(port + DELIMITER + device, 0);
+                                                packetCounters[port + DELIMITER + device]++;
+                                                PacketCounters = PacketCounters;
+                                            }
+                                            //SemaphorePacketCounters.Release();
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                    //}
+
+                    //SemaphoreRxBuffers.WaitOne();
+                    if (RxBuffers.ContainsKey(port))
+                    {
+                        RxBuffers.Remove(port);
+                    }
+                    RxBuffers.Add(port, rxBuffer);
+                    //SemaphoreRxBuffers.Release();
                 }
             }
-
-            SemaphoreRxBuffers.WaitOne();
-            if (RxBuffers.ContainsKey(port))
-            {
-                RxBuffers.Remove(port);
-            }
-            RxBuffers.Add(port, rxBuffer);
-            SemaphoreRxBuffers.Release();
             return found;
         }
 
-        //        data = Encoding.UTF8.GetString(rxBuffer);
-        //        if (!(found = data.Contains(ECOMILK)))
-        //        {
-        //            RfId rfId = new RfId();
-        //            if (found = rfId.PacketParse(ref rxBuffer))
-        //            {
-        //                unsafe
-        //                {
-        //                    fixed (byte* pepc = rfId.EPC)
-        //                    {
-        //                        CowId = rfId.ArrayToUint(pepc);
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (found = Aptx.PacketParse(ref rxBuffer))
-        //                {
-        //                    if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
-        //                    {
-        //                        AptxUpdate();
-        //                        Aptxs[Aptx.Id - 1] = Aptx;
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
-        //                    if (!Ports.ContainsKey(device))
-        //                    {
-        //                        found = data.Contains("1F-85-01");
-        //                        if (!found)
-        //                            found = data.Contains("0x1f-0x85-0x01");
-        //                        if (found)
-        //                            rxBuffer = new byte[0];
-        //                    }
-        //                    else
-        //                    {
-        //                        if (data.Contains("SNUM "))
-        //                        {
-        //                            uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
-        //                            if (snum[0] == 123)
-        //                            {
-        //                                Aptx.SNum++;
-        //                                rxBuffer = new byte[0];
-        //                            }
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //    SemaphoreRxBuffers.WaitOne();
-        //    if (RxBuffers.ContainsKey(port))
-        //    {
-        //        RxBuffers.Remove(port);
-        //        RxBuffers.Add(port, rxBuffer);
-        //    }
-        //    SemaphoreRxBuffers.Release();
-        //    return found;
-        //}
-        
         //private async Task<int> PortRequest(string device, string port, uint state)
         private async Task<int> PortRequest(TxPacket txPacket, string port)
         {
             int ret = ERROR;
-            switch (txPacket.device)
+            if (txPacket.packetType != PacketType.EMPTY)
             {
-                case ECOMILK:
-                    if (txPacket.packetType != PacketType.ECOMILK_ID)
-                        txPacket.packetType = PacketType.EMPTY;
-                    break;
-                case REMOTE:
-                    if (txPacket.packetType != PacketType.REMOTE_STATUS_0 &&
-                        txPacket.packetType != PacketType.REMOTE_STATUS_1 &&
-                        txPacket.packetType != PacketType.REMOTE_STATUS_2 &&
-                        txPacket.packetType != PacketType.REMOTE_STATUS_3)
-                        txPacket.packetType = PacketType.EMPTY;
-                    break;
-                case APTX1:
-                    //switch (txPacket.packetType)
-                    //{
-                    //    case PacketType.APTX1_ID:
-                    //        //if (Ports.ContainsKey(txPacket.device))
-                    //        //{
-                    //        txPacket.packetType = PacketType.APTX1_SNUM;
-                    //        txPacket.packet = Encoding.UTF8.GetBytes("testread,3#");
-                    //        //}
-                    //        break;
-                    //    case PacketType.APTX1_SNUM:
-                    //        //if (Aptx.SNum != UERROR)
-                    //        //{
-                    //        txPacket.packetType = PacketType.APTX1_CURRENT;
-                    //        txPacket.packet = Encoding.UTF8.GetBytes("find,3#");
-                    //        //}
-                    //        break;
-                    //    case PacketType.APTX1_CURRENT:
-                    //        //if (Aptx.CurrentPulses != UERROR)
-                    //        //{
-                    //        //txPacket.packetType = PacketType.APTX1_APTXID;
-                    //        //txPacket.packet = Encoding.UTF8.GetBytes("readid#");
-                    //        txPacket.packetType = PacketType.APTX1_APTXID;
-                    //        txPacket.packet = Encoding.UTF8.GetBytes("readid#");
-                    //        //}
-                    //        break;
-                    //    case PacketType.APTX1_APTXID:
-                    //        //if ((Aptx.aptxId[0] != UERROR) ||
-                    //        //    (Aptx.aptxId[1] != UERROR) ||
-                    //        //    (Aptx.aptxId[2] != UERROR))
-                    //        //{
-                    //        //    txPacket.packetType = PacketType.EMPTY;
-                    //        //}
-                    //        txPacket.packetType = PacketType.APTX1_ID;
-                    //        txPacket.packet = Encoding.UTF8.GetBytes("getid,3#");
-                    //        break;
-                    //}
-                    if (!Ports.ContainsKey(txPacket.device))
-                    {
-                        txPacket.packetType = PacketType.APTX1_ID;
-                        txPacket.packet = Encoding.UTF8.GetBytes("#getid,3#");
-                    }
-                    else
-                    {
-                        txPacket.packetType = PacketType.APTX1_SNUM;
-                        txPacket.packet = Encoding.UTF8.GetBytes("#testread,3#");
-                        //if (Aptx.SNum == UERROR)
-                        //{
-                        //    txPacket.packetType = PacketType.APTX1_SNUM;
-                        //    txPacket.packet = Encoding.UTF8.GetBytes("testread,3#");
-                        //}
-                        //else if (Aptx.CurrentPulses == UERROR)
-                        //{
-                        //    txPacket.packetType = PacketType.APTX1_CURRENT;
-                        //    txPacket.packet = Encoding.UTF8.GetBytes("find,3#");
-                        //}
-                        //else if ((Aptx.aptxId[0] == UERROR) ||
-                        //    (Aptx.aptxId[1] == UERROR) ||
-                        //    (Aptx.aptxId[2] == UERROR))
-                        //{
-                        //    txPacket.packetType = PacketType.APTX1_ID;
-                        //    txPacket.packet = Encoding.UTF8.GetBytes("getid,3#");
-                        //}
-                    }
-                    break;
+                switch (txPacket.device)
+                {
+                    case ECOMILK:
+                        if (txPacket.packetType != PacketType.ECOMILK_ID)
+                            txPacket.packetType = PacketType.EMPTY;
+                        break;
+                    case REMOTE:
+                        if (txPacket.packetType != PacketType.REMOTE_STATUS_0 &&
+                            txPacket.packetType != PacketType.REMOTE_STATUS_1 &&
+                            txPacket.packetType != PacketType.REMOTE_STATUS_2 &&
+                            txPacket.packetType != PacketType.REMOTE_STATUS_3)
+                            txPacket.packetType = PacketType.EMPTY;
+                        break;
+                    case APTX1:
+                        if (!Ports.ContainsKey(txPacket.device))
+                        {
+                            txPacket.packetType = PacketType.APTX1_ID;
+                            txPacket.packet = Encoding.UTF8.GetBytes("#getid,3#");
+                        }
+                        else
+                        {
+                            txPacket.packetType = PacketType.APTX1_SNUM;
+                            txPacket.packet = Encoding.UTF8.GetBytes("#testread,3#");
+                        }
+                        break;
+                }
+
+                //if((!CowIdOk) || (port == "COM14"))
+                ret = await UsbSerial.Write(port, txPacket.packet);
             }
-
-            //if((!CowIdOk) || (port == "COM14"))
-            ret = await UsbSerial.Write(port, txPacket.packet);
-
             return ret;
         }
 
@@ -1004,6 +1009,42 @@ namespace RemoteControl.Models
             Aptx.RemainingLow = Aptx.RemainingLow;
             Aptx.AptPulsesOK = Aptx.AptPulsesOK;
             Aptx.AptPulsesLow = Aptx.AptPulsesLow;
+
+            //Aptxs[Aptx.Id].ProcessPulses = Aptxs[Aptx.Id].ProcessPulses;
+            //Aptxs[Aptx.Id].Progress = Aptxs[Aptx.Id].Progress;
+            //Aptxs[Aptx.Id].StatusMessage = Aptxs[Aptx.Id].StatusMessage;
+            //Aptxs[Aptx.Id].StatusColor = Aptxs[Aptx.Id].StatusColor;
+
+            if (Aptxs.Any(a => a.Id == Aptx.Id))
+            {
+                Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
+                Aptxs[Aptx.Id].Progress = Aptx.Progress;
+                Aptxs[Aptx.Id].StatusMessage = Aptx.StatusMessage;
+                Aptxs[Aptx.Id].StatusColor = Aptx.StatusColor;
+            }
+            //Aptxs[0].ProcessPulses = Aptxs[0].ProcessPulses;
+            //Aptxs[0].Progress = Aptxs[0].Progress;
+            //Aptxs[0].StatusMessage = Aptxs[0].StatusMessage;
+            //Aptxs[0].StatusColor = Aptxs[0].StatusColor;
+            //Aptxs[1].ProcessPulses = Aptxs[1].ProcessPulses;
+            //Aptxs[1].Progress = Aptxs[1].Progress;
+            //Aptxs[1].StatusMessage = Aptxs[1].StatusMessage;
+            //Aptxs[1].StatusColor = Aptxs[1].StatusColor;
+            //Aptxs[2].ProcessPulses = Aptxs[2].ProcessPulses;
+            //Aptxs[2].Progress = Aptxs[2].Progress;
+            //Aptxs[2].StatusMessage = Aptxs[2].StatusMessage;
+            //Aptxs[2].StatusColor = Aptxs[2].StatusColor;
+            //Aptxs[3].ProcessPulses = Aptxs[3].ProcessPulses;
+            //Aptxs[3].Progress = Aptxs[3].Progress;
+            //Aptxs[3].StatusMessage = Aptxs[3].StatusMessage;
+            //Aptxs[3].StatusColor = Aptxs[3].StatusColor;
+            //if (Aptx.Id == 3)
+            //{
+            //    Aptxs[3].ProcessPulses = Aptx.ProcessPulses;
+            //    Aptxs[3].Progress = Aptx.Progress;
+            //    Aptxs[3].StatusMessage = Aptx.StatusMessage;
+            //    Aptxs[3].StatusColor = Aptx.StatusColor;
+            //}
 
             switch (Procedure)
             {
@@ -1124,7 +1165,7 @@ namespace RemoteControl.Models
                             return true;
                         else return false;
                     });
-                    if(lines.Any())
+                    if (lines.Any())
                     {
                         string line = lines.Last();
                         CmtFL = CmtParse(line, "CmtFL: ");
@@ -1144,11 +1185,10 @@ namespace RemoteControl.Models
         public int ProcessStart()
         {
             Aptx[] aptxs = Aptxs;
+            PauseResume = Aptx.START;
             foreach (Aptx aptx in aptxs)
             {
-                //if (await Process(aptx, Aptx.START) == ERROR)
-                //return ERROR;
-                aptx.PulsesPrev = aptx.ProcessPulses;
+                //aptx.PulsesPrev = aptx.ProcessPulses;
                 Process(aptx, Aptx.START);
             }
             return OK;
@@ -1157,8 +1197,9 @@ namespace RemoteControl.Models
         public int ProcessStop()
         {
             Aptx[] aptxs = Aptxs;
+            PauseResume = Aptx.STOP;
             foreach (Aptx aptx in aptxs)
-            { 
+            {
                 //if (await Process(aptx, Aptx.STOP) == ERROR)
                 //return ERROR;
                 Process(aptx, Aptx.STOP);
@@ -1168,13 +1209,13 @@ namespace RemoteControl.Models
 
         public int ProcessPauseResume()
         {
-            PauseResume = PauseResume == Aptx.STOP ? PauseResume = Aptx.START : PauseResume = Aptx.STOP;
             Aptx[] aptxs = Aptxs;
+            //PauseResume = PauseResume == Aptx.STOP ? PauseResume = Aptx.START : PauseResume = Aptx.STOP;
+            PauseResume = PauseResume == Aptx.STOP ? Aptx.RESUME : Aptx.STOP;
             foreach (Aptx aptx in aptxs)
             {
-                //if (await Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev))) == ERROR)
-                //return ERROR;
-                Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev)));
+                //Process(aptx, PauseResume, (ushort)(Aptx.PULSES100 - (aptx.ProcessPulses - aptx.PulsesPrev)));
+                Process(aptx, PauseResume, (ushort)Aptx.PULSES100);
             }
             return OK;
         }
@@ -1199,14 +1240,17 @@ namespace RemoteControl.Models
         {
             if (Ports.ContainsKey(device))
             {
-                SemaphoreTxQue.WaitOne();
-                TxQue.Insert(0, new TxPacket()
+                //SemaphoreTxQue.WaitOne();
+                lock (TxQueLock)
                 {
-                    device = device,
-                    packetType = packetType,
-                    packet = packet,
-                });
-                SemaphoreTxQue.Release();
+                    TxQue.Insert(0, new TxPacket()
+                    {
+                        device = device,
+                        packetType = packetType,
+                        packet = packet,
+                    });
+                }
+                //SemaphoreTxQue.Release();
             }
         }
 
@@ -1555,6 +1599,166 @@ namespace RemoteControl.Models
         //    TxQue.Remove(txPacket);
         //    TxQue.Add(txPacket);
         //    SemaphoreTxQ.Release();
+        //}
+
+        //if (Aptx.SNum == UERROR)
+        //{
+        //    if (data.Contains("SNUM "))
+        //    {
+        //        uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
+        //        Aptx.SNum = snum[0];
+        //        rxBuffer = new byte[0];
+        //    }
+        //}
+        //if ((Aptx.aptxId[0] == UERROR) ||
+        //    (Aptx.aptxId[1] == UERROR) ||
+        //    (Aptx.aptxId[2] == UERROR))
+        //{
+        //    if (data.Contains("readid Device_id"))
+        //    {
+        //        uint[] aptid = DataParse(data, "readid Device_id", NumberStyles.HexNumber);
+        //        Aptx.aptxId[0] = aptid[0];
+        //        Aptx.aptxId[1] = aptid[1];
+        //        Aptx.aptxId[2] = aptid[2];
+        //        Aptx.AptxId = Aptx.AptxId;
+        //        rxBuffer = new byte[0];
+        //    }
+        //}
+        //if ((Aptx.CurrentPulses == UERROR) || (Aptx.Maxi == UERROR))
+        //{
+        //    if (data.Contains("MAXI "))
+        //    {
+        //        uint[] maxi = DataParse(data, "MAXI ", NumberStyles.Number);
+        //        Aptx.Maxi = maxi[0];
+        //        rxBuffer = new byte[0];
+        //    }
+        //    if (data.Contains("Found: ") || data.Contains("pulses written "))
+        //    {
+        //        uint[] current = DataParse(data, "Found: ", NumberStyles.Number);
+        //        if (current[0] == 0)
+        //            current = DataParse(data, "pulses written ", NumberStyles.Number);
+        //        Aptx.CurrentPulses = current[0];
+        //        rxBuffer = new byte[0];
+        //    }
+        //    if ((Aptx.Maxi != UERROR) && (Aptx.CurrentPulses != UERROR))
+        //        Aptx.Remaining = Aptx.Maxi - Aptx.CurrentPulses;
+        //}
+
+        //        data = Encoding.UTF8.GetString(rxBuffer);
+        //        if (!(found = data.Contains(ECOMILK)))
+        //        {
+        //            RfId rfId = new RfId();
+        //            if (found = rfId.PacketParse(ref rxBuffer))
+        //            {
+        //                unsafe
+        //                {
+        //                    fixed (byte* pepc = rfId.EPC)
+        //                    {
+        //                        CowId = rfId.ArrayToUint(pepc);
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (found = Aptx.PacketParse(ref rxBuffer))
+        //                {
+        //                    if (Aptx.APTXIDs.Contains((byte)Aptx.Id))
+        //                    {
+        //                        AptxUpdate();
+        //                        Aptxs[Aptx.Id - 1] = Aptx;
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    data = Encoding.UTF8.GetString(rxBuffer.Where(b => b != 0x00).ToArray());
+        //                    if (!Ports.ContainsKey(device))
+        //                    {
+        //                        found = data.Contains("1F-85-01");
+        //                        if (!found)
+        //                            found = data.Contains("0x1f-0x85-0x01");
+        //                        if (found)
+        //                            rxBuffer = new byte[0];
+        //                    }
+        //                    else
+        //                    {
+        //                        if (data.Contains("SNUM "))
+        //                        {
+        //                            uint[] snum = DataParse(data, "SNUM ", NumberStyles.Number);
+        //                            if (snum[0] == 123)
+        //                            {
+        //                                Aptx.SNum++;
+        //                                rxBuffer = new byte[0];
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+
+        //    SemaphoreRxBuffers.WaitOne();
+        //    if (RxBuffers.ContainsKey(port))
+        //    {
+        //        RxBuffers.Remove(port);
+        //        RxBuffers.Add(port, rxBuffer);
+        //    }
+        //    SemaphoreRxBuffers.Release();
+        //    return found;
+        //}
+
+        //switch (txPacket.packetType)
+        //{
+        //    case PacketType.APTX1_ID:
+        //        //if (Ports.ContainsKey(txPacket.device))
+        //        //{
+        //        txPacket.packetType = PacketType.APTX1_SNUM;
+        //        txPacket.packet = Encoding.UTF8.GetBytes("testread,3#");
+        //        //}
+        //        break;
+        //    case PacketType.APTX1_SNUM:
+        //        //if (Aptx.SNum != UERROR)
+        //        //{
+        //        txPacket.packetType = PacketType.APTX1_CURRENT;
+        //        txPacket.packet = Encoding.UTF8.GetBytes("find,3#");
+        //        //}
+        //        break;
+        //    case PacketType.APTX1_CURRENT:
+        //        //if (Aptx.CurrentPulses != UERROR)
+        //        //{
+        //        //txPacket.packetType = PacketType.APTX1_APTXID;
+        //        //txPacket.packet = Encoding.UTF8.GetBytes("readid#");
+        //        txPacket.packetType = PacketType.APTX1_APTXID;
+        //        txPacket.packet = Encoding.UTF8.GetBytes("readid#");
+        //        //}
+        //        break;
+        //    case PacketType.APTX1_APTXID:
+        //        //if ((Aptx.aptxId[0] != UERROR) ||
+        //        //    (Aptx.aptxId[1] != UERROR) ||
+        //        //    (Aptx.aptxId[2] != UERROR))
+        //        //{
+        //        //    txPacket.packetType = PacketType.EMPTY;
+        //        //}
+        //        txPacket.packetType = PacketType.APTX1_ID;
+        //        txPacket.packet = Encoding.UTF8.GetBytes("getid,3#");
+        //        break;
+        //}
+
+        //if (Aptx.SNum == UERROR)
+        //{
+        //    txPacket.packetType = PacketType.APTX1_SNUM;
+        //    txPacket.packet = Encoding.UTF8.GetBytes("testread,3#");
+        //}
+        //else if (Aptx.CurrentPulses == UERROR)
+        //{
+        //    txPacket.packetType = PacketType.APTX1_CURRENT;
+        //    txPacket.packet = Encoding.UTF8.GetBytes("find,3#");
+        //}
+        //else if ((Aptx.aptxId[0] == UERROR) ||
+        //    (Aptx.aptxId[1] == UERROR) ||
+        //    (Aptx.aptxId[2] == UERROR))
+        //{
+        //    txPacket.packetType = PacketType.APTX1_ID;
+        //    txPacket.packet = Encoding.UTF8.GetBytes("getid,3#");
         //}
     }
 }
