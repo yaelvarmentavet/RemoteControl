@@ -282,7 +282,8 @@ namespace RemoteControl.Models
                     OrderBy(t => t?.packetType).
                     Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
                 usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
-                packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n");
+                packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") + "\n" +
+                Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
             }
             //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
@@ -1017,6 +1018,31 @@ namespace RemoteControl.Models
 
             if (Aptxs.Any(a => a.Id == Aptx.Id))
             {
+                Aptxs[Aptx.Id].SNum = Aptx.SNum;
+                Aptxs[Aptx.Id].Maxi = Aptx.Maxi;
+                Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
+                Aptxs[Aptx.Id].aptxId[0] = Aptx.aptxId[0];
+                Aptxs[Aptx.Id].Pressure = Aptx.Pressure;
+                Aptxs[Aptx.Id].Battery = Aptx.Battery;
+                Aptxs[Aptx.Id].MotorIsRunning = Aptx.MotorIsRunning;
+                Aptxs[Aptx.Id].AptPulses = Aptx.AptPulses;
+                Aptxs[Aptx.Id].MotorTemperature = Aptx.MotorTemperature;
+                Aptxs[Aptx.Id].MotorVoltage = Aptx.MotorVoltage;
+                Aptxs[Aptx.Id].SpeedOfBullet = Aptx.SpeedOfBullet;
+                Aptxs[Aptx.Id].CowId = Aptx.CowId;
+                Aptxs[Aptx.Id].CurrentPulses = Aptx.CurrentPulses;
+
+                Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
+                Aptxs[Aptx.Id].Remaining = Aptx.Maxi - Aptx.CurrentPulses;
+                Aptxs[Aptx.Id].PressureOK = Aptx.PressureOK;
+                Aptxs[Aptx.Id].PressureLow = Aptx.PressureLow;
+                Aptxs[Aptx.Id].BatteryOK = Aptx.BatteryOK;
+                Aptxs[Aptx.Id].BatteryLow = Aptx.BatteryLow;
+                Aptxs[Aptx.Id].RemainingOK = Aptx.RemainingOK;
+                Aptxs[Aptx.Id].RemainingLow = Aptx.RemainingLow;
+                Aptxs[Aptx.Id].AptPulsesOK = Aptx.AptPulsesOK;
+                Aptxs[Aptx.Id].AptPulsesLow = Aptx.AptPulsesLow;
+
                 Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
                 Aptxs[Aptx.Id].Progress = Aptx.Progress;
                 Aptxs[Aptx.Id].StatusMessage = Aptx.StatusMessage;
