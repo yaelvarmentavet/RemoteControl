@@ -29,10 +29,10 @@
                 <StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" HorizontalOptions="End">
                     <views:PortsView/>
                 </StackLayout>
-                <Label x:Name="LblAptx1" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
-                <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
-                <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
-                <Label x:Name="LblAptx4" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"  Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx1" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx2" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx3" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
+                <Label x:Name="LblAptx4" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="1" Text="{Binding StatusMessage}" BackgroundColor="{Binding StatusColor}" Style="{StaticResource LabelAliceBlue}"/>
                 <!--<ImageButton Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.begin.png}" Command="{Binding NextPageKinematic}"/>-->
                 <!--<Image Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource IconWhite}" 

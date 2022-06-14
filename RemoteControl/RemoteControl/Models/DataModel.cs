@@ -281,9 +281,10 @@ namespace RemoteControl.Models
                 return TxQue.Where(t => t?.packetType != PacketType.EMPTY).
                     OrderBy(t => t?.packetType).
                     Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
-                usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
-                packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") + "\n" +
-                Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
+                    usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
+                    packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") +
+                    //Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
+                    Aptxs.Aggregate("", (r, a) => r += "APTX" + a.Id + DELIMITER + "PRESSURE" + DELIMITER + a.Pressure + "\n");
             }
             //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
@@ -1212,11 +1213,46 @@ namespace RemoteControl.Models
         {
             Aptx[] aptxs = Aptxs;
             PauseResume = Aptx.START;
-            foreach (Aptx aptx in aptxs)
+            Task.Run(() =>
             {
-                //aptx.PulsesPrev = aptx.ProcessPulses;
-                Process(aptx, Aptx.START);
-            }
+                foreach (Aptx aptx in aptxs)
+                {
+                    //aptx.PulsesPrev = aptx.ProcessPulses;
+                    Process(aptx, Aptx.START);
+                    //Thread.Sleep(22000);
+                }
+
+                //foreach (Aptx aptx in aptxs)
+                //{
+                //    //aptx.PulsesPrev = aptx.ProcessPulses;
+                //    if (aptx.Id == 1 || aptx.Id == 2)
+                //        Process(aptx, Aptx.START);
+                //    //aptx.ProcessPulses = 0;
+                //}
+
+                ////while (Aptxs[1].ProcessPulses < 96 || Aptxs[1].ProcessPulses >= 100)
+                //while (aptxs.Where(a => a.Id == 1 || a.Id == 2).Where(a => a.ProcessPulses < 96 || a.ProcessPulses == 100).Any())
+                //    Thread.Sleep(1000);
+
+                //Thread.Sleep(22000);
+
+                //foreach (Aptx aptx in aptxs)
+                //{
+                //    //aptx.PulsesPrev = aptx.ProcessPulses;
+                //    if (aptx.Id == 0 || aptx.Id == 3)
+                //        Process(aptx, Aptx.START);
+                //}
+
+                //for (int i = 0; i < 30; i++)
+                //{
+                //    Thread.Sleep(1000);
+                //    foreach (Aptx aptx in aptxs)
+                //    {
+                //        if (aptx.Id == 0 || aptx.Id == 3)
+                //            Process(aptx, Aptx.RESUME, (ushort)Aptx.PULSES100);
+                //    }
+                //}
+            });
             return OK;
         }
 

@@ -318,27 +318,28 @@ namespace RemoteControl.Models
         {
             get
             {
-                string sts = string.Empty;
-                if (Pressure == 1)
-                    sts += "Pressure OK\n";
-                else
-                    sts += "Pressure fault\n";
+                string sts = "Quarter " + (Id + 1) + "\n" + "\n";
+                //if (Pressure == 1)
+                //    sts += "Pressure OK\n";
+                //else
+                //    sts += "Pressure fault\n";
+                sts += "Pressure " + Pressure + "\n";
                 if (Battery == 1)
                     sts += "Battery OK\n";
                 else
                     sts += "Battery fault\n";
-                if (MotorTemperature == 1)
-                    sts += "Motor temperature OK\n";
-                else
-                    sts += "Motor temperature fault\n";
-                if (MotorVoltage == 1)
-                    sts += "Motor voltage OK\n";
-                else
-                    sts += "Motor voltage fault\n";
-                if (SpeedOfBullet == 1)
-                    sts += "Speed of bullet OK\n";
-                else
-                    sts += "Speed of bullet fault\n";
+                //if (MotorTemperature == 1)
+                //    sts += "Motor temperature OK\n";
+                //else
+                //    sts += "Motor temperature fault\n";
+                //if (MotorVoltage == 1)
+                //    sts += "Motor voltage OK\n";
+                //else
+                //    sts += "Motor voltage fault\n";
+                //if (SpeedOfBullet == 1)
+                //    sts += "Speed of bullet OK\n";
+                //else
+                //    sts += "Speed of bullet fault\n";
                 return sts;
             }
             set
@@ -349,8 +350,9 @@ namespace RemoteControl.Models
 
         public Color StatusColor
         {
-            get => ((Pressure == 1) && (Battery == 1) && (MotorTemperature == 1) &&
-                    (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.LightGreen : Color.Red;
+            //get => ((Pressure == 1) && (Battery == 1) && (MotorTemperature == 1) &&
+            //        (MotorVoltage == 1) && (SpeedOfBullet == 1)) ? Color.LightGreen : Color.Red;
+            get => ((Battery == 1) && (Pressure >= 24)) ? Color.LimeGreen : Color.Red;
             set
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(StatusColor)));
@@ -368,7 +370,7 @@ namespace RemoteControl.Models
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Progress)));
             }
         }
-        
+
         private const uint UERROR = 0xFFFFFFFF;
         private const int ERROR = -1;
         private const int OK = 0;
