@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RemoteControl.Views.PortsView">
   <ContentView.Content>
-      <StackLayout>
+        <StackLayout>
             <!--<Label x:Name="LblPort" Style="{StaticResource Label8}" Text="{Binding UsbPorts}" LineBreakMode="CharacterWrap"/>-->
+            <Button x:Name="BtnDebug" Text="Debug On/Off" Command="{Binding PortsDebugSwitch}" Style="{StaticResource ButtonCornerRadius10}" HorizontalOptions="End"/>
             <Label x:Name="LblPacketCounter" Style="{StaticResource Label8}" Text="{Binding PacketCounters}" LineBreakMode="CharacterWrap"/>
         </StackLayout>
   </ContentView.Content>

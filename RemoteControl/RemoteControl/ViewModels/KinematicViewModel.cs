@@ -89,9 +89,14 @@ namespace RemoteControl.ViewModels
                 App.DataModel.TCCWStop();
             });
 
-            XFStart = new Command(() =>
+            XFStart = new DBindableEvent(() =>
             {
                 App.DataModel.XFStart();
+            });
+
+            XFStop = new DBindableEvent(() =>
+            {
+                App.DataModel.XFStop();
             });
 
             StartProcessPage = new Command(async () =>
@@ -136,7 +141,8 @@ namespace RemoteControl.ViewModels
         public DBindableEvent TCWStop { get; }
         public DBindableEvent TCCWStart { get; }
         public DBindableEvent TCCWStop { get; }
-        public Command XFStart { get; }
+        public DBindableEvent XFStart { get; }
+        public DBindableEvent XFStop { get; }
 
         public Command StartProcessPage { get; }
         public Command Zoom { get; }

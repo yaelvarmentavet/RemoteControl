@@ -48,6 +48,7 @@
     <None Remove="Icons\bat_l.png" />
     <None Remove="Icons\begin.png" />
     <None Remove="Icons\break.png" />
+    <None Remove="Icons\BreaksOnOff.PNG" />
     <None Remove="Icons\cancel.png" />
     <None Remove="Icons\cow.png" />
     <None Remove="Icons\down.png" />
@@ -119,6 +120,7 @@
     <EmbeddedResource Include="Icons\bat_l.png" />
     <EmbeddedResource Include="Icons\begin.png" />
     <EmbeddedResource Include="Icons\break.png" />
+    <EmbeddedResource Include="Icons\BreaksOnOff.PNG" />
     <EmbeddedResource Include="Icons\cancel.png" />
     <EmbeddedResource Include="Icons\cow.png" />
     <EmbeddedResource Include="Icons\down.png" />

@@ -278,18 +278,45 @@ namespace RemoteControl.Models
                 //return (TxQue.Where(t => t.packetType != PacketType.EMPTY) != null ? 
                 //    TxQue.Where(t => t.packetType != PacketType.EMPTY).OrderBy(t => t.packetType).ToList() :
                 //    TxQue).
-                return TxQue.Where(t => t?.packetType != PacketType.EMPTY).
-                    OrderBy(t => t?.packetType).
-                    Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
-                    usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
-                    packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") +
-                    //Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
-                    Aptxs.Aggregate("", (r, a) => r += "APTX" + a.Id + DELIMITER + "PRESSURE" + DELIMITER + a.Pressure + "\n");
+                if (PortsDebug)
+                {
+                    return TxQue.Where(t => t?.packetType != PacketType.EMPTY).
+                        OrderBy(t => t?.packetType).
+                        Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
+                        usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
+                        packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") +
+                        //Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
+                        Aptxs.Aggregate("", (r, a) => r += "APTX" + a.Id + DELIMITER + "PRESSURE" + DELIMITER + a.Pressure + "\n");
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
             //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PacketCounters)));
+            }
+        }
+
+        private bool portsDebug = true;
+        public bool PortsDebug
+        {
+            get => portsDebug;
+            set
+            {
+                portsDebug = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PortsDebug)));
+            }
+        }
+
+        public Color PortsDebugColor
+        {
+            get => portsDebug ? Color.Green : Color.Default;
+            set
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PortsDebugColor)));
             }
         }
 
@@ -409,6 +436,7 @@ namespace RemoteControl.Models
             ECOMILK_TCCW_START,
             ECOMILK_TCCW_STOP,
             ECOMILK_XF_START,
+            ECOMILK_XF_STOP,
             ECOMILK_MZD_STOP,
             ECOMILK_MZD_START,
             ECOMILK_MZU_STOP,
@@ -467,6 +495,8 @@ namespace RemoteControl.Models
 
         public Command NextPageCMT { get; }
         public Command NextPageTreatment { get; }
+
+        public Command PortsDebugSwitch { get; }
 
         //public string[] Devices;
 
@@ -591,6 +621,11 @@ namespace RemoteControl.Models
             //    }
             //    SemaphorePorts.Release();
             //}, null);
+
+            PortsDebugSwitch = new Command(() =>
+            {
+                PortsDebug = PortsDebug ? PortsDebug = false : PortsDebug = true;
+            });
 
             NextPageCMT = new Command(async () =>
             {
@@ -1421,6 +1456,12 @@ namespace RemoteControl.Models
         public void XFStart()
         {
             TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_START, Encoding.UTF8.GetBytes("xf 1\r"));
+            //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1\r"));
+        }
+
+        public void XFStop()
+        {
+            TxQueEnque(ECOMILK, PacketType.ECOMILK_XF_STOP, Encoding.UTF8.GetBytes("xf 0\r"));
             //await UsbSerial.Write(Ports.TryGetValue(ECOMILK, out var val) ? val : string.Empty, Encoding.UTF8.GetBytes("xf 1\r"));
         }
 

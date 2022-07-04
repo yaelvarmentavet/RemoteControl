@@ -155,9 +155,16 @@
                                        Style="{StaticResource ImageButtonArrow}"
                                        Source="{resources:ImageResource RemoteControl.Icons.restoreBath.png}"
                                        CustomPressed="{Binding TCCWStart}" CustomReleased="{Binding TCCWStop}"/>
-                <Button Text="Brakes On/Off" BackgroundColor="{StaticResource ButtonCoral}" 
+                <!--<Button Text="Brakes On/Off" BackgroundColor="{StaticResource ButtonCoral}" 
                         Scale="1.1" Grid.Row="14" Grid.Column="18" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource ButtonCornerRadius10}" 
-                        Command="{Binding XFStart}"/>
+                        Command="{Binding XFStart}"/>-->
+                <Label Text="Brakes On/Off" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="Center"
+                        Scale="1.3" Grid.Row="14" Grid.Column="18" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource Label20}"/>
+                <renderer:CustomButton Style="{StaticResource ImageButtonArrow}"
+                                       BackgroundColor="{StaticResource ButtonCoral}"
+                                       Opacity="0.5"
+                                       Scale="1.1" Grid.Row="14" Grid.Column="18" Grid.RowSpan="2" Grid.ColumnSpan="6"  
+                                       CustomPressed="{Binding XFStart}" CustomReleased="{Binding XFStop}"/>
                 <Button Text="Start Process" BackgroundColor="{StaticResource ButtonGreen}" 
                         Scale="1.1"  Grid.Row="12" Grid.Column="18" Grid.RowSpan="2" Grid.ColumnSpan="6" Style="{StaticResource ButtonCornerRadius10}" 
                         Command="{Binding StartProcessPage}"/>
