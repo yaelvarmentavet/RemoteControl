@@ -7,9 +7,9 @@ using Xamarin.Forms;
 
 namespace RemoteControl.ViewModels
 {
-    class MainViewModelUWP : INotifyPropertyChanged
+    class MainViewModelEcomilk : INotifyPropertyChanged
     {
-        public MainViewModelUWP()
+        public MainViewModelEcomilk()
         {
             NextPageCowId = new Command(async () =>
             {

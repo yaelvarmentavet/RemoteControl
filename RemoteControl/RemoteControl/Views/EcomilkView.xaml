@@ -4,7 +4,7 @@
              xmlns:resources="clr-namespace:RemoteControl.Resources"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:views="clr-namespace:RemoteControl.Views"
-             x:Class="RemoteControl.Views.UWPView">
+             x:Class="RemoteControl.Views.EcomilkView">
               <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
    <ContentView.Content>
         <StackLayout>

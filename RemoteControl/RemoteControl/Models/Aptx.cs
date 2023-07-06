@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using Xamarin.Forms;
 
 namespace RemoteControl.Models
@@ -92,6 +93,8 @@ namespace RemoteControl.Models
             {
                 remaining = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Remaining)));
+                RemainingOK = remaining > Maxi * 0.1 ? true : false;
+                RemainingLow = remaining <= Maxi * 0.1 ? true : false;
             }
         }
 
@@ -107,25 +110,36 @@ namespace RemoteControl.Models
         }
 
         private uint[] aptxid = new uint[3] { UERROR, UERROR, UERROR };
-        public uint[] aptxId
+        public uint AptxId
         {
-            get => aptxid;
+            get => aptxid[0];
             set
             {
-                aptxid = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptxId)));
-            }
-        }
-
-        public string AptxId
-        {
-            //get => aptxid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
-            get => aptxid[0].ToString();
-            set
-            {
+                aptxid[0] = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptxId)));
             }
         }
+        //public uint[] aptxId
+        //{
+        //    get => aptxid;
+        //    set
+        //    {
+        //        aptxid = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(aptxId)));
+        //    }
+        //}
+        //
+        ////public string AptxId
+        //public uint AptxId
+        //{
+        //    //get => aptxid.Aggregate("", (r, m) => r += m.ToString("X") + "   ");
+        //    //get => aptxid[0].ToString();
+        //    get => aptxid[0];
+        //    set
+        //    {
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptxId)));
+        //    }
+        //}
 
         private uint pressure = UERROR;
         public uint Pressure
@@ -135,6 +149,8 @@ namespace RemoteControl.Models
             {
                 pressure = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pressure)));
+                PressureOK = pressure == 1 ? true : false;
+                PressureLow = pressure == 0 ? true : false;
             }
         }
 
@@ -146,6 +162,8 @@ namespace RemoteControl.Models
             {
                 battery = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery)));
+                BatteryOK = battery == 1 ? true : false;
+                BatteryLow = battery == 0 ? true : false;
             }
         }
 
@@ -168,6 +186,8 @@ namespace RemoteControl.Models
             {
                 aptpulses = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulses)));
+                AptPulsesOK = aptpulses == 1 ? true : false;
+                AptPulsesLow = aptpulses == 0 ? true : false;
             }
         }
 
@@ -226,10 +246,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool pressureOK;
+        private bool pressureOK = false;
         public bool PressureOK
         {
-            get => Pressure == 1;
+            //get => Pressure == 1;
+            get => pressureOK;
             set
             {
                 pressureOK = value;
@@ -237,10 +258,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool pressureLow;
+        private bool pressureLow = true;
         public bool PressureLow
         {
-            get => Pressure != 1;
+            //get => Pressure != 1;
+            get => pressureLow;
             set
             {
                 pressureLow = value;
@@ -248,10 +270,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool remainingOK;
+        private bool remainingOK = false;
         public bool RemainingOK
         {
-            get => Remaining > Maxi * 0.1;
+            //get => Remaining > Maxi * 0.1;
+            get => remainingOK;
             set
             {
                 remainingOK = value;
@@ -259,10 +282,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool remainingLow;
+        private bool remainingLow = true;
         public bool RemainingLow
         {
-            get => Remaining <= Maxi * 0.1;
+            //get => Remaining <= Maxi * 0.1;
+            get => remainingLow;
             set
             {
                 remainingLow = value;
@@ -270,10 +294,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool batteryOK;
+        private bool batteryOK = false;
         public bool BatteryOK
         {
-            get => Battery == 1;
+            //get => Battery == 1;
+            get => batteryOK;
             set
             {
                 batteryOK = value;
@@ -281,10 +306,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool batteryLow;
+        private bool batteryLow = true;
         public bool BatteryLow
         {
-            get => Battery != 1;
+            //get => Battery != 1;
+            get => batteryLow;
             set
             {
                 batteryLow = value;
@@ -292,10 +318,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool aptPulsesOK;
+        private bool aptPulsesOK = false;
         public bool AptPulsesOK
         {
-            get => AptPulses == 1;
+            //get => AptPulses == 1;
+            get => aptPulsesOK;
             set
             {
                 aptPulsesOK = value;
@@ -303,10 +330,11 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool aptPulsesLow;
+        private bool aptPulsesLow = true;
         public bool AptPulsesLow
         {
-            get => AptPulses != 1;
+            //get => AptPulses != 1;
+            get => aptPulsesLow;
             set
             {
                 aptPulsesLow = value;
@@ -434,7 +462,8 @@ namespace RemoteControl.Models
                         SNum = ArrayToUint((byte*)&packetStatus->AM_number_msb);
                         Maxi = ArrayToUint((byte*)&packetStatus->Max_number_msb);
                         ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number_msb);
-                        aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
+                        //aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
+                        AptxId = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
                         Pressure = packetStatus->Pressure_flag;
                         Battery = packetStatus->Battery_flag;
                         MotorIsRunning = packetStatus->motor_is_running;
@@ -444,6 +473,7 @@ namespace RemoteControl.Models
                         SpeedOfBullet = packetStatus->speed_of_bullet;
                         CowId = ArrayToUshort((byte*)&packetStatus->Cow_id_msb);
                         CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses_msb);
+                        Remaining = Maxi - CurrentPulses;
                         //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
                         return true;
                         //}

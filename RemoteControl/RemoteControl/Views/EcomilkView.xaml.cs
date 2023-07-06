@@ -11,9 +11,9 @@ using Xamarin.Forms.Xaml;
 namespace RemoteControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class UWPView : ContentView
+    public partial class EcomilkView : ContentView
     {
-        public UWPView()
+        public EcomilkView()
         {
             InitializeComponent();
             EdCowId.BindingContext = App.DataModel;

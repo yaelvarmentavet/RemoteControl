@@ -3,8 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             xmlns:views="clr-namespace:RemoteControl.Views"
+             xmlns:views="clr-namespace:RemoteControl.Views" xmlns:models="clr-namespace:RemoteControl.Models"
              x:Class="RemoteControl.Views.TopView">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <models:NullableIntConverter x:Key="NullableIntConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
     <ContentView.Content>
         <StackLayout>
             <Grid>
@@ -20,28 +25,28 @@
                 </Grid.ColumnDefinitions>
                 <!--<ImageButton Grid.Column="0" Scale="1" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.home.png}" Command="{Binding NextPageHome}"/>-->
-                <Image Grid.Column="0" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.home40.png}"
+                <!--<Image Grid.Column="0" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.home40.png}"
                     xct:TouchEffect.PressedOpacity="0.5">
-                    <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"-->
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageHome}"/>
                     </Image.GestureRecognizers>
-                </Image>
-                <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelAlignedEnd}" Text="Pulses:"/>
-                <Label x:Name="LblRem" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding Remaining}" LineBreakMode="CharacterWrap"/>
+                </Image>-->
+                    <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"-->
+                <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelAlignedEnd}" Text="AM REMAINING :"/>
+                <Label x:Name="LblRem" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding Remaining, Converter={StaticResource NullableIntConverter}}" LineBreakMode="CharacterWrap"/>
                 <!--<Label x:Name="LblPort" Grid.Column="3" Grid.ColumnSpan="1" Style="{StaticResource Label8}" Text="{Binding UsbPorts}"  LineBreakMode="CharacterWrap"/>-->
                 <StackLayout Grid.Column="3" Grid.ColumnSpan="1">
                     <views:PortsView/>
                 </StackLayout>
                 <!--<ImageButton Grid.Column="4" Scale="1" Style="{StaticResource ImageButton}" 
                              Source="{resources:ImageResource RemoteControl.Icons.settings.png}" Command="{Binding NextPageSettings}"/>-->
-                <Image Grid.Column="4" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.settings40.png}"
+                <!--<Image Grid.Column="4" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.settings40.png}"
                     xct:TouchEffect.PressedOpacity="0.5">
-                    <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}">-->
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NextPageSettings}"/>
                     </Image.GestureRecognizers>
-                </Image>
+                </Image>-->
+                    <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}">-->
             </Grid>
         </StackLayout>
     </ContentView.Content>

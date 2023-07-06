@@ -198,14 +198,17 @@
     <Compile Update="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\AndroidView.xaml.cs">
-      <DependentUpon>AndroidView.xaml</DependentUpon>
+    <Compile Update="Views\Aptx2View.xaml.cs">
+      <DependentUpon>Aptx2View.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\StartProcessPage.xaml.cs">
       <DependentUpon>StartProcessPage.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ProcessPage.xaml.cs">
       <DependentUpon>ProcessPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\EcomilkView.xaml.cs">
+      <DependentUpon>EcomilkView.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -234,10 +237,10 @@
     <EmbeddedResource Update="Views\TopView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\AndroidView.xaml">
+    <EmbeddedResource Update="Views\Aptx2View.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\UWPView.xaml">
+    <EmbeddedResource Update="Views\EcomilkView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

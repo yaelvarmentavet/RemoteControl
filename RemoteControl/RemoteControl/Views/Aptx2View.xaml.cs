@@ -10,22 +10,24 @@ using Xamarin.Forms.Xaml;
 namespace RemoteControl.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class AndroidView : ContentView
+    public partial class Aptx2View : ContentView
     {
-        public AndroidView()
+        public Aptx2View()
         {
             InitializeComponent();
 
-            LblCowId.BindingContext = App.DataModel;
+            //LblCowId.BindingContext = App.DataModel;
 
             LblAmId.BindingContext = App.DataModel.Aptx;
             //LblAmId.SetBinding(Label.TextProperty, "SNum");
+            LblAmIdRemaining.BindingContext = App.DataModel.Aptx;
 
             LblAptxId.BindingContext = App.DataModel.Aptx;
             //LblAptxId.SetBinding(Label.TextProperty, "AptxId");
+            LblAptxIdRemaining.BindingContext = App.DataModel.Aptx;
 
-            BtnCmt.BindingContext = App.DataModel;
-            BtnProcedure.BindingContext = App.DataModel;
+            //BtnCmt.BindingContext = App.DataModel;
+            //BtnProcedure.BindingContext = App.DataModel;
         }
     }
 }

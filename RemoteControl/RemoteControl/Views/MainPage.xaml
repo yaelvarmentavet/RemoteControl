@@ -14,12 +14,14 @@
     </NavigationPage.TitleView>
 
     <ContentPage.BindingContext>
-        <viewModels:MainViewModelUWP/>
+        <!--<viewModels:MainViewModelUWP/>-->
+        <viewModels:MainViewModelAptx2/>
         <!--<binding:DataModel/>-->
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <views:UWPView/>
+            <!--<views:UWPView/>-->
+            <views:Aptx2View/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

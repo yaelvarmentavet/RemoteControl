@@ -13,6 +13,7 @@
             <Color x:Key="TextWhite">White</Color>
             <Color x:Key="TextDarkCyan">DarkCyan</Color>
             <Color x:Key="TextYellowGreen">YellowGreen</Color>
+            <Color x:Key="TextBlack">Black</Color>
             <Color x:Key="BackgroundCyan">Cyan</Color>
             <Color x:Key="BackgroundDarkCyan">DarkCyan</Color>
             <Color x:Key="BackgroundGreen">Green</Color>
@@ -68,6 +69,7 @@
             <Style x:Key="Label24" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=24, UWP=48}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelAlignedStart" TargetType="Label">
@@ -83,16 +85,19 @@
             <Style x:Key="Label16" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
+                <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="Label8" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=8, UWP=14}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
+                <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
             <Style x:Key="LabelAlignedEnd" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="HorizontalTextAlignment" Value="End"/>
+                <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>

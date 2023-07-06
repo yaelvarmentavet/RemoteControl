@@ -458,11 +458,17 @@ namespace RemoteControl.Models
             public PacketType packetType;
             public byte[] packet;
         }
-
+        
         public const string VERSION = "Armenta - Remote Control Application V1.4";
         public const uint UERROR = 0xFFFFFFFF;
         private const int OK = 0;
         private const int ERROR = -1;
+        private enum ProjectType
+        {
+            APTX2,
+            ECOMILK,
+        }
+        private const ProjectType projectType = ProjectType.APTX2;
 
         private const string APTX1 = "APTX1";
         private const string REMOTE = "REMOTE";
@@ -557,7 +563,8 @@ namespace RemoteControl.Models
         public DataModel(IUsbSerial usbSerial)
         {
             //Aptxs = new Aptx[Aptx.APTXIDs.Length].Select((a, i) => { a = new Aptx(); a.Id = Aptx.APTXIDs[i]; return a; }).ToArray();
-            if (Device.RuntimePlatform == Device.Android)
+            //if (Device.RuntimePlatform == Device.Android)
+            if (projectType == ProjectType.APTX2)
             {
                 //Devices = new string[] { REMOTE };
                 //Devices = new string[] { REMOTE, APTX1 };
@@ -568,21 +575,22 @@ namespace RemoteControl.Models
                     //new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
                 };
             }
-            else if (Device.RuntimePlatform == Device.UWP)
+            //else if (Device.RuntimePlatform == Device.UWP)
+            else if (projectType == ProjectType.ECOMILK)
             {
                 //Devices = new string[] { ECOMILK, REMOTE, RFID, APTX1 };
                 //Devices = new string[] { APTX1 };
                 //Devices = new string[] { REMOTE };
                 TxQue = new List<TxPacket>() {
                     new TxPacket() { device = ECOMILK, packetType = PacketType.ECOMILK_ID, packet = Encoding.UTF8.GetBytes("\recomilkid\r")},
-
+                    
                     new TxPacket() { device = RFID, packetType = PacketType.RFID_TAG, packet = new RfId().PacketBuild()},
-
+                    
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_0, packet = Aptxs[0].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_1, packet = Aptxs[1].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_2, packet = Aptxs[2].PacketBuild() },
                     new TxPacket() { device = REMOTE, packetType = PacketType.REMOTE_STATUS_3, packet = Aptxs[3].PacketBuild() },
-
+                    
                     new TxPacket() { device = APTX1, packetType = PacketType.APTX1_ID, packet = Encoding.UTF8.GetBytes("getid,3#\r")},
                 };
                 Procedure = ProcedureType.ECOMILK;
@@ -743,9 +751,12 @@ namespace RemoteControl.Models
                         Aptx.SNum = UERROR;
                         Aptx.CurrentPulses = UERROR;
                         Aptx.Remaining = UERROR;
-                        Aptx.aptxId[0] = UERROR;
-                        Aptx.aptxId[1] = UERROR;
-                        Aptx.aptxId[2] = UERROR;
+                        //Aptx.aptxId[0] = UERROR;
+                        //Aptx.aptxId[1] = UERROR;
+                        //Aptx.aptxId[2] = UERROR;
+                        Aptx.AptxId = UERROR;
+                        Aptx.AptxId = UERROR;
+                        Aptx.AptxId = UERROR;
                         break;
                 }
                 //SemaphorePacketCounters.WaitOne();
@@ -1036,16 +1047,16 @@ namespace RemoteControl.Models
 
         private void AptxUpdate()
         {
-            Aptx.AptxId = Aptx.AptxId;
-            Aptx.Remaining = Aptx.Maxi - Aptx.CurrentPulses;
-            Aptx.PressureOK = Aptx.PressureOK;
-            Aptx.PressureLow = Aptx.PressureLow;
-            Aptx.BatteryOK = Aptx.BatteryOK;
-            Aptx.BatteryLow = Aptx.BatteryLow;
-            Aptx.RemainingOK = Aptx.RemainingOK;
-            Aptx.RemainingLow = Aptx.RemainingLow;
-            Aptx.AptPulsesOK = Aptx.AptPulsesOK;
-            Aptx.AptPulsesLow = Aptx.AptPulsesLow;
+            //Aptx.AptxId = Aptx.AptxId;
+            //Aptx.Remaining = Aptx.Maxi - Aptx.CurrentPulses;
+            //Aptx.PressureOK = Aptx.PressureOK;
+            //Aptx.PressureLow = Aptx.PressureLow;
+            //Aptx.BatteryOK = Aptx.BatteryOK;
+            //Aptx.BatteryLow = Aptx.BatteryLow;
+            //Aptx.RemainingOK = Aptx.RemainingOK;
+            //Aptx.RemainingLow = Aptx.RemainingLow;
+            //Aptx.AptPulsesOK = Aptx.AptPulsesOK;
+            //Aptx.AptPulsesLow = Aptx.AptPulsesLow;
 
             //Aptxs[Aptx.Id].ProcessPulses = Aptxs[Aptx.Id].ProcessPulses;
             //Aptxs[Aptx.Id].Progress = Aptxs[Aptx.Id].Progress;
@@ -1057,7 +1068,8 @@ namespace RemoteControl.Models
                 Aptxs[Aptx.Id].SNum = Aptx.SNum;
                 Aptxs[Aptx.Id].Maxi = Aptx.Maxi;
                 Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
-                Aptxs[Aptx.Id].aptxId[0] = Aptx.aptxId[0];
+                //Aptxs[Aptx.Id].aptxId[0] = Aptx.aptxId[0];
+                Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
                 Aptxs[Aptx.Id].Pressure = Aptx.Pressure;
                 Aptxs[Aptx.Id].Battery = Aptx.Battery;
                 Aptxs[Aptx.Id].MotorIsRunning = Aptx.MotorIsRunning;
@@ -1069,7 +1081,8 @@ namespace RemoteControl.Models
                 Aptxs[Aptx.Id].CurrentPulses = Aptx.CurrentPulses;
 
                 Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
-                Aptxs[Aptx.Id].Remaining = Aptx.Maxi - Aptx.CurrentPulses;
+                //Aptxs[Aptx.Id].Remaining = Aptx.Maxi - Aptx.CurrentPulses;
+                Aptxs[Aptx.Id].Remaining = Aptx.Remaining;
                 Aptxs[Aptx.Id].PressureOK = Aptx.PressureOK;
                 Aptxs[Aptx.Id].PressureLow = Aptx.PressureLow;
                 Aptxs[Aptx.Id].BatteryOK = Aptx.BatteryOK;
