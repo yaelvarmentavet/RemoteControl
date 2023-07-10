@@ -755,8 +755,10 @@ namespace RemoteControl.Models
                         //Aptx.aptxId[1] = UERROR;
                         //Aptx.aptxId[2] = UERROR;
                         Aptx.AptxId = UERROR;
-                        Aptx.AptxId = UERROR;
-                        Aptx.AptxId = UERROR;
+                        //Aptx.AptxId = UERROR;
+                        //Aptx.AptxId = UERROR;
+                        Aptx.AptPulsesCurrent = UERROR;
+                        Aptx.AptRemaining = UERROR;
                         break;
                 }
                 //SemaphorePacketCounters.WaitOne();
@@ -1069,7 +1071,7 @@ namespace RemoteControl.Models
                 Aptxs[Aptx.Id].Maxi = Aptx.Maxi;
                 Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
                 //Aptxs[Aptx.Id].aptxId[0] = Aptx.aptxId[0];
-                Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
+                //Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
                 Aptxs[Aptx.Id].Pressure = Aptx.Pressure;
                 Aptxs[Aptx.Id].Battery = Aptx.Battery;
                 Aptxs[Aptx.Id].MotorIsRunning = Aptx.MotorIsRunning;
@@ -1081,6 +1083,8 @@ namespace RemoteControl.Models
                 Aptxs[Aptx.Id].CurrentPulses = Aptx.CurrentPulses;
 
                 Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
+                Aptxs[Aptx.Id].AptPulsesCurrent = Aptx.AptPulsesCurrent;
+                Aptxs[Aptx.Id].AptRemaining = Aptx.AptRemaining;
                 //Aptxs[Aptx.Id].Remaining = Aptx.Maxi - Aptx.CurrentPulses;
                 Aptxs[Aptx.Id].Remaining = Aptx.Remaining;
                 Aptxs[Aptx.Id].PressureOK = Aptx.PressureOK;

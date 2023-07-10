@@ -14,22 +14,23 @@ namespace RemoteControl.Models
             [MarshalAs(UnmanagedType.U2)]
             public byte STX;
             public byte APT_SERIAL_NUMBER;
-            public byte AM_number_msb;
-            public byte AM_number_2;
-            public byte AM_number_3;
-            public byte AM_number_lsb;
-            public byte Max_number_msb;
-            public byte Max_number_2;
-            public byte Max_number_3;
-            public byte Max_number_lsb;
-            public byte Current_number_msb;
-            public byte Current_number_2;
-            public byte Current_number_3;
-            public byte Current_number_lsb;
-            public byte Apt_number_msb;
-            public byte Apt_number_2;
-            public byte Apt_number_3;
-            public byte Apt_number_lsb;
+            public uint AM_number;
+            //public byte AM_number_2;
+            //public byte AM_number_3;
+            //public byte AM_number_lsb;
+            public uint Max_number;
+            //public byte Max_number_2;
+            //public byte Max_number_3;
+            //public byte Max_number_lsb;
+            public uint Current_number;
+            //public byte Current_number_2;
+            //public byte Current_number_3;
+            //public byte Current_number_lsb;
+            public uint Apt_number;
+            //public byte Apt_number_2;
+            //public byte Apt_number_3;
+            //public byte Apt_number_lsb;
+            public uint Apt_pulses_current;
             public byte Pressure_flag;
             public byte Battery_flag;
             public byte motor_is_running;
@@ -38,15 +39,15 @@ namespace RemoteControl.Models
             public byte motor_temperature;
             public byte motor_voltage;
             public byte speed_of_bullet;
-            public byte Cow_id_msb;
-            public byte Cow_id_lsb;
-            public byte Sum_pulses_msb;
-            public byte Sum_pulses_2;
-            public byte Sum_pulses_3;
-            public byte Sum_pulses_lsb;
+            public ushort Cow_id;
+            //public byte Cow_id_lsb;
+            public uint Sum_pulses;
+            //public byte Sum_pulses_2;
+            //public byte Sum_pulses_3;
+            //public byte Sum_pulses_lsb;
             public byte ETX;
-            public byte Check_sum_msb;
-            public byte Check_sum_lsb;
+            public ushort Check_sum;
+            //public byte Check_sum_lsb;
         }
 
         private uint id = UERROR;
@@ -140,6 +141,28 @@ namespace RemoteControl.Models
         //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptxId)));
         //    }
         //}
+
+        private uint aptPulsesCurrent = UERROR;
+        public uint AptPulsesCurrent
+        {
+            get => aptPulsesCurrent;
+            set
+            {
+                aptPulsesCurrent = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesCurrent)));
+            }
+        }
+
+        private uint aptRemaining = UERROR;
+        public uint AptRemaining
+        {
+            get => aptRemaining;
+            set
+            {
+                aptRemaining = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptRemaining)));
+            }
+        }
 
         private uint pressure = UERROR;
         public uint Pressure
@@ -459,11 +482,13 @@ namespace RemoteControl.Models
                         //if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(res.Take(sizeof(PacketStatus) - 2).ToArray()))
                         //{
                         Id = packetStatus->APT_SERIAL_NUMBER;
-                        SNum = ArrayToUint((byte*)&packetStatus->AM_number_msb);
-                        Maxi = ArrayToUint((byte*)&packetStatus->Max_number_msb);
-                        ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number_msb);
+                        SNum = ArrayToUint((byte*)&packetStatus->AM_number);
+                        Maxi = ArrayToUint((byte*)&packetStatus->Max_number);
+                        ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number);
                         //aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
-                        AptxId = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
+                        AptxId = ArrayToUint((byte*)&packetStatus->Apt_number);
+                        AptPulsesCurrent = ArrayToUint((byte*)&packetStatus->Apt_pulses_current);
+                        AptRemaining = 1000000 - AptPulsesCurrent;
                         Pressure = packetStatus->Pressure_flag;
                         Battery = packetStatus->Battery_flag;
                         MotorIsRunning = packetStatus->motor_is_running;
@@ -471,8 +496,8 @@ namespace RemoteControl.Models
                         MotorTemperature = packetStatus->motor_temperature;
                         MotorVoltage = packetStatus->motor_voltage;
                         SpeedOfBullet = packetStatus->speed_of_bullet;
-                        CowId = ArrayToUshort((byte*)&packetStatus->Cow_id_msb);
-                        CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses_msb);
+                        CowId = ArrayToUshort((byte*)&packetStatus->Cow_id);
+                        CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses);
                         Remaining = Maxi - CurrentPulses;
                         //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
                         return true;

@@ -63,7 +63,7 @@
                         <Label Grid.Row="6" Grid.Column="2" Style="{StaticResource LabelAlignedEnd}" Text="APT ID :"/>
                         <Label x:Name="LblAptxId" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="{Binding AptxId, Mode=TwoWay, Converter={StaticResource NullableIntConverter}}" LineBreakMode="CharacterWrap"/>
                         <Label Grid.Row="6" Grid.Column="5" Style="{StaticResource LabelAlignedEnd}" Text="APT REMAINING :"/>
-                        <Label x:Name="LblAptxIdRemaining" Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="{Binding AptxId, Mode=TwoWay, Converter={StaticResource NullableIntConverter}}" LineBreakMode="CharacterWrap"/>
+                        <Label x:Name="LblAptxIdRemaining" Grid.Row="6" Grid.Column="6" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="{Binding AptRemaining, Mode=TwoWay, Converter={StaticResource NullableIntConverter}}" LineBreakMode="CharacterWrap"/>
                     </Grid>
                 </Frame>
                 <Frame Grid.Row="2" Style="{StaticResource FrameWhite}">
