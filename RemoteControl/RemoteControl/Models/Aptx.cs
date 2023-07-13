@@ -12,41 +12,80 @@ namespace RemoteControl.Models
         unsafe struct PacketStatus
         {
             [MarshalAs(UnmanagedType.U2)]
-            public byte STX;
-            public byte APT_SERIAL_NUMBER;
-            public uint AM_number;
+            //public byte STX;
+            //public byte APT_SERIAL_NUMBER;
+            //public uint AM_number;
+            ////public byte AM_number_2;
+            ////public byte AM_number_3;
+            ////public byte AM_number_lsb;
+            //public uint Max_number;
+            ////public byte Max_number_2;
+            ////public byte Max_number_3;
+            ////public byte Max_number_lsb;
+            //public uint Current_number;
+            ////public byte Current_number_2;
+            ////public byte Current_number_3;
+            ////public byte Current_number_lsb;
+            //public uint Apt_number;
+            ////public byte Apt_number_2;
+            ////public byte Apt_number_3;
+            ////public byte Apt_number_lsb;
+            //public uint Apt_pulses_current;
+            //public byte Pressure_flag;
+            //public byte Battery_flag;
+            //public byte motor_is_running;
+            //public byte Apt_pulses_flag;
+            //public byte errors;
+            //public byte motor_temperature;
+            //public byte motor_voltage;
+            //public byte speed_of_bullet;
+            //public ushort Cow_id;
+            ////public byte Cow_id_lsb;
+            //public uint Sum_pulses;
+            ////public byte Sum_pulses_2;
+            ////public byte Sum_pulses_3;
+            ////public byte Sum_pulses_lsb;
+            //public byte ETX;
+            //public ushort Check_sum;
+            ////public byte Check_sum_lsb;
+
+            public byte stx;
+            public byte id;
+            public uint snum;
             //public byte AM_number_2;
             //public byte AM_number_3;
             //public byte AM_number_lsb;
-            public uint Max_number;
+            public uint maxi;
             //public byte Max_number_2;
             //public byte Max_number_3;
             //public byte Max_number_lsb;
-            public uint Current_number;
+            //public uint Current_number;
+            public uint pulse;
             //public byte Current_number_2;
             //public byte Current_number_3;
             //public byte Current_number_lsb;
-            public uint Apt_number;
+            public uint apt_id;
             //public byte Apt_number_2;
             //public byte Apt_number_3;
             //public byte Apt_number_lsb;
-            public uint Apt_pulses_current;
-            public byte Pressure_flag;
-            public byte Battery_flag;
-            public byte motor_is_running;
-            public byte Apt_pulses_flag;
-            public byte errors;
-            public byte motor_temperature;
-            public byte motor_voltage;
-            public byte speed_of_bullet;
-            public ushort Cow_id;
+            public uint apt_pulse;
+            public byte pressure;
+            public byte battery;
+            public byte operation;
+            //public byte Apt_pulses_flag;
+            //public byte operation;
+            public byte temperature;
+            public byte voltage;
+            public byte speed;
+            //public ushort Cow_id;
             //public byte Cow_id_lsb;
-            public uint Sum_pulses;
+            //public uint pulse;
             //public byte Sum_pulses_2;
             //public byte Sum_pulses_3;
             //public byte Sum_pulses_lsb;
-            public byte ETX;
-            public ushort Check_sum;
+            public byte error;
+            public byte etx;
+            public ushort checksum;
             //public byte Check_sum_lsb;
         }
 
@@ -99,14 +138,25 @@ namespace RemoteControl.Models
             }
         }
 
-        private uint processPulses = UERROR;
-        public uint ProcessPulses
+        //private uint processPulses = UERROR;
+        //public uint ProcessPulses
+        //{
+        //    get => processPulses;
+        //    set
+        //    {
+        //        processPulses = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses)));
+        //    }
+        //}
+
+        private uint operationPulse = UERROR;
+        public uint OperationPulse
         {
-            get => processPulses;
+            get => operationPulse;
             set
             {
-                processPulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ProcessPulses)));
+                operationPulse = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OperationPulse)));
             }
         }
 
@@ -142,14 +192,25 @@ namespace RemoteControl.Models
         //    }
         //}
 
-        private uint aptPulsesCurrent = UERROR;
-        public uint AptPulsesCurrent
+        //private uint aptPulsesCurrent = UERROR;
+        //public uint AptPulsesCurrent
+        //{
+        //    get => aptPulsesCurrent;
+        //    set
+        //    {
+        //        aptPulsesCurrent = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesCurrent)));
+        //    }
+        //}
+
+        private uint aptPulse = UERROR;
+        public uint AptPulse
         {
-            get => aptPulsesCurrent;
+            get => aptPulse;
             set
             {
-                aptPulsesCurrent = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesCurrent)));
+                aptPulse = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulse)));
             }
         }
 
@@ -190,60 +251,128 @@ namespace RemoteControl.Models
             }
         }
 
-        private uint motorisrunning = UERROR;
-        public uint MotorIsRunning
+        //private uint motorisrunning = UERROR;
+        //public uint MotorIsRunning
+        //{
+        //    get => motorisrunning;
+        //    set
+        //    {
+        //        motorisrunning = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorIsRunning)));
+        //    }
+        //}
+
+        //private uint motor = UERROR;
+        //public uint Motor
+        //{
+        //    get => motor;
+        //    set
+        //    {
+        //        motor = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Motor)));
+        //    }
+        //}
+
+        private uint operation = UERROR;
+        public uint Operation
         {
-            get => motorisrunning;
+            get => operation;
             set
             {
-                motorisrunning = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorIsRunning)));
+                operation = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Operation)));
+                OperationRun = operation == 1 ? true : false;
+                OperationStop = operation == 0 ? true : false;
             }
         }
 
-        private uint aptpulses = UERROR;
-        public uint AptPulses
+        //private uint aptpulses = UERROR;
+        //public uint AptPulses
+        //{
+        //    get => aptpulses;
+        //    set
+        //    {
+        //        aptpulses = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulses)));
+        //        AptPulsesOK = aptpulses == 1 ? true : false;
+        //        AptPulsesLow = aptpulses == 0 ? true : false;
+        //    }
+        //}
+
+        //private uint motortemperature = UERROR;
+        //public uint MotorTemperature
+        //{
+        //    get => motortemperature;
+        //    set
+        //    {
+        //        motortemperature = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorTemperature)));
+        //    }
+        //}
+
+        private uint temperature = UERROR;
+        public uint Temperature
         {
-            get => aptpulses;
+            get => temperature;
             set
             {
-                aptpulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulses)));
-                AptPulsesOK = aptpulses == 1 ? true : false;
-                AptPulsesLow = aptpulses == 0 ? true : false;
+                temperature = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Temperature)));
             }
         }
 
-        private uint motortemperature = UERROR;
-        public uint MotorTemperature
+        //private uint motorvoltage = UERROR;
+        //public uint MotorVoltage
+        //{
+        //    get => motorvoltage;
+        //    set
+        //    {
+        //        motorvoltage = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorVoltage)));
+        //    }
+        //}
+
+        private uint voltage = UERROR;
+        public uint Voltage
         {
-            get => motortemperature;
+            get => voltage;
             set
             {
-                motortemperature = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorTemperature)));
+                voltage = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Voltage)));
             }
         }
 
-        private uint motorvoltage = UERROR;
-        public uint MotorVoltage
+        //private uint speedofbullet = UERROR;
+        //public uint SpeedOfBullet
+        //{
+        //    get => speedofbullet;
+        //    set
+        //    {
+        //        speedofbullet = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SpeedOfBullet)));
+        //    }
+        //}
+        
+        private uint speed = UERROR;
+        public uint Speed
         {
-            get => motorvoltage;
+            get => speed;
             set
             {
-                motorvoltage = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(MotorVoltage)));
+                speed = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Speed)));
             }
         }
 
-        private uint speedofbullet = UERROR;
-        public uint SpeedOfBullet
+        private uint error = UERROR;
+        public uint Error
         {
-            get => speedofbullet;
+            get => error;
             set
             {
-                speedofbullet = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SpeedOfBullet)));
+                error = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Error)));
             }
         }
 
@@ -258,14 +387,25 @@ namespace RemoteControl.Models
             }
         }
 
-        private uint currentPulses = UERROR;
-        public uint CurrentPulses
+        //private uint currentPulses = UERROR;
+        //public uint CurrentPulses
+        //{
+        //    get => currentPulses;
+        //    set
+        //    {
+        //        currentPulses = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPulses)));
+        //    }
+        //}
+
+        private uint pulse = UERROR;
+        public uint Pulse
         {
-            get => currentPulses;
+            get => pulse;
             set
             {
-                currentPulses = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentPulses)));
+                pulse = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Pulse)));
             }
         }
 
@@ -341,27 +481,50 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool aptPulsesOK = false;
-        public bool AptPulsesOK
+        //private bool aptPulsesOK = false;
+        //public bool AptPulsesOK
+        //{
+        //    //get => AptPulses == 1;
+        //    get => aptPulsesOK;
+        //    set
+        //    {
+        //        aptPulsesOK = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesOK)));
+        //    }
+        //}
+        //private bool aptPulsesLow = true;
+        //public bool AptPulsesLow
+        //{
+        //    //get => AptPulses != 1;
+        //    get => aptPulsesLow;
+        //    set
+        //    {
+        //        aptPulsesLow = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesLow)));
+        //    }
+        //}
+
+        private bool operationRun = false;
+        public bool OperationRun
         {
             //get => AptPulses == 1;
-            get => aptPulsesOK;
+            get => operationRun;
             set
             {
-                aptPulsesOK = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesOK)));
+                operationRun = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OperationRun)));
             }
         }
 
-        private bool aptPulsesLow = true;
-        public bool AptPulsesLow
+        private bool operationStop = true;
+        public bool OperationStop
         {
             //get => AptPulses != 1;
-            get => aptPulsesLow;
+            get => operationStop;
             set
             {
-                aptPulsesLow = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(AptPulsesLow)));
+                operationStop = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(OperationStop)));
             }
         }
 
@@ -414,7 +577,8 @@ namespace RemoteControl.Models
         public float Progress
         {
             //get => (ProcessPulses - PulsesPrev) / ECOMILK_PROCESS_PULSES;
-            get => (float)ProcessPulses / (float)ECOMILK_PROCESS_PULSES;
+            //get => (float)ProcessPulses / (float)ECOMILK_PROCESS_PULSES;
+            get => (float)OperationPulse / (float)ECOMILK_PROCESS_PULSES;
             set
             {
                 //progress = value;
@@ -481,24 +645,49 @@ namespace RemoteControl.Models
                         PacketStatus* packetStatus = (PacketStatus*)pbuffer;
                         //if (ArrayToUshort((byte*)&packetStatus->Check_sum_msb) == ChecksumCalc(res.Take(sizeof(PacketStatus) - 2).ToArray()))
                         //{
-                        Id = packetStatus->APT_SERIAL_NUMBER;
-                        SNum = ArrayToUint((byte*)&packetStatus->AM_number);
-                        Maxi = ArrayToUint((byte*)&packetStatus->Max_number);
-                        ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number);
+
+                        //Id = packetStatus->APT_SERIAL_NUMBER;
+                        //SNum = ArrayToUint((byte*)&packetStatus->AM_number);
+                        //Maxi = ArrayToUint((byte*)&packetStatus->Max_number);
+                        //ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number);
+                        ////aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
+                        //AptxId = ArrayToUint((byte*)&packetStatus->Apt_number);
+                        //AptPulsesCurrent = ArrayToUint((byte*)&packetStatus->Apt_pulses_current);
+                        //AptRemaining = 1000000 - AptPulsesCurrent;
+                        //Pressure = packetStatus->Pressure_flag;
+                        //Battery = packetStatus->Battery_flag;
+                        //MotorIsRunning = packetStatus->motor_is_running;
+                        //AptPulses = packetStatus->Apt_pulses_flag;
+                        //MotorTemperature = packetStatus->motor_temperature;
+                        //MotorVoltage = packetStatus->motor_voltage;
+                        //SpeedOfBullet = packetStatus->speed_of_bullet;
+                        //CowId = ArrayToUshort((byte*)&packetStatus->Cow_id);
+                        //CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses);
+                        //Remaining = Maxi - CurrentPulses;
+
+                        Id = packetStatus->id;
+                        SNum = ArrayToUint((byte*)&packetStatus->snum);
+                        Maxi = ArrayToUint((byte*)&packetStatus->maxi);
+                        Pulse = ArrayToUint((byte*)&packetStatus->pulse);
+                        Remaining = Maxi - Pulse;
+                        //ProcessPulses = ArrayToUint((byte*)&packetStatus->Current_number);
                         //aptxId[0] = ArrayToUint((byte*)&packetStatus->Apt_number_msb);
-                        AptxId = ArrayToUint((byte*)&packetStatus->Apt_number);
-                        AptPulsesCurrent = ArrayToUint((byte*)&packetStatus->Apt_pulses_current);
-                        AptRemaining = 1000000 - AptPulsesCurrent;
-                        Pressure = packetStatus->Pressure_flag;
-                        Battery = packetStatus->Battery_flag;
-                        MotorIsRunning = packetStatus->motor_is_running;
-                        AptPulses = packetStatus->Apt_pulses_flag;
-                        MotorTemperature = packetStatus->motor_temperature;
-                        MotorVoltage = packetStatus->motor_voltage;
-                        SpeedOfBullet = packetStatus->speed_of_bullet;
-                        CowId = ArrayToUshort((byte*)&packetStatus->Cow_id);
-                        CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses);
-                        Remaining = Maxi - CurrentPulses;
+                        AptxId = ArrayToUint((byte*)&packetStatus->apt_id);
+                        AptPulse = ArrayToUint((byte*)&packetStatus->apt_pulse);
+                        AptRemaining = 1000000 - AptPulse;
+                        Pressure = packetStatus->pressure;
+                        Battery = packetStatus->battery;
+                        Operation = packetStatus->operation;
+                        //AptPulses = packetStatus->Apt_pulses_flag;
+                        Temperature = packetStatus->temperature;
+                        Voltage = packetStatus->voltage;
+                        Speed = packetStatus->speed;
+                        Error = packetStatus->error;
+
+                        //CowId = ArrayToUshort((byte*)&packetStatus->Cow_id);
+                        //CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses);
+                        //Pulse = ArrayToUint((byte*)&packetStatus->Sum_pulses);
+                        //Remaining = Maxi - Pulse;
                         //buffer = res.Skip(sizeof(PacketStatus)).ToArray();
                         return true;
                         //}

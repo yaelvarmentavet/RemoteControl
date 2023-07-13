@@ -18,8 +18,10 @@ namespace RemoteControl.Views
 
             ImgPressureOK.BindingContext = App.DataModel.Aptx;
             ImgPressureLow.BindingContext = App.DataModel.Aptx;
-            ImgSpeedOfBulletOK.BindingContext = App.DataModel.Aptx;
-            ImgSpeedOfBulletLow.BindingContext = App.DataModel.Aptx;
+            //ImgSpeedOfBulletOK.BindingContext = App.DataModel.Aptx;
+            //ImgSpeedOfBulletLow.BindingContext = App.DataModel.Aptx;
+            ImgOperationRun.BindingContext = App.DataModel.Aptx;
+            ImgOperationStop.BindingContext = App.DataModel.Aptx;
             ImgBatteryOK.BindingContext = App.DataModel.Aptx;
             ImgBatteryLow.BindingContext = App.DataModel.Aptx;
             ImgPulsesYes.BindingContext = App.DataModel.Aptx;

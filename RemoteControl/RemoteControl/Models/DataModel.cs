@@ -749,7 +749,8 @@ namespace RemoteControl.Models
                         break;
                     case REMOTE:
                         Aptx.SNum = UERROR;
-                        Aptx.CurrentPulses = UERROR;
+                        //Aptx.CurrentPulses = UERROR; 
+                        Aptx.Pulse = UERROR;
                         Aptx.Remaining = UERROR;
                         //Aptx.aptxId[0] = UERROR;
                         //Aptx.aptxId[1] = UERROR;
@@ -757,7 +758,8 @@ namespace RemoteControl.Models
                         Aptx.AptxId = UERROR;
                         //Aptx.AptxId = UERROR;
                         //Aptx.AptxId = UERROR;
-                        Aptx.AptPulsesCurrent = UERROR;
+                        //Aptx.AptPulsesCurrent = UERROR; 
+                        Aptx.AptPulse = UERROR;
                         Aptx.AptRemaining = UERROR;
                         break;
                 }
@@ -1069,21 +1071,29 @@ namespace RemoteControl.Models
             {
                 Aptxs[Aptx.Id].SNum = Aptx.SNum;
                 Aptxs[Aptx.Id].Maxi = Aptx.Maxi;
-                Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
+                //Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
+                Aptxs[Aptx.Id].OperationPulse = Aptx.OperationPulse;
                 //Aptxs[Aptx.Id].aptxId[0] = Aptx.aptxId[0];
                 //Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
                 Aptxs[Aptx.Id].Pressure = Aptx.Pressure;
                 Aptxs[Aptx.Id].Battery = Aptx.Battery;
-                Aptxs[Aptx.Id].MotorIsRunning = Aptx.MotorIsRunning;
-                Aptxs[Aptx.Id].AptPulses = Aptx.AptPulses;
-                Aptxs[Aptx.Id].MotorTemperature = Aptx.MotorTemperature;
-                Aptxs[Aptx.Id].MotorVoltage = Aptx.MotorVoltage;
-                Aptxs[Aptx.Id].SpeedOfBullet = Aptx.SpeedOfBullet;
+                //Aptxs[Aptx.Id].MotorIsRunning = Aptx.MotorIsRunning;
+                //Aptxs[Aptx.Id].AptPulses = Aptx.AptPulses;
+                //Aptxs[Aptx.Id].MotorTemperature = Aptx.MotorTemperature;
+                //Aptxs[Aptx.Id].MotorVoltage = Aptx.MotorVoltage;
+                //Aptxs[Aptx.Id].SpeedOfBullet = Aptx.SpeedOfBullet;
+                //Aptxs[Aptx.Id].Motor = Aptx.Motor;
+                Aptxs[Aptx.Id].Operation = Aptx.Operation;
+                Aptxs[Aptx.Id].Temperature = Aptx.Temperature;
+                Aptxs[Aptx.Id].Voltage = Aptx.Voltage;
+                Aptxs[Aptx.Id].Speed = Aptx.Speed;
                 Aptxs[Aptx.Id].CowId = Aptx.CowId;
-                Aptxs[Aptx.Id].CurrentPulses = Aptx.CurrentPulses;
+                //Aptxs[Aptx.Id].CurrentPulses = Aptx.CurrentPulses;
+                Aptxs[Aptx.Id].Pulse = Aptx.Pulse;
 
                 Aptxs[Aptx.Id].AptxId = Aptx.AptxId;
-                Aptxs[Aptx.Id].AptPulsesCurrent = Aptx.AptPulsesCurrent;
+                //Aptxs[Aptx.Id].AptPulsesCurrent = Aptx.AptPulsesCurrent;
+                Aptxs[Aptx.Id].AptPulse = Aptx.AptPulse;
                 Aptxs[Aptx.Id].AptRemaining = Aptx.AptRemaining;
                 //Aptxs[Aptx.Id].Remaining = Aptx.Maxi - Aptx.CurrentPulses;
                 Aptxs[Aptx.Id].Remaining = Aptx.Remaining;
@@ -1093,10 +1103,13 @@ namespace RemoteControl.Models
                 Aptxs[Aptx.Id].BatteryLow = Aptx.BatteryLow;
                 Aptxs[Aptx.Id].RemainingOK = Aptx.RemainingOK;
                 Aptxs[Aptx.Id].RemainingLow = Aptx.RemainingLow;
-                Aptxs[Aptx.Id].AptPulsesOK = Aptx.AptPulsesOK;
-                Aptxs[Aptx.Id].AptPulsesLow = Aptx.AptPulsesLow;
+                //Aptxs[Aptx.Id].AptPulsesOK = Aptx.AptPulsesOK;
+                //Aptxs[Aptx.Id].AptPulsesLow = Aptx.AptPulsesLow;
+                Aptxs[Aptx.Id].OperationRun = Aptx.OperationRun;
+                Aptxs[Aptx.Id].OperationStop = Aptx.OperationStop;
 
-                Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
+                //Aptxs[Aptx.Id].ProcessPulses = Aptx.ProcessPulses;
+                Aptxs[Aptx.Id].OperationPulse = Aptx.OperationPulse;
                 Aptxs[Aptx.Id].Progress = Aptx.Progress;
                 Aptxs[Aptx.Id].StatusMessage = Aptx.StatusMessage;
                 Aptxs[Aptx.Id].StatusColor = Aptx.StatusColor;
@@ -1128,7 +1141,8 @@ namespace RemoteControl.Models
             switch (Procedure)
             {
                 case ProcedureType.APTX2:
-                    if ((Aptx.ProcessPulses == 200) && (PulsesPrev > 190) && (PulsesPrev < 200))
+                    //if ((Aptx.ProcessPulses == 200) && (PulsesPrev > 190) && (PulsesPrev < 200))
+                    if ((Aptx.OperationPulse == 200) && (PulsesPrev > 190) && (PulsesPrev < 200))
                     {
                         Count++;
                         if (Count == 2)
@@ -1179,7 +1193,8 @@ namespace RemoteControl.Models
                     }
                     //if ((Aptx.ProcessPulses > 10) && (PulsesPrev < 10) && (Count >= 2))
                     //    Count = 0;
-                    PulsesPrev = Aptx.ProcessPulses;
+                    //PulsesPrev = Aptx.ProcessPulses;
+                    PulsesPrev = Aptx.OperationPulse;
                     break;
                 case ProcedureType.ECOMILK:
                     CmtSave(string.Format("CmtFL: {0} CmtRL: {1} CmtFR: {2} CmtRR: {3}", CmtFL, CmtRL, CmtFR, CmtRR));
