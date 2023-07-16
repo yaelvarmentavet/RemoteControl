@@ -7,6 +7,7 @@
         <ResourceDictionary>
             <Color x:Key="BackgroundLightGray">LightGray</Color>
             <Color x:Key="BackgroundDarkGray">Gray</Color>
+            <Color x:Key="BackgroundBottom">White</Color>
             <Color x:Key="BackgroundWhite">White</Color>
             <Color x:Key="BackgroundLightGreen">LightGreen</Color>
             <Color x:Key="BackgroundAliceBlue">AliceBlue</Color>
@@ -35,17 +36,24 @@
             </Style>
             <Style x:Key="FrameLightGreen" TargetType="Frame">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundLightGreen}"/>
-                <Setter Property="Margin" Value="10,10,10,10"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
             </Style>
             <Style x:Key="ButtonCornerRadius10" TargetType="Button">
                 <Setter Property="FontSize" Value="Medium"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
+            <Style x:Key="IconBottom" TargetType="Image">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundBottom}"/>
+                <!--<Setter Property="Scale" Value="2"/>-->
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
+                <Setter Property="Margin" Value="0,10,0,0"/>
+            </Style>
             <Style x:Key="IconWhite" TargetType="Image">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundWhite}"/>
                 <!--<Setter Property="Scale" Value="2"/>-->
-                <Setter Property="Margin" Value="10,10,10,10"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
+                <Setter Property="Margin" Value="0,10,0,0"/>
             </Style>
             <Style x:Key="IconRed" TargetType="Image">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundRed}"/>
@@ -66,11 +74,16 @@
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
+            <Style x:Key="LabelIcon" TargetType="Label">
+                <Setter Property="FontSize" Value="Micro"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
+            </Style>
             <Style x:Key="Label24" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=24, UWP=48}"/>
                 <Setter Property="HorizontalOptions" Value="Center"/>
                 <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
-                <Setter Property="Margin" Value="10,10,10,10"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
             </Style>
             <Style x:Key="LabelAlignedStart" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=24, UWP=48}"/>
@@ -86,20 +99,20 @@
                 <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
-                <Setter Property="Margin" Value="10,10,10,10"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
             </Style>
             <Style x:Key="Label8" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=8, UWP=14}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
                 <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
-                <Setter Property="Margin" Value="10,10,10,10"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
             </Style>
             <Style x:Key="LabelAlignedEnd" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=16, UWP=16}"/>
                 <Setter Property="HorizontalTextAlignment" Value="End"/>
                 <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
                 <!--<Setter Property="FontAttributes" Value="Bold"/>-->
-                <Setter Property="Margin" Value="10,10,10,10"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
             </Style>
             <Style x:Key="Label12" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=12, UWP=12}"/>

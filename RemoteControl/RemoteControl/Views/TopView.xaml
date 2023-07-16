@@ -32,9 +32,11 @@
                     </Image.GestureRecognizers>
                 </Image>-->
                     <!--xct:TouchEffect.PressedBackgroundColor="{StaticResource BackgroundCyan}"-->
-                <Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelAlignedEnd}" Text="AM REMAINING :"/>
-                <Label x:Name="LblRem" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding Remaining, Converter={StaticResource NullableIntConverter}}" LineBreakMode="CharacterWrap"/>
+                <!--<Label Grid.Column="1" Grid.ColumnSpan="1" Style="{StaticResource LabelAlignedEnd}" Text="AM REMAINING :"/>
+                <Label x:Name="LblRem" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Style="{StaticResource Label16}" Text="{Binding Remaining, Converter={StaticResource NullableIntConverter}}" LineBreakMode="CharacterWrap"/>-->
                 <!--<Label x:Name="LblPort" Grid.Column="3" Grid.ColumnSpan="1" Style="{StaticResource Label8}" Text="{Binding UsbPorts}"  LineBreakMode="CharacterWrap"/>-->
+                <!--<StackLayout Grid.Column="3" Grid.ColumnSpan="1">-->
+                <Label x:Name="LblError" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Label16}" Text="{Binding ErrorStr}" LineBreakMode="CharacterWrap"/>
                 <StackLayout Grid.Column="3" Grid.ColumnSpan="1">
                     <views:PortsView/>
                 </StackLayout>

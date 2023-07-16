@@ -2,9 +2,15 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:resources="clr-namespace:RemoteControl.Resources"
+             xmlns:models="clr-namespace:RemoteControl.Models"
              x:Class="RemoteControl.Views.BottomView">
-  <ContentView.Content>
-      <StackLayout>
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <models:NullableIntConverter x:Key="NullableIntConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <StackLayout BackgroundColor="{StaticResource BackgroundBottom}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
@@ -14,17 +20,21 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Image x:Name="ImgPressureOK" Grid.Column="0" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pr1h.bmp}" IsVisible="{Binding PressureOK}"/>
-                <Image x:Name="ImgPressureLow" Grid.Column="0" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pr1l.bmp}" IsVisible="{Binding PressureLow}"/>
+                <Image x:Name="ImgPressureOK" Grid.Column="0" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.pr1h.bmp}" IsVisible="{Binding PressureOK}"/>
+                <Image x:Name="ImgPressureLow" Grid.Column="0" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.pr1l.bmp}" IsVisible="{Binding PressureLow}"/>
                 <!--<Image x:Name="ImgSpeedOfBulletOK" Grid.Column="1" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pulseYes.bmp}" IsVisible="{Binding AptPulsesOK}"/>
                 <Image x:Name="ImgSpeedOfBulletLow" Grid.Column="1" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pulseNo.bmp}" IsVisible="{Binding AptPulsesLow}"/>-->
-                <Image x:Name="ImgOperationRun" Grid.Column="1" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pulseYes.bmp}" IsVisible="{Binding OperationRun}"/>
-                <Image x:Name="ImgOperationStop" Grid.Column="1" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.pulseNo.bmp}" IsVisible="{Binding OperationStop}"/>
-                <Image x:Name="ImgBatteryOK" Grid.Column="2" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.bat_1.png}" IsVisible="{Binding BatteryOK}"/>
-                <Image x:Name="ImgBatteryLow" Grid.Column="2" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.bat_l.png}" IsVisible="{Binding BatteryLow}"/>
-                <Image x:Name="ImgPulsesYes" Grid.Column="3" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.ap_clean.bmp}" IsVisible="{Binding RemainingOK}"/>
-                <Image x:Name="ImgPulsesNo" Grid.Column="3" Scale="1" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.ap_red.bmp}" IsVisible="{Binding RemainingLow}"/>
+                <Image x:Name="ImgOperationRun" Grid.Column="2" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.pulseYes.bmp}" IsVisible="{Binding OperationRun}"/>
+                <Image x:Name="ImgOperationStop" Grid.Column="2" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.pulseNo.bmp}" IsVisible="{Binding OperationStop}"/>
+                <Image x:Name="ImgBatteryOK" Grid.Column="4" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.bat_1.png}" IsVisible="{Binding BatteryOK}"/>
+                <Image x:Name="ImgBatteryLow" Grid.Column="4" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.bat_l.png}" IsVisible="{Binding BatteryLow}"/>
+                <Label x:Name="LblBattery" Grid.Column="4" Style="{StaticResource LabelIcon}" Text ="{Binding Battery, Converter={StaticResource NullableIntConverter}}"/>
+                <Image x:Name="ImgPulsesYes" Grid.Column="6" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.ap_clean.bmp}" IsVisible="{Binding RemainingOK}"/>
+                <Image x:Name="ImgPulsesNo" Grid.Column="6" Scale="1" Style="{StaticResource IconBottom}" Source="{resources:ImageResource RemoteControl.Icons.ap_red.bmp}" IsVisible="{Binding RemainingLow}"/>
             </Grid>
         </StackLayout>
   </ContentView.Content>

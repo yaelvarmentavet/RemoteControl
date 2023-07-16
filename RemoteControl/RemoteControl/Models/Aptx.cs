@@ -246,8 +246,8 @@ namespace RemoteControl.Models
             {
                 battery = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery)));
-                BatteryOK = battery == 1 ? true : false;
-                BatteryLow = battery == 0 ? true : false;
+                BatteryOK = battery >= BATTERY_LIMIT ? true : false;
+                BatteryLow = battery < BATTERY_LIMIT ? true : false;
             }
         }
 
@@ -373,6 +373,30 @@ namespace RemoteControl.Models
             {
                 error = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Error)));
+                if ((error & A4000) != 0)
+                    ErrorStr += "A4000 Contact Service\n";
+                if ((error & E6999) != 0)
+                    ErrorStr += "E6999 Contact Service Replace AM\n";
+                if ((error & A7000) != 0)
+                    ErrorStr += "7000 Pulses Remaining Contact Service Press Reset\n";
+                if ((error & A1000) != 0)
+                    ErrorStr += "1000 Pulses Remaining Contact Service Press Reset\n";
+                if ((error & E0) != 0)
+                    ErrorStr += "0 Pulses Remaining Contact Service Replace AM\n";
+                if ((error & A504) != 0)
+                    ErrorStr += "Maintenance Required Contact Service\n";
+                if ((error & E503) != 0)
+                    ErrorStr += "Maintenance is due, Efficiency and safety comprimised Contact Service\n";
+                if ((error & ABattery25) != 0)
+                    ErrorStr += "Please charge Press Reset\n";
+                if ((error & ABattery20) != 0)
+                    ErrorStr += "Please charge Press Reset\n";
+                if ((error & EBattery15) != 0)
+                    ErrorStr += "Please charge Press Reset\n";
+                if ((error & EBattery0) != 0)
+                    ErrorStr += "Battery Depleted Charge to continue\n";
+                if ((error & E200) != 0)
+                    ErrorStr += "Low ambient temperature\n";
             }
         }
 
@@ -528,6 +552,17 @@ namespace RemoteControl.Models
             }
         }
 
+        private string errorStr = string.Empty;
+        public string ErrorStr
+        {
+            get => errorStr;
+            set
+            {
+                errorStr = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorStr)));
+            }
+        }
+
         public string StatusMessage
         {
             get
@@ -602,6 +637,8 @@ namespace RemoteControl.Models
         public const byte RESUME = 0x03;
         public const byte RESERVED = 0x00;
 
+        public const byte BATTERY_LIMIT = 15;
+
         public const int ECOMILK_PROCESS_PULSES = 100;
 
         public static readonly byte[] APTXIDs = new byte[] { 0x00, 0x01, 0x02, 0x03 };
@@ -618,6 +655,20 @@ namespace RemoteControl.Models
             Dcheck = ChecksumCalc;
             Dassign = PacketAssign;
         }
+
+        const uint A4000 = 1;
+        const uint E4001 = 2;
+        const uint E6999 = 4;
+        const uint A7000 = 8;
+        const uint A1000 = 16;
+        const uint E0 = 32;
+        const uint A504 = 64;
+        const uint E503 = 128;
+        const uint ABattery25 = 256;
+        const uint ABattery20 = 512;
+        const uint EBattery15 = 1024;
+        const uint EBattery0 = 2048;
+        const uint E200 = 4096;
 
         //public static uint PacketGetId(byte[] buffer)
         //{
@@ -682,7 +733,7 @@ namespace RemoteControl.Models
                         Temperature = packetStatus->temperature;
                         Voltage = packetStatus->voltage;
                         Speed = packetStatus->speed;
-                        Error = packetStatus->error;
+                        Error = ArrayToUshort((byte*)&packetStatus->error);
 
                         //CowId = ArrayToUshort((byte*)&packetStatus->Cow_id);
                         //CurrentPulses = ArrayToUint((byte*)&packetStatus->Sum_pulses);
