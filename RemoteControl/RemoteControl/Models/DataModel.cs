@@ -278,20 +278,20 @@ namespace RemoteControl.Models
                 //return (TxQue.Where(t => t.packetType != PacketType.EMPTY) != null ? 
                 //    TxQue.Where(t => t.packetType != PacketType.EMPTY).OrderBy(t => t.packetType).ToList() :
                 //    TxQue).
-                if (PortsDebug)
-                {
-                    return TxQue.Where(t => t?.packetType != PacketType.EMPTY).
-                        OrderBy(t => t?.packetType).
-                        Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
-                        usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
-                        packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") +
-                        //Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
-                        Aptxs.Aggregate("", (r, a) => r += "APTX" + a.Id + DELIMITER + "PRESSURE" + DELIMITER + a.Pressure + "\n");
-                }
-                else
-                {
-                    return string.Empty;
-                }
+                //if (PortsDebug)
+                //{
+                return TxQue.Where(t => t?.packetType != PacketType.EMPTY).
+                    OrderBy(t => t?.packetType).
+                    Aggregate("", (r, t) => r += t?.packetType + " ") + "\n" +
+                    usbPorts.Aggregate("", (r, u) => r += u + " ") + "\n" +
+                    packetCounters.Aggregate("", (r, p) => r += p.Key + DELIMITER + p.Value + "\n") +
+                    //Aptxs.Aggregate("", (r, a) => r += a.Id + " Pressure " + a.PressureOK + "\n");
+                    Aptxs.Aggregate("", (r, a) => r += "APTX" + a.Id + DELIMITER + "PRESSURE" + DELIMITER + a.Pressure + "\n");
+                //}
+                //else
+                //{
+                //    return string.Empty;
+                //}
             }
             //get => packetCounters.Aggregate("", (r, v) => r += v + DELIMITER);
             set
@@ -1099,8 +1099,13 @@ namespace RemoteControl.Models
                 Aptxs[Aptx.Id].Remaining = Aptx.Remaining;
                 Aptxs[Aptx.Id].PressureOK = Aptx.PressureOK;
                 Aptxs[Aptx.Id].PressureLow = Aptx.PressureLow;
-                Aptxs[Aptx.Id].BatteryOK = Aptx.BatteryOK;
-                Aptxs[Aptx.Id].BatteryLow = Aptx.BatteryLow;
+                //Aptxs[Aptx.Id].BatteryOK = Aptx.BatteryOK;
+                //Aptxs[Aptx.Id].BatteryLow = Aptx.BatteryLow;
+                Aptxs[Aptx.Id].Battery100Per = Aptx.Battery100Per;
+                Aptxs[Aptx.Id].Battery75Per = Aptx.Battery75Per;
+                Aptxs[Aptx.Id].Battery50Per = Aptx.Battery50Per;
+                Aptxs[Aptx.Id].Battery25Per = Aptx.Battery25Per;
+                Aptxs[Aptx.Id].Battery15Per = Aptx.Battery15Per;
                 Aptxs[Aptx.Id].RemainingOK = Aptx.RemainingOK;
                 Aptxs[Aptx.Id].RemainingLow = Aptx.RemainingLow;
                 //Aptxs[Aptx.Id].AptPulsesOK = Aptx.AptPulsesOK;

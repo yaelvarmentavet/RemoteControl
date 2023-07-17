@@ -45,6 +45,11 @@
     <None Remove="Icons\ARmentaSmall.png" />
     <None Remove="Icons\bat_1.bmp" />
     <None Remove="Icons\bat_1.png" />
+    <None Remove="Icons\bat_100per.bmp" />
+    <None Remove="Icons\bat_15per.bmp" />
+    <None Remove="Icons\bat_25per.bmp" />
+    <None Remove="Icons\bat_50per.bmp" />
+    <None Remove="Icons\bat_75per.bmp" />
     <None Remove="Icons\bat_l.png" />
     <None Remove="Icons\begin.png" />
     <None Remove="Icons\break.png" />
@@ -99,6 +104,7 @@
     <None Remove="Icons\w.bmp" />
     <None Remove="Icons\w_cropped.bmp" />
     <None Remove="Icons\w_cropped.xcf" />
+    <None Remove="Icons\w_cropped_x2.bmp" />
     <None Remove="Icons\‏‏bat_l.bmp" />
     <None Remove="Icons\‏‏pulseY.bmp" />
     <None Remove="Models\UsbModel.cs.bck" />
@@ -117,6 +123,11 @@
     <EmbeddedResource Include="Icons\ARmentaSmall.png" />
     <EmbeddedResource Include="Icons\bat_1.bmp" />
     <EmbeddedResource Include="Icons\bat_1.png" />
+    <EmbeddedResource Include="Icons\bat_100per.bmp" />
+    <EmbeddedResource Include="Icons\bat_15per.bmp" />
+    <EmbeddedResource Include="Icons\bat_25per.bmp" />
+    <EmbeddedResource Include="Icons\bat_50per.bmp" />
+    <EmbeddedResource Include="Icons\bat_75per.bmp" />
     <EmbeddedResource Include="Icons\bat_l.png" />
     <EmbeddedResource Include="Icons\begin.png" />
     <EmbeddedResource Include="Icons\break.png" />
@@ -169,6 +180,7 @@
     <EmbeddedResource Include="Icons\w.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.bmp" />
     <EmbeddedResource Include="Icons\w_cropped.xcf" />
+    <EmbeddedResource Include="Icons\w_cropped_x2.bmp" />
     <EmbeddedResource Include="Icons\‏‏bat_l.bmp" />
     <EmbeddedResource Include="Icons\‏‏pulseY.bmp" />
   </ItemGroup>

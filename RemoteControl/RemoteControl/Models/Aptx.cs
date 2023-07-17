@@ -83,7 +83,7 @@ namespace RemoteControl.Models
             //public byte Sum_pulses_2;
             //public byte Sum_pulses_3;
             //public byte Sum_pulses_lsb;
-            public byte error;
+            public ushort error;
             public byte etx;
             public ushort checksum;
             //public byte Check_sum_lsb;
@@ -246,8 +246,23 @@ namespace RemoteControl.Models
             {
                 battery = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery)));
-                BatteryOK = battery >= BATTERY_LIMIT ? true : false;
-                BatteryLow = battery < BATTERY_LIMIT ? true : false;
+                //BatteryOK = battery >= BATTERY_LIMIT ? true : false;
+                //BatteryLow = battery < BATTERY_LIMIT ? true : false;
+                Battery100Per = false;
+                Battery75Per = false;
+                Battery50Per = false;
+                Battery25Per = false;
+                Battery15Per = false;
+                if ((battery > 75) && (battery <= 100))
+                    Battery100Per = true;
+                if ((battery > 50) && (battery <= 75))
+                    Battery75Per = true;
+                if ((battery > 25) && (battery <= 50))
+                    Battery50Per = true;
+                if ((battery > 15) && (battery <= 25))
+                    Battery25Per = true;
+                if (battery <= 15)
+                    Battery15Per = true;
             }
         }
 
@@ -373,30 +388,31 @@ namespace RemoteControl.Models
             {
                 error = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Error)));
+                Errors = string.Empty;
                 if ((error & A4000) != 0)
-                    ErrorStr += "A4000 Contact Service\n";
+                    Errors += "A4000 Contact Service\n";
                 if ((error & E6999) != 0)
-                    ErrorStr += "E6999 Contact Service Replace AM\n";
+                    Errors += "E6999 Contact Service Replace AM\n";
                 if ((error & A7000) != 0)
-                    ErrorStr += "7000 Pulses Remaining Contact Service Press Reset\n";
+                    Errors += "7000 Pulses Remaining Contact Service Press Reset\n";
                 if ((error & A1000) != 0)
-                    ErrorStr += "1000 Pulses Remaining Contact Service Press Reset\n";
+                    Errors += "1000 Pulses Remaining Contact Service Press Reset\n";
                 if ((error & E0) != 0)
-                    ErrorStr += "0 Pulses Remaining Contact Service Replace AM\n";
+                    Errors += "0 Pulses Remaining Contact Service Replace AM\n";
                 if ((error & A504) != 0)
-                    ErrorStr += "Maintenance Required Contact Service\n";
+                    Errors += "Maintenance Required Contact Service\n";
                 if ((error & E503) != 0)
-                    ErrorStr += "Maintenance is due, Efficiency and safety comprimised Contact Service\n";
+                    Errors += "Maintenance is due, Efficiency and safety comprimised Contact Service\n";
                 if ((error & ABattery25) != 0)
-                    ErrorStr += "Please charge Press Reset\n";
+                    Errors += "Please charge Press Reset\n";
                 if ((error & ABattery20) != 0)
-                    ErrorStr += "Please charge Press Reset\n";
+                    Errors += "Please charge Press Reset\n";
                 if ((error & EBattery15) != 0)
-                    ErrorStr += "Please charge Press Reset\n";
+                    Errors += "Please charge Press Reset\n";
                 if ((error & EBattery0) != 0)
-                    ErrorStr += "Battery Depleted Charge to continue\n";
+                    Errors += "Battery Depleted Charge to continue\n";
                 if ((error & E200) != 0)
-                    ErrorStr += "Low ambient temperature\n";
+                    Errors += "Low ambient temperature\n";
             }
         }
 
@@ -481,30 +497,90 @@ namespace RemoteControl.Models
             }
         }
 
-        private bool batteryOK = false;
-        public bool BatteryOK
+        //private bool batteryOK = false;
+        //public bool BatteryOK
+        //{
+        //    //get => Battery == 1;
+        //    get => batteryOK;
+        //    set
+        //    {
+        //        batteryOK = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BatteryOK)));
+        //    }
+        //}
+        //
+        //private bool batteryLow = true;
+        //public bool BatteryLow
+        //{
+        //    //get => Battery != 1;
+        //    get => batteryLow;
+        //    set
+        //    {
+        //        batteryLow = value;
+        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BatteryLow)));
+        //    }
+        //}
+
+        private bool battery100Per = false;
+        public bool Battery100Per
         {
             //get => Battery == 1;
-            get => batteryOK;
+            get => battery100Per;
             set
             {
-                batteryOK = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BatteryOK)));
+                battery100Per = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery100Per)));
             }
         }
 
-        private bool batteryLow = true;
-        public bool BatteryLow
+        private bool battery75Per = false;
+        public bool Battery75Per
         {
-            //get => Battery != 1;
-            get => batteryLow;
+            //get => Battery == 1;
+            get => battery75Per;
             set
             {
-                batteryLow = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BatteryLow)));
+                battery75Per = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery75Per)));
             }
         }
 
+        private bool battery50Per = false;
+        public bool Battery50Per
+        {
+            //get => Battery == 1;
+            get => battery50Per;
+            set
+            {
+                battery50Per = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery50Per)));
+            }
+        }
+
+        private bool battery25Per = false;
+        public bool Battery25Per
+        {
+            //get => Battery == 1;
+            get => battery25Per;
+            set
+            {
+                battery25Per = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery25Per)));
+            }
+        }
+
+        private bool battery15Per = true;
+        public bool Battery15Per
+        {
+            //get => Battery == 1;
+            get => battery15Per;
+            set
+            {
+                battery15Per = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Battery15Per)));
+            }
+        }
+ 
         //private bool aptPulsesOK = false;
         //public bool AptPulsesOK
         //{
@@ -528,7 +604,7 @@ namespace RemoteControl.Models
         //    }
         //}
 
-        private bool operationRun = false;
+private bool operationRun = false;
         public bool OperationRun
         {
             //get => AptPulses == 1;
@@ -552,14 +628,14 @@ namespace RemoteControl.Models
             }
         }
 
-        private string errorStr = string.Empty;
-        public string ErrorStr
+        private string errors = string.Empty;
+        public string Errors
         {
-            get => errorStr;
+            get => errors;
             set
             {
-                errorStr = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ErrorStr)));
+                errors = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Errors)));
             }
         }
 

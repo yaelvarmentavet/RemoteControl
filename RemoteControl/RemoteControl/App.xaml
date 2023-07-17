@@ -7,7 +7,6 @@
         <ResourceDictionary>
             <Color x:Key="BackgroundLightGray">LightGray</Color>
             <Color x:Key="BackgroundDarkGray">Gray</Color>
-            <Color x:Key="BackgroundBottom">White</Color>
             <Color x:Key="BackgroundWhite">White</Color>
             <Color x:Key="BackgroundLightGreen">LightGreen</Color>
             <Color x:Key="BackgroundAliceBlue">AliceBlue</Color>
@@ -23,6 +22,15 @@
             <Color x:Key="ButtonBlue">DeepSkyBlue</Color>
             <Color x:Key="ButtonCoral">Coral</Color>
             <Color x:Key="ButtonLightSteelBlue">LightSteelBlue</Color>
+
+            <!--TOP-->
+            <Color x:Key="TopBackground">White</Color>
+            <Color x:Key="TopText">Black</Color>
+
+            <!--BOTTOM-->
+            <Color x:Key="BottomBackground">White</Color>
+            <Color x:Key="BottomText">Black</Color>
+
             <Style x:Key="GridMargin" TargetType="Grid">
                 <Setter Property="Margin" Value="10,10,10,10"/>
             </Style>
@@ -39,15 +47,9 @@
                 <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
             </Style>
             <Style x:Key="ButtonCornerRadius10" TargetType="Button">
-                <Setter Property="FontSize" Value="Medium"/>
+                <Setter Property="FontSize" Value="Micro"/>
                 <Setter Property="CornerRadius" Value="10"/>
-                <Setter Property="Margin" Value="10,10,10,10"/>
-            </Style>
-            <Style x:Key="IconBottom" TargetType="Image">
-                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundBottom}"/>
-                <!--<Setter Property="Scale" Value="2"/>-->
-                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
-                <Setter Property="Margin" Value="0,10,0,0"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundDarkGray}"/>
             </Style>
             <Style x:Key="IconWhite" TargetType="Image">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundWhite}"/>
@@ -73,11 +75,6 @@
                 <Setter Property="BackgroundColor" Value="{StaticResource ButtonLightSteelBlue}"/>
                 <Setter Property="CornerRadius" Value="10"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
-            </Style>
-            <Style x:Key="LabelIcon" TargetType="Label">
-                <Setter Property="FontSize" Value="Micro"/>
-                <Setter Property="HorizontalOptions" Value="Center"/>
-                <Setter Property="TextColor" Value="{StaticResource TextBlack}"/>
             </Style>
             <Style x:Key="Label24" TargetType="Label">
                 <Setter Property="FontSize" Value="{OnPlatform Android=24, UWP=48}"/>
@@ -181,6 +178,34 @@
             <Style x:Key="ListViewCyan" TargetType="ListView">
                 <Setter Property="BackgroundColor" Value="{StaticResource BackgroundCyan}"/>
                 <Setter Property="Margin" Value="10,10,10,10"/>
+            </Style>
+
+            <!--TOP-->
+            <Style x:Key="TopButton" TargetType="Button">
+                <Setter Property="FontSize" Value="Micro"/>
+                <Setter Property="TextColor" Value="{StaticResource TopText}"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource TopBackground}"/>
+            </Style>
+            <Style x:Key="TopLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="{OnPlatform Android=8, UWP=14}"/>
+                <!--<Setter Property="FontAttributes" Value="Bold"/>-->
+                <Setter Property="TextColor" Value="{StaticResource TopText}"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource TopBackground}"/>
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
+            </Style>
+            
+            <!--BOTTOM-->
+            <Style x:Key="BottomIcon" TargetType="Image">
+                <Setter Property="BackgroundColor" Value="{StaticResource BottomBackground}"/>
+                <!--<Setter Property="Scale" Value="2"/>-->
+                <!--<Setter Property="Margin" Value="10,10,10,10"/>-->
+                <Setter Property="Margin" Value="0,10,0,0"/>
+            </Style>
+            <Style x:Key="BottomLabelIcon" TargetType="Label">
+                <Setter Property="FontSize" Value="12"/>
+                <Setter Property="HorizontalOptions" Value="Center"/>
+                <Setter Property="TextColor" Value="{StaticResource BottomText}"/>
             </Style>
         </ResourceDictionary>
     </Application.Resources>
