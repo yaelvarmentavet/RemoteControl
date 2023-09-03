@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resources="clr-namespace:RemoteControl.Resources"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:views="clr-namespace:RemoteControl.Views"
+             x:Class="RemoteControl.Views.UWPView">
+              <!--xmlns:binding="clr-namespace:RemoteControl.Models"-->
+   <ContentView.Content>
+        <StackLayout>
+            <Grid Style="{StaticResource GridMargin}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Scale="0.72" Style="{StaticResource IconWhite}" Source="{resources:ImageResource RemoteControl.Icons.logo.png}"/>
+                <Label Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="CowId" Style="{StaticResource Label24}"/>
+                <StackLayout Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="1" HorizontalOptions="End">
+                    <views:PortsView/>
+                </StackLayout>
+                <Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding CowId}" IsReadOnly="True"/>
+                <!--<Editor x:Name="EdCowId" Grid.Row="2" Grid.Column="1" Style="{StaticResource Editor30}" Placeholder="Cow ID / RFID12345" Text="{Binding SNum}">
+                    <Editor.BindingContext>
+                        <binding:DataModel/>
+                    </Editor.BindingContext>
+                </Editor>-->
+                <!--<ImageButton x:Name="ImgId" Grid.Row="3" Grid.Column="1" Style="{StaticResource ImageButton}" 
+                       Source="{resources:ImageResource RemoteControl.Icons.id.png}" Command="{Binding NextPageCowId}"/>-->
+                <!--<Image Grid.Row="3" Grid.Column="1" Style="{StaticResource IconWhite}"
+                    Source="{resources:ImageResource RemoteControl.Icons.id.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NextPageCowId}"/>
+                    </Image.GestureRecognizers>
+                </Image>-->
+                <!--new line-->
+                <Button Text="Insert Cow Id &#x0a;    Manually" BackgroundColor="{StaticResource ButtonBlue}" Grid.Row="3" Grid.Column="1" Style="{StaticResource ButtonCornerRadius10}"
+                       Command="{Binding NextPageCowId}"/>
+                <!--<ImageButton Grid.Row="3" Grid.Column="2" Style="{StaticResource ImageButton}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.next.png}" Command="{Binding NextPageStatus}"/>-->
+                <!--<Image Grid.Row="3" Grid.Column="2" Style="{StaticResource IconWhite}" 
+                    Source="{resources:ImageResource RemoteControl.Icons.next.png}"
+                    xct:TouchEffect.PressedOpacity="0.5">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NextPageStatus}"/>
+                    </Image.GestureRecognizers>
+                </Image>-->
+                <Button Text="Next" BackgroundColor="{StaticResource ButtonGreen}" Grid.Row="3" Grid.Column="2" Style="{StaticResource ButtonCornerRadius10}" 
+                       Command="{Binding NextPageStatus}"/>
+            </Grid>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>
