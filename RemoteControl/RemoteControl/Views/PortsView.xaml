@@ -2,15 +2,20 @@
 <ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="RemoteControl.Views.PortsView">
-  <ContentView.Content>
-        <StackLayout>
-            <Grid>
-                <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="9" Grid.ColumnSpan="24" x:Name="BtnDebug" Text="Debug On/Off" Command="{Binding PortsDebugSwitch}" Style="{StaticResource TopButton}"/>
-                <ScrollView Grid.Row="0" Grid.Column="24" Grid.RowSpan="24" Grid.ColumnSpan="24">
-                    <!--<Label x:Name="LblPort" Style="{StaticResource Label8}" Text="{Binding UsbPorts}" LineBreakMode="CharacterWrap"/>-->
-                    <Label x:Name="LblPacketCounter" Style="{StaticResource TopLabel}" Text="{Binding PacketCounters}" LineBreakMode="CharacterWrap" IsVisible="{Binding PortsDebug}"/>
+    <ContentView.Content>
+        <StackLayout Orientation="Vertical">
+            <!--<Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>-->
+                <ScrollView Style="{StaticResource TopScrollView}">
+                    <Label x:Name="LblPacketCounter" Style="{StaticResource TopLabel}" HorizontalTextAlignment="End" Text="{Binding PacketCounters}" LineBreakMode="CharacterWrap" IsVisible="{Binding PortsDebug}"/>
                 </ScrollView>
-            </Grid>
+            <Button x:Name="BtnDebugOnOff" Text="Debug ON/OFF" Command="{Binding PortsDebugSwitch}" Style="{StaticResource TopButton}" HorizontalOptions="End"/>
+            <!--</Grid>-->
         </StackLayout>
-  </ContentView.Content>
+    </ContentView.Content>
 </ContentView>

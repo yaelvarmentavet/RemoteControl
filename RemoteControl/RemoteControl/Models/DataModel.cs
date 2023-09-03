@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.Devices.Usb;
+using Xamarin.CommunityToolkit.Helpers;
 using Xamarin.Forms;
 
 namespace RemoteControl.Models
@@ -266,7 +268,7 @@ namespace RemoteControl.Models
         //}
 
         //private string devices = string.Empty;
-        private Dictionary<string, uint> packetCounters = new Dictionary<string, uint>();
+        public Dictionary<string, uint> packetCounters = new Dictionary<string, uint>();
         public string PacketCounters
         {
             get

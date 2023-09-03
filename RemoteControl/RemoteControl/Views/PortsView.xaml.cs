@@ -17,7 +17,7 @@ namespace RemoteControl.Views
             InitializeComponent();
 
             //LblPort.BindingContext = App.DataModel;
-            BtnDebug.BindingContext = App.DataModel;
+            BtnDebugOnOff.BindingContext = App.DataModel;
             LblPacketCounter.BindingContext = App.DataModel;
         }
     }
